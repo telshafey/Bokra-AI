@@ -1,0 +1,7 @@
+{
+  "name": "Bokra AI-Powered HR",
+  "description": "An AI-powered Human Resources Management System designed for modern businesses, compliant with Egyptian law. This initial version features the employee dashboard and an AI HR assistant.",
+  "requestFramePermissions": [
+    "geolocation"
+  ]
+}
