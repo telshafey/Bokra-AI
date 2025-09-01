@@ -6,13 +6,15 @@ import { EmployeeProfile, Goal, TeamReportsData, AttendanceRecord, HRRequest, Ex
 import ProductivityAnalysis from './ProductivityAnalysis';
 import SentimentAnalysis from './SentimentAnalysis';
 import StatCard from './StatCard';
-import { ChartPieIcon, DocumentTextIcon, UserGroupIcon, ClockIcon } from './icons/Icons';
+import { ChartPieIcon, DocumentTextIcon, UserGroupIcon, ClockIcon, ArrowsUpDownIcon, ChevronUpIcon, ChevronDownIcon } from './icons/Icons';
 import DateRangePicker from './DateRangePicker';
 import Card from './Card';
 import ActionBar from './ActionBar';
 import { LEAVE_TYPE_TRANSLATION } from '../constants';
 
 type ReportTab = 'attendance' | 'absences' | 'leaves' | 'tasks';
+type SortableKeys<T> = keyof T;
+
 
 interface ManagerReportsPageProps {
   reportsData: TeamReportsData;
@@ -38,6 +40,7 @@ const ManagerReportsPage: React.FC<ManagerReportsPageProps> = ({ reportsData, te
   const { keyMetrics, weeklyAttendance, leaveDistribution } = reportsData;
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [activeTab, setActiveTab] = useState<ReportTab>('attendance');
+  const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
 
   const teamMemberIds = useMemo(() => new Set(teamMembers.map(m => m.id)), [teamMembers]);
   const employeeMap = useMemo(() => new Map(teamMembers.map(e => [e.id, e.name])), [teamMembers]);
@@ -71,11 +74,44 @@ const ManagerReportsPage: React.FC<ManagerReportsPageProps> = ({ reportsData, te
         tasks: teamTasks,
     };
   }, [dateRange, teamMemberIds, attendanceRecords, requests, externalTasks]);
+  
+  const sortedData = useMemo(() => {
+    let dataToSort = filteredData[activeTab] || [];
+    if (sortConfig !== null) {
+        (dataToSort as any[]).sort((a, b) => {
+            let aValue = a[sortConfig.key];
+            let bValue = b[sortConfig.key];
+            
+            if (sortConfig.key === 'employeeId') {
+                aValue = employeeMap.get(aValue) || '';
+                bValue = employeeMap.get(bValue) || '';
+            }
+
+            if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+            if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+            return 0;
+        });
+    }
+    return dataToSort;
+  }, [filteredData, activeTab, sortConfig, employeeMap]);
+
+
+    const handleSort = (key: string) => {
+        let direction: 'asc' | 'desc' = 'asc';
+        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const getSortIcon = (key: string) => {
+        if (!sortConfig || sortConfig.key !== key) return <ArrowsUpDownIcon className="w-4 h-4 text-slate-400" />;
+        return sortConfig.direction === 'asc' ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />;
+    };
+
 
   const renderActiveTable = () => {
-    const dataForTab = filteredData[activeTab] || [];
-    
-    if (dataForTab.length === 0) {
+    if (sortedData.length === 0) {
         return (
              <div className="text-center p-12 text-slate-500">
                 <p>لا توجد بيانات لعرضها في الفترة الزمنية المحددة.</p>
@@ -83,26 +119,28 @@ const ManagerReportsPage: React.FC<ManagerReportsPageProps> = ({ reportsData, te
         )
     }
 
+    const commonHeaderClass = "flex items-center gap-1";
+
     switch (activeTab) {
         case 'attendance':
             return (
                 <table className="w-full text-sm text-right text-slate-500">
                     <thead className="text-xs text-slate-700 uppercase bg-slate-100">
                         <tr>
-                            <th className="px-6 py-3">الموظف</th><th className="px-6 py-3">التاريخ</th>
+                            <th className="px-6 py-3"><button onClick={() => handleSort('employeeId')} className={commonHeaderClass}>الموظف {getSortIcon('employeeId')}</button></th>
+                            <th className="px-6 py-3"><button onClick={() => handleSort('date')} className={commonHeaderClass}>التاريخ {getSortIcon('date')}</button></th>
                             <th className="px-6 py-3">أول حضور</th><th className="px-6 py-3">آخر انصراف</th>
-                            <th className="px-6 py-3">ساعات العمل</th><th className="px-6 py-3">الإضافي</th>
+                            <th className="px-6 py-3"><button onClick={() => handleSort('workedHours')} className={commonHeaderClass}>ساعات العمل {getSortIcon('workedHours')}</button></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredData.attendance.map(r => (
+                        {(sortedData as AttendanceRecord[]).map(r => (
                             <tr key={`${r.employeeId}-${r.date}`} className="bg-white border-b">
                                 <td className="px-6 py-4 font-medium">{employeeMap.get(r.employeeId) || r.employeeId}</td>
                                 <td className="px-6 py-4">{r.date}</td>
                                 <td className="px-6 py-4">{r.firstCheckIn || '-'}</td>
                                 <td className="px-6 py-4">{r.lastCheckOut || '-'}</td>
                                 <td className="px-6 py-4">{r.workedHours?.toFixed(2) || '-'}</td>
-                                <td className="px-6 py-4">{r.overtime?.toFixed(2) || '0'}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -113,11 +151,12 @@ const ManagerReportsPage: React.FC<ManagerReportsPageProps> = ({ reportsData, te
                  <table className="w-full text-sm text-right text-slate-500">
                     <thead className="text-xs text-slate-700 uppercase bg-slate-100">
                         <tr>
-                            <th className="px-6 py-3">الموظف</th><th className="px-6 py-3">تاريخ الغياب</th>
+                            <th className="px-6 py-3"><button onClick={() => handleSort('employeeId')} className={commonHeaderClass}>الموظف {getSortIcon('employeeId')}</button></th>
+                            <th className="px-6 py-3"><button onClick={() => handleSort('date')} className={commonHeaderClass}>تاريخ الغياب {getSortIcon('date')}</button></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredData.absences.map(r => (
+                        {(sortedData as AttendanceRecord[]).map(r => (
                             <tr key={`${r.employeeId}-${r.date}`} className="bg-white border-b">
                                 <td className="px-6 py-4 font-medium">{employeeMap.get(r.employeeId) || r.employeeId}</td>
                                 <td className="px-6 py-4">{r.date}</td>
@@ -131,20 +170,21 @@ const ManagerReportsPage: React.FC<ManagerReportsPageProps> = ({ reportsData, te
                 <table className="w-full text-sm text-right text-slate-500">
                     <thead className="text-xs text-slate-700 uppercase bg-slate-100">
                         <tr>
-                            <th className="px-6 py-3">الموظف</th><th className="px-6 py-3">نوع الإجازة</th>
-                            <th className="px-6 py-3">من</th><th className="px-6 py-3">إلى</th>
-                            <th className="px-6 py-3">المدة</th><th className="px-6 py-3">الحالة</th>
+                            <th className="px-6 py-3"><button onClick={() => handleSort('employeeId')} className={commonHeaderClass}>الموظف {getSortIcon('employeeId')}</button></th>
+                            <th className="px-6 py-3"><button onClick={() => handleSort('leaveType')} className={commonHeaderClass}>نوع الإجازة {getSortIcon('leaveType')}</button></th>
+                            <th className="px-6 py-3"><button onClick={() => handleSort('startDate')} className={commonHeaderClass}>من {getSortIcon('startDate')}</button></th>
+                            <th className="px-6 py-3">إلى</th>
+                            <th className="px-6 py-3"><button onClick={() => handleSort('duration')} className={commonHeaderClass}>المدة {getSortIcon('duration')}</button></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredData.leaves.map(r => (
+                        {(sortedData as LeaveRequest[]).map(r => (
                             <tr key={r.id} className="bg-white border-b">
                                 <td className="px-6 py-4 font-medium">{employeeMap.get(r.employeeId) || r.employeeId}</td>
                                 <td className="px-6 py-4">{LEAVE_TYPE_TRANSLATION[r.leaveType]}</td>
                                 <td className="px-6 py-4">{r.startDate}</td>
                                 <td className="px-6 py-4">{r.endDate}</td>
                                 <td className="px-6 py-4">{r.duration} أيام</td>
-                                <td className="px-6 py-4">{r.status}</td>
                             </tr>
                         ))}
                     </tbody>
@@ -155,13 +195,15 @@ const ManagerReportsPage: React.FC<ManagerReportsPageProps> = ({ reportsData, te
                 <table className="w-full text-sm text-right text-slate-500">
                     <thead className="text-xs text-slate-700 uppercase bg-slate-100">
                         <tr>
-                            <th className="px-6 py-3">الموظف</th><th className="px-6 py-3">المهمة</th>
-                            <th className="px-6 py-3">التاريخ</th><th className="px-6 py-3">الوقت</th>
-                            <th className="px-6 py-3">الحالة</th>
+                             <th className="px-6 py-3"><button onClick={() => handleSort('employeeId')} className={commonHeaderClass}>الموظف {getSortIcon('employeeId')}</button></th>
+                             <th className="px-6 py-3"><button onClick={() => handleSort('title')} className={commonHeaderClass}>المهمة {getSortIcon('title')}</button></th>
+                             <th className="px-6 py-3"><button onClick={() => handleSort('date')} className={commonHeaderClass}>التاريخ {getSortIcon('date')}</button></th>
+                             <th className="px-6 py-3">الوقت</th>
+                             <th className="px-6 py-3"><button onClick={() => handleSort('status')} className={commonHeaderClass}>الحالة {getSortIcon('status')}</button></th>
                         </tr>
                     </thead>
                     <tbody>
-                        {filteredData.tasks.map(t => (
+                        {(sortedData as ExternalTask[]).map(t => (
                             <tr key={t.id} className="bg-white border-b">
                                 <td className="px-6 py-4 font-medium">{employeeMap.get(t.employeeId) || t.employeeId}</td>
                                 <td className="px-6 py-4">{t.title}</td>

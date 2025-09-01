@@ -6,7 +6,7 @@ interface LeavePermitModalProps {
     isOpen: boolean;
     onClose: () => void;
     // FIX: Corrected the onSubmit prop type to match what the form actually provides, excluding properties added by the parent handler.
-    onSubmit: (newRequest: Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'employeeId' | 'durationHours'>) => void;
+    onSubmit: (newRequest: Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'durationHours'>) => void;
     attendancePolicy?: AttendancePolicy;
     permitRequests: LeavePermitRequest[];
 }
@@ -46,7 +46,7 @@ const LeavePermitModal: React.FC<LeavePermitModalProps> = ({ isOpen, onClose, on
             startTime,
             endTime,
             reason,
-        });
+        } as Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'durationHours'>);
 
         // Reset form and close modal
         setDate(new Date().toISOString().split('T')[0]);

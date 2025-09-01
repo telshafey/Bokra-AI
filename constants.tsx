@@ -1,6 +1,7 @@
+
 import React from 'react';
-import { HomeIcon, CalendarIcon, DocumentTextIcon, UserCircleIcon, CogIcon, ArrowLeftOnRectangleIcon, BriefcaseIcon, BanknotesIcon, ChartPieIcon, AcademicCapIcon, UserGroupIcon, ClipboardDocumentListIcon, DocumentCheckIcon, BuildingOfficeIcon, PresentationChartLineIcon, CheckCircleIcon, ShieldCheckIcon, ShieldExclamationIcon, BookOpenIcon, UsersIcon, DocumentDuplicateIcon, ClockIcon, QuestionMarkCircleIcon, CheckBadgeIcon, ArchiveBoxIcon, ClipboardDocumentCheckIcon, UserPlusIcon, UserMinusIcon, ChevronDownIcon, ExclamationTriangleIcon, ArrowsUpDownIcon, ChevronUpIcon } from './components/icons/Icons';
-import type { NavItem, EmployeeProfile, AttendanceRecord, Payslip, PayslipItem, LeaveRequest, HRRequest, TeamMemberDetails, LeaveType, LeaveDistributionDataItem, TeamWeeklyAttendanceItem, Branch, Goal, PerformanceReview, Skill, DevelopmentSuggestion, AttendancePolicy, LeavePolicy, EmployeeInfraction, JobTitle, Course, EmployeeCourse, Notification, MonthlyCheckIn, SalaryComponent, CompensationPackage, SupportTicket, EmployeeDashboardData, TeamDashboardData, RecentActivityItem, AttentionItem, TeamLearningStat, OvertimePolicy, AttendanceAdjustmentRequest, LeavePermitRequest, TeamMember, JobOpening, Candidate, OnboardingTemplate, OnboardingProcess, OnboardingTaskCategory, OnboardingResponsible, OffboardingTemplate, OffboardingProcess, OffboardingTaskCategory, OffboardingResponsible, NavGroup, EmployeeDocument, WorkLocation, AttendanceEvent, ExternalTask, TeamReportsData, TeamMemberStats, RequestType, AttendanceStatus, ApprovalContext, OverlappingLeave, PerformanceCycle, TeamMemberPerformanceData, ManagerPerformanceData } from './types';
+import { HomeIcon, CalendarIcon, DocumentTextIcon, UserCircleIcon, CogIcon, ArrowLeftOnRectangleIcon, BriefcaseIcon, BanknotesIcon, ChartPieIcon, AcademicCapIcon, UserGroupIcon, ClipboardDocumentListIcon, DocumentCheckIcon, BuildingOfficeIcon, PresentationChartLineIcon, CheckCircleIcon, ShieldCheckIcon, ShieldExclamationIcon, BookOpenIcon, UsersIcon, DocumentDuplicateIcon, ClockIcon, QuestionMarkCircleIcon, CheckBadgeIcon, ArchiveBoxIcon, ClipboardDocumentCheckIcon, UserPlusIcon, UserMinusIcon, ChevronDownIcon, ExclamationTriangleIcon, ArrowsUpDownIcon, ChevronUpIcon, ComputerDesktopIcon } from './components/icons/Icons';
+import type { NavItem, EmployeeProfile, AttendanceRecord, Payslip, PayslipItem, LeaveRequest, HRRequest, TeamMemberDetails, LeaveType, LeaveDistributionDataItem, TeamWeeklyAttendanceItem, Branch, Goal, PerformanceReview, Skill, DevelopmentSuggestion, AttendancePolicy, LeavePolicy, EmployeeInfraction, JobTitle, Course, EmployeeCourse, Notification, MonthlyCheckIn, SalaryComponent, CompensationPackage, SupportTicket, EmployeeDashboardData, TeamDashboardData, RecentActivityItem, AttentionItem, TeamLearningStat, OvertimePolicy, AttendanceAdjustmentRequest, LeavePermitRequest, TeamMember, JobOpening, Candidate, OnboardingTemplate, OnboardingProcess, OnboardingTaskCategory, OnboardingResponsible, OffboardingTemplate, OffboardingProcess, OffboardingTaskCategory, OffboardingResponsible, NavGroup, EmployeeDocument, WorkLocation, AttendanceEvent, ExternalTask, TeamReportsData, TeamMemberStats, RequestType, AttendanceStatus, ApprovalContext, OverlappingLeave, PerformanceCycle, TeamMemberPerformanceData, ManagerPerformanceData, Asset } from './types';
 
 // =================================================================================
 // ===== COMPANY STRUCTURE & HIERARCHY =====
@@ -308,6 +309,8 @@ export const MOCK_COURSES: Course[] = [
         durationHours: 40,
         description: 'Learn to Program and Analyze Data with Python. Develop programs to gather, clean, analyze, and visualize data.',
         isMandatory: false,
+        venue: 'Online',
+        locationDetails: 'Coursera Platform',
     }
 ];
 
@@ -614,6 +617,20 @@ export const MOCK_SUPPORT_TICKETS: SupportTicket[] = [
 ];
 
 // =================================================================================
+// ===== ASSETS MOCK DATA =====
+// =================================================================================
+
+export const MOCK_ASSETS: Asset[] = [
+    { id: 'asset-1', name: 'MacBook Pro 16"', category: 'Hardware', serialNumber: 'C02Z1234ABCD', purchaseDate: '2023-01-15', purchaseValue: 75000, status: 'Assigned', assignedToId: 'emp-002', depreciationMethod: 'Declining Balance', usefulLifeYears: 5 },
+    { id: 'asset-2', name: 'Dell Latitude 7420', category: 'Hardware', serialNumber: 'DL123456789', purchaseDate: '2022-11-01', purchaseValue: 35000, status: 'Assigned', assignedToId: 'emp-003', depreciationMethod: 'Straight-line', usefulLifeYears: 4 },
+    { id: 'asset-3', name: 'iPhone 14 Pro', category: 'Hardware', serialNumber: 'IP14P987654', purchaseDate: '2023-01-05', purchaseValue: 40000, status: 'Assigned', assignedToId: 'emp-102', depreciationMethod: 'Declining Balance', usefulLifeYears: 3 },
+    { id: 'asset-4', name: 'Lenovo ThinkPad T14', category: 'Hardware', serialNumber: 'LVTP123456', purchaseDate: '2023-06-20', purchaseValue: 32000, status: 'Available', assignedToId: null, depreciationMethod: 'Straight-line', usefulLifeYears: 4 },
+    { id: 'asset-5', name: 'Adobe Creative Cloud', category: 'Software', serialNumber: 'AD-CC-LICENSE-1', purchaseDate: '2024-01-01', purchaseValue: 15000, status: 'Assigned', assignedToId: 'emp-001', depreciationMethod: 'Straight-line', usefulLifeYears: 1 },
+    { id: 'asset-6', name: 'Herman Miller Aeron', category: 'Furniture', serialNumber: 'HM-Aeron-001', purchaseDate: '2021-01-01', purchaseValue: 25000, status: 'Assigned', assignedToId: 'emp-gm', depreciationMethod: 'Straight-line', usefulLifeYears: 10 },
+];
+
+
+// =================================================================================
 // ===== NAVIGATION & STATIC CONTENT =====
 // =================================================================================
 
@@ -628,6 +645,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { name: 'الأداء', icon: ChartPieIcon, path: '/performance', requiresEmployee: true, pageTitle: 'الأداء', module: 'performance' },
       { name: 'التطوير والتدريب', icon: BookOpenIcon, path: '/learning', requiresEmployee: true, pageTitle: 'التطوير والتدريب', module: 'learning' },
       { name: 'أوراقي', icon: DocumentDuplicateIcon, path: '/documents', requiresEmployee: true, pageTitle: 'أوراقي ومستنداتي', module: 'documents' },
+      { name: 'عهدتي', icon: ComputerDesktopIcon, path: '/my-assets', requiresEmployee: true, pageTitle: 'عهدتي', module: 'assets' },
       { name: 'تذاكر الدعم', icon: QuestionMarkCircleIcon, path: '/support', pageTitle: 'تذاكر الدعم', module: 'support' },
     ]
   },
@@ -667,9 +685,9 @@ export const NAV_GROUPS: NavGroup[] = [
       { name: 'إدارة الموظفين', icon: UsersIcon, path: '/system-admin', roles: ['Admin', 'Super Admin', 'Branch Admin'], pageTitle: 'إدارة الموظفين' },
       { name: 'إدارة الوحدات', icon: CogIcon, path: '/module-management', roles: ['Super Admin'], pageTitle: 'إدارة الوحدات' },
       { name: 'إدارة الفروع', icon: BuildingOfficeIcon, path: '/branch-management', roles: ['Super Admin'], pageTitle: 'إدارة الفروع' },
-      { name: 'إدارة العقود', icon: DocumentTextIcon, path: '/contracts', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitle: 'إدارة العقود' },
       { name: 'إدارة التدريب', icon: AcademicCapIcon, path: '/learning-management', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitle: 'إدارة التدريب', module: 'learning' },
       { name: 'إدارة المستندات', icon: DocumentCheckIcon, path: '/document-management', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitle: 'إدارة المستندات', module: 'documents' },
+      { name: 'إدارة العهد', icon: ComputerDesktopIcon, path: '/assets-management', roles: ['Admin', 'Super Admin'], pageTitle: 'إدارة العهد', module: 'assets' },
       { name: 'قوالب التعيين', icon: ClipboardDocumentCheckIcon, path: '/onboarding-templates', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitle: 'إدارة قوالب التعيين', module: 'onboarding' },
       { name: 'قوالب إنهاء الخدمة', icon: DocumentDuplicateIcon, path: '/offboarding-templates', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitle: 'إدارة قوالب إنهاء الخدمة', module: 'offboarding' },
       { name: 'سياسات الحضور', icon: ClockIcon, path: '/attendance-policy', roles: ['HR Manager', 'Admin', 'Super Admin', 'Branch Admin'], pageTitle: 'سياسات الحضور' },
@@ -1008,13 +1026,68 @@ export const getDerivedData = (
   externalTasks: ExternalTask[],
   goals: Goal[],
   attendanceEvents: AttendanceEvent[],
+  assets: Asset[],
 ) => {
+
+// FIX: Explicitly type the return value of the map function to ensure type safety.
+  const assetsWithDepreciation = assets.map((asset): Asset => {
+    const purchaseDate = new Date(asset.purchaseDate);
+    const now = new Date('2025-09-01'); // Fixed date for demo consistency
+    const yearsSincePurchase = (now.getTime() - purchaseDate.getTime()) / (1000 * 60 * 60 * 24 * 365.25);
+    let depreciationStatus: Asset['depreciationStatus'] = 'Normal';
+
+
+    if (yearsSincePurchase <= 0 || asset.usefulLifeYears <= 0 || asset.purchaseValue <= 0) {
+        return { ...asset, currentValue: asset.purchaseValue, depreciationStatus: 'Normal' };
+    }
+
+    let currentValue;
+
+    if (asset.depreciationMethod === 'Straight-line') {
+        const annualDepreciation = asset.purchaseValue / asset.usefulLifeYears;
+        const totalDepreciation = Math.min(annualDepreciation * yearsSincePurchase, asset.purchaseValue);
+        currentValue = asset.purchaseValue - totalDepreciation;
+    } else if (asset.depreciationMethod === 'Declining Balance') {
+        let bookValue = asset.purchaseValue;
+        const rate = 2 / asset.usefulLifeYears; // Double declining rate
+
+        const fullYearsPassed = Math.floor(yearsSincePurchase);
+        for (let i = 0; i < fullYearsPassed; i++) {
+             if (i < asset.usefulLifeYears) {
+                const depreciationAmount = bookValue * rate;
+                bookValue -= depreciationAmount;
+             }
+        }
+        
+        if(yearsSincePurchase > fullYearsPassed && fullYearsPassed < asset.usefulLifeYears) {
+            const partialYearFraction = yearsSincePurchase - fullYearsPassed;
+            const depreciationForPartialYear = bookValue * rate * partialYearFraction;
+            bookValue -= depreciationForPartialYear;
+        }
+
+        currentValue = bookValue;
+    } else {
+        currentValue = asset.purchaseValue;
+    }
+
+    currentValue = Math.max(0, currentValue);
+    
+    if (currentValue === 0) {
+        depreciationStatus = 'Depreciated';
+    } else if (asset.usefulLifeYears - yearsSincePurchase <= 1) { // Nearing EOL if 1 year or less remains
+        depreciationStatus = 'NearingEOL';
+    }
+    
+    return { ...asset, currentValue: parseFloat(currentValue.toFixed(2)), depreciationStatus };
+  });
+
   const allEmployeesWithDetails = employees.map(emp => {
       const branch = branches.find(b => b.id === emp.branchId);
       const attendancePolicy = attendancePolicies.find(p => p.id === emp.attendancePolicyId);
       const overtimePolicy = overtimePolicies.find(p => p.id === emp.overtimePolicyId);
       const leavePolicy = leavePolicies.find(p => p.id === emp.leavePolicyId);
       const jobTitle = jobTitles.find(jt => jt.id === emp.jobTitleId);
+      const assignedAssets = assetsWithDepreciation.filter(a => a.assignedToId === emp.id);
       return {
           ...emp,
           branchName: branch?.name || 'N/A',
@@ -1022,6 +1095,7 @@ export const getDerivedData = (
           overtimePolicyName: overtimePolicy?.name || 'N/A',
           leavePolicyName: leavePolicy?.name || 'N/A',
           title: jobTitle?.name || emp.title,
+          assets: assignedAssets,
       };
   });
 
@@ -1347,6 +1421,7 @@ export const getDerivedData = (
           goals: MOCK_GOALS.filter(g => g.employeeId === profile.id),
           reviews: performanceReviews.filter(r => r.employeeId === profile.id),
           documents: documents.filter(d => d.employeeId === profile.id),
+          assets: assetsWithDepreciation.filter(a => a.assignedToId === profile.id),
           infractions: employeeInfractions.filter(i => i.employeeId === profile.id),
           courses: memberCourses,
           monthlyCheckIns: monthlyCheckIns.filter(mci => mci.employeeId === profile.id),

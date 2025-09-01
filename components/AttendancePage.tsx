@@ -1,3 +1,5 @@
+
+
 import React, { useState, useMemo } from 'react';
 import { AttendanceRecord, EmployeeInfraction, EmployeeProfile, AttendancePolicy, AttendanceAdjustmentRequest, LeavePermitRequest, RequestStatus, AttendanceEvent, ExternalTask, AttendanceStatus, Branch } from '../types';
 import AttendanceSummary from './AttendanceSummary';
@@ -8,6 +10,8 @@ import AttendanceAdjustmentModal from './AttendanceAdjustmentModal';
 import LeavePermitModal from './LeavePermitModal';
 import EmployeeAttendanceCard from './EmployeeAttendanceCard';
 import { ALL_EMPLOYEES, COMPANY_BRANCHES } from '../constants';
+import { useRequestContext } from './contexts/RequestContext';
+import { usePoliciesContext } from './contexts/PoliciesContext';
 
 const STATUS_BADGE: Record<RequestStatus, string> = {
     Approved: 'bg-emerald-100 text-emerald-800',
@@ -27,17 +31,19 @@ interface AttendancePageProps {
   attendanceEvents: AttendanceEvent[];
   infractions: EmployeeInfraction[];
   currentUser: EmployeeProfile;
-  attendancePolicies: AttendancePolicy[];
-  adjustmentRequests: AttendanceAdjustmentRequest[];
-  onNewAdjustmentRequest: (newRequest: Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => void;
-  permitRequests: LeavePermitRequest[];
-  onNewPermitRequest: (newRequest: Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'employeeId' | 'durationHours'>) => void;
   externalTasks: ExternalTask[];
 }
 
-const EmployeeAttendanceView: React.FC<AttendancePageProps> = ({ records, attendanceEvents, infractions, currentUser, attendancePolicies, adjustmentRequests, onNewAdjustmentRequest, permitRequests, onNewPermitRequest, externalTasks }) => {
+const EmployeeAttendanceView: React.FC<AttendancePageProps> = ({ records, attendanceEvents, infractions, currentUser, externalTasks }) => {
   const [isExcuseModalOpen, setIsExcuseModalOpen] = useState(false);
   const [isPermitModalOpen, setIsPermitModalOpen] = useState(false);
+  // FIX: Destructure `leavePermitRequests` correctly from the context hook.
+  const { attendanceAdjustmentRequests, leavePermitRequests, handleNewAttendanceAdjustmentRequest, handleNewLeavePermitRequest } = useRequestContext();
+  const { attendancePolicies } = usePoliciesContext();
+
+  const userAdjustmentRequests = attendanceAdjustmentRequests.filter(r => r.employeeId === currentUser.id);
+  const userPermitRequests = leavePermitRequests.filter(r => r.employeeId === currentUser.id);
+
   const attendancePolicy = attendancePolicies.find(p => p.id === currentUser.attendancePolicyId);
   
   const calculateLateCount = () => {
@@ -60,14 +66,14 @@ const EmployeeAttendanceView: React.FC<AttendancePageProps> = ({ records, attend
   const lateCount = calculateLateCount();
 
   const combinedRequests = useMemo(() => {
-    const mappedAdjustments = adjustmentRequests.map(r => ({
+    const mappedAdjustments = userAdjustmentRequests.map(r => ({
         id: `adj-${r.id}`, date: r.date, type: r.adjustmentType === 'LateArrival' ? 'عذر تأخير' : 'انصراف مبكر', details: r.reason, status: r.status
     }));
-    const mappedPermits = permitRequests.map(r => ({
+    const mappedPermits = userPermitRequests.map(r => ({
         id: `prm-${r.id}`, date: r.date, type: 'إذن انصراف', details: `من ${r.startTime} إلى ${r.endTime}`, status: r.status
     }));
     return [...mappedAdjustments, ...mappedPermits].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [adjustmentRequests, permitRequests]);
+  }, [userAdjustmentRequests, userPermitRequests]);
 
   return (
     <div className="space-y-6">
@@ -85,7 +91,7 @@ const EmployeeAttendanceView: React.FC<AttendancePageProps> = ({ records, attend
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2 bg-white p-6 rounded-xl shadow-md transition-shadow hover:shadow-lg">
           <h2 className="text-xl font-bold mb-4 text-slate-700">سجل الحضور لشهر أغسطس 2025</h2>
-          <AttendanceLogTable records={records} events={attendanceEvents} infractions={infractions} policy={attendancePolicy} adjustmentRequests={adjustmentRequests} permitRequests={permitRequests} externalTasks={externalTasks} />
+          <AttendanceLogTable records={records} events={attendanceEvents} infractions={infractions} policy={attendancePolicy} adjustmentRequests={userAdjustmentRequests} permitRequests={userPermitRequests} externalTasks={externalTasks} />
         </div>
         <div className="bg-white p-6 rounded-xl shadow-md transition-shadow hover:shadow-lg">
           <h2 className="text-xl font-bold mb-4 text-slate-700">تقويم الشهر</h2>
@@ -115,19 +121,21 @@ const EmployeeAttendanceView: React.FC<AttendancePageProps> = ({ records, attend
                 </table>
             </div>
         </div>
-       <AttendanceAdjustmentModal isOpen={isExcuseModalOpen} onClose={() => setIsExcuseModalOpen(false)} onSubmit={(data) => onNewAdjustmentRequest({...data, employeeId: currentUser.id})} />
-       <LeavePermitModal isOpen={isPermitModalOpen} onClose={() => setIsPermitModalOpen(false)} onSubmit={onNewPermitRequest} attendancePolicy={attendancePolicy} permitRequests={permitRequests} />
+       <AttendanceAdjustmentModal isOpen={isExcuseModalOpen} onClose={() => setIsExcuseModalOpen(false)} onSubmit={(data) => handleNewAttendanceAdjustmentRequest({...data, employeeId: currentUser.id})} />
+       {/* FIX: Correctly pass the employeeId inside the new request object to resolve the type error. */}
+       <LeavePermitModal isOpen={isPermitModalOpen} onClose={() => setIsPermitModalOpen(false)} onSubmit={(data) => handleNewLeavePermitRequest({...data, employeeId: currentUser.id})} attendancePolicy={attendancePolicy} permitRequests={userPermitRequests} />
     </div>
   );
 };
 
 
-const ManagerAttendanceView: React.FC<AttendancePageProps> = ({ records, attendanceEvents, attendancePolicies, currentUser }) => {
+const ManagerAttendanceView: React.FC<AttendancePageProps> = ({ records, attendanceEvents, currentUser }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [statusFilter, setStatusFilter] = useState<AttendanceStatus | 'all'>('all');
     const [departmentFilter, setDepartmentFilter] = useState('all');
     const [branchFilter, setBranchFilter] = useState('all');
+    const { attendancePolicies } = usePoliciesContext();
 
     const { teamMembers, departments, branches } = useMemo(() => {
         const teamMemberIds = new Set(

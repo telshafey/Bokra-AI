@@ -17,6 +17,7 @@ const ALL_MODULES_CONFIG: { key: AppModule; name: string; description: string }[
     { key: 'compensation', name: 'التعويضات والمزايا', description: 'إدارة مكونات الرواتب وإنشاء حزم مالية مختلفة.' },
     { key: 'job_titles', name: 'الهيكل الوظيفي', description: 'بناء وإدارة شجرة المسميات الوظيفية للشركة.' },
     { key: 'documents', name: 'المستندات والأوراق', description: 'إدارة المستندات الرسمية للموظفين مثل العقود ومسوغات التعيين.' },
+    { key: 'assets', name: 'إدارة العهد', description: 'تتبع أصول الشركة المسلمة للموظفين، مثل أجهزة اللابتوب والهواتف.' },
 ];
 
 const ModuleToggle: React.FC<{ enabled: boolean; setEnabled: () => void }> = ({ enabled, setEnabled }) => (

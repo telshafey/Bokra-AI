@@ -1,6 +1,8 @@
+
+
 import type React from 'react';
 
-export type AppModule = 'performance' | 'learning' | 'recruitment' | 'onboarding' | 'offboarding' | 'support' | 'compensation' | 'job_titles' | 'documents';
+export type AppModule = 'performance' | 'learning' | 'recruitment' | 'onboarding' | 'offboarding' | 'support' | 'compensation' | 'job_titles' | 'documents' | 'assets';
 
 export interface NavItem {
   name: string;
@@ -61,6 +63,108 @@ export interface CompensationPackage {
     }[];
 }
 
+// --- Asset Management Types ---
+export type AssetCategory = 'Hardware' | 'Software' | 'Furniture' | 'Vehicle';
+export type AssetStatus = 'Available' | 'Assigned' | 'UnderMaintenance' | 'Retired';
+export type DepreciationMethod = 'Straight-line' | 'Declining Balance';
+
+export interface Asset {
+    id: string;
+    name: string;
+    category: AssetCategory;
+    serialNumber: string;
+    purchaseDate: string;
+    purchaseValue: number; // Renamed from value
+    status: AssetStatus;
+    assignedToId: string | null;
+    // New fields for depreciation
+    depreciationMethod: DepreciationMethod;
+    usefulLifeYears: number;
+    currentValue?: number; // Will be calculated dynamically
+    depreciationStatus?: 'Normal' | 'NearingEOL' | 'Depreciated';
+}
+
+export interface AssetsContextType {
+    assets: Asset[];
+    saveAsset: (asset: Asset) => void;
+    assignAsset: (assetId: string, employeeId: string | null) => void;
+}
+
+export interface AssetsProviderProps {
+    children: React.ReactNode;
+}
+
+export interface PoliciesContextType {
+    attendancePolicies: AttendancePolicy[];
+    overtimePolicies: OvertimePolicy[];
+    leavePolicies: LeavePolicy[];
+    saveAttendancePolicy: (policy: AttendancePolicy) => void;
+    archiveAttendancePolicy: (policyId: string) => void;
+    bulkArchiveAttendancePolicies: (policyIds: string[]) => void;
+    updateAttendancePolicyStatus: (policyId: string, newStatus: 'Active' | 'Rejected') => void;
+    saveOvertimePolicy: (policy: OvertimePolicy) => void;
+    archiveOvertimePolicy: (policyId: string) => void;
+    bulkArchiveOvertimePolicies: (policyIds: string[]) => void;
+    updateOvertimePolicyStatus: (policyId: string, newStatus: 'Active' | 'Rejected') => void;
+    saveLeavePolicy: (policy: LeavePolicy) => void;
+    archiveLeavePolicy: (policyId: string) => void;
+    bulkArchiveLeavePolicies: (policyIds: string[]) => void;
+    updateLeavePolicyStatus: (policyId: string, newStatus: 'Active' | 'Rejected') => void;
+}
+
+export interface PoliciesProviderProps {
+    children: React.ReactNode;
+}
+
+export interface UserContextType {
+    employees: EmployeeProfile[];
+    updateUserRole: (userId: string, newRole: UserRole) => void;
+    deactivateUser: (userId: string) => void;
+    bulkDeactivateUsers: (userIds: string[]) => void;
+    reactivateUser: (userId: string) => void;
+    bulkAssignAttendancePolicy: (policyId: string, employeeIds: string[]) => void;
+    bulkAssignOvertimePolicy: (policyId: string, employeeIds: string[]) => void;
+    bulkAssignLeavePolicy: (policyId: string, employeeIds: string[]) => void;
+    updateProfile: (updatedProfile: EmployeeProfile) => void;
+    addNewUser: (newUserPayload: NewUserPayload) => void;
+    updateUser: (userId: string, updatedData: NewUserPayload) => void;
+    updateBranchManager: (branchId: string, newManagerId: string) => void;
+}
+
+export interface UserProviderProps {
+    children: React.ReactNode;
+}
+
+export interface CompanyStructureContextType {
+    branches: Branch[];
+    jobTitles: JobTitle[];
+    addBranch: (name: string) => Branch;
+    updateBranch: (id: string, name: string) => void;
+    archiveBranch: (id: string) => void;
+    saveJobTitle: (jobTitle: JobTitle) => void;
+    deleteJobTitle: (jobTitleId: string) => void;
+}
+
+export interface CompanyStructureProviderProps {
+    children: React.ReactNode;
+}
+
+export interface RequestContextType {
+    requests: HRRequest[];
+    leaveRequests: LeaveRequest[];
+    attendanceAdjustmentRequests: AttendanceAdjustmentRequest[];
+    leavePermitRequests: LeavePermitRequest[];
+    handleRequestAction: (requestId: number, newStatus: RequestStatus) => void;
+    handleNewLeaveRequest: (newRequestData: Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => void;
+    handleNewAttendanceAdjustmentRequest: (newRequestData: Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => void;
+    // FIX: Corrected the type to expect `employeeId` to be passed, aligning it with other request handlers.
+    handleNewLeavePermitRequest: (newRequestData: Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'durationHours'>) => void;
+}
+
+export interface RequestProviderProps {
+    children: React.ReactNode;
+}
+
 
 export interface EmployeeProfile extends Employee {
     id: string;
@@ -85,6 +189,7 @@ export interface EmployeeProfile extends Employee {
     leavePolicyId?: string;
     leavePolicyName?: string; // Added dynamically
     compensationPackageId?: string; // New field
+    assets?: Asset[]; // Added dynamically
     // New fields for turnover analysis
     performanceScore: number; // e.g., 1 to 5
     satisfactionSurveyScore: number; // e.g., 1 to 5
@@ -375,7 +480,7 @@ export interface AttendancePolicy {
     name: string;
     scope: 'company' | 'branch';
     branchId?: string;
-    status: 'Active' | 'PendingApproval';
+    status: 'Active' | 'PendingApproval' | 'Archived' | 'Rejected';
     gracePeriodInMinutes: number;
     latenessTiers: LatenessTier[];
     absenceRules: ViolationRule[];
@@ -392,7 +497,7 @@ export interface OvertimePolicy {
     name: string;
     scope: 'company' | 'branch';
     branchId?: string;
-    status: 'Active' | 'PendingApproval';
+    status: 'Active' | 'PendingApproval' | 'Archived' | 'Rejected';
     allowOvertime: boolean;
     minOvertimeInMinutes: number;
     overtimeRateNormal: number; // e.g., 1.35 for 135%
@@ -405,7 +510,7 @@ export interface LeavePolicy {
     name: string;
     scope: 'company' | 'branch';
     branchId?: string;
-    status: 'Active' | 'PendingApproval';
+    status: 'Active' | 'PendingApproval' | 'Archived' | 'Rejected';
     annualLeaveBalance: number;
     sickLeaveBalance: number;
     casualLeaveBalance: number;
@@ -441,6 +546,7 @@ export interface TeamMemberDetails {
     goals: Goal[];
     reviews: PerformanceReview[];
     documents: EmployeeDocument[];
+    assets: Asset[];
     infractions: EmployeeInfraction[];
     courses: (Course & EmployeeCourse)[];
     monthlyCheckIns: MonthlyCheckIn[];
@@ -462,6 +568,7 @@ export type CourseCategory = 'Technical' | 'Soft Skills' | 'Compliance' | 'Leade
 export type CourseStatus = 'Not Started' | 'In Progress' | 'Completed';
 export type CourseType = 'Internal' | 'External';
 export type ManagerApprovalStatus = 'Pending' | 'Approved' | 'Rejected' | 'NotSubmitted';
+export type ExternalCourseVenue = 'On-site' | 'Training Center' | 'Online';
 
 
 export interface CourseModule {
@@ -482,6 +589,8 @@ export interface Course {
     type: CourseType;
     provider?: string; // e.g., Coursera, Udemy
     url?: string;
+    venue?: ExternalCourseVenue;
+    locationDetails?: string;
 }
 
 export interface EmployeeCourse {
@@ -492,6 +601,8 @@ export interface EmployeeCourse {
     managerApprovalStatus: ManagerApprovalStatus;
     submittedNotes?: string;
     certificateUrl?: string; // Placeholder for file path/URL
+    result?: string; // e.g., "Pass", "95/100"
+    performanceRating?: number; // 1-5
 }
 
 export interface CourseOutline {

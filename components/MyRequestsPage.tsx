@@ -1,11 +1,11 @@
-
 import React, { useState, useMemo } from 'react';
 import type { HRRequest, RequestStatus, RequestType } from '../types';
-import { BriefcaseIcon, DocumentTextIcon, IdentificationIcon, ClockIcon } from './icons/Icons';
+import { BriefcaseIcon, DocumentTextIcon, IdentificationIcon, ClockIcon, ArrowsUpDownIcon, ChevronUpIcon, ChevronDownIcon } from './icons/Icons';
 import Card from './Card';
 import ActionBar from './ActionBar';
 
 type FilterStatus = 'All' | RequestStatus;
+type SortableKeys = 'type' | 'submissionDate' | 'status';
 
 const STATUS_BADGE: Record<RequestStatus, string> = {
     Approved: 'bg-emerald-100 text-emerald-800',
@@ -65,13 +65,37 @@ interface MyRequestsPageProps {
 
 const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests }) => {
     const [activeFilter, setActiveFilter] = useState<FilterStatus>('All');
+    const [sortConfig, setSortConfig] = useState<{ key: SortableKeys, direction: 'asc' | 'desc' } | null>({ key: 'submissionDate', direction: 'desc' });
 
-    const filteredRequests = useMemo(() => {
-        if (activeFilter === 'All') {
-            return requests;
+    const sortedAndFilteredRequests = useMemo(() => {
+        let filtered = requests;
+        if (activeFilter !== 'All') {
+            filtered = requests.filter(req => req.status === activeFilter);
         }
-        return requests.filter(req => req.status === activeFilter);
-    }, [activeFilter, requests]);
+        
+        if (sortConfig !== null) {
+            // FIX: Create a shallow copy to avoid mutating state, and explicitly type sort values to handle numbers from date conversion.
+            return [...filtered].sort((a, b) => {
+                let aValue: string | number = a[sortConfig.key];
+                let bValue: string | number = b[sortConfig.key];
+
+                if(sortConfig.key === 'submissionDate') {
+                    aValue = new Date(aValue as string).getTime();
+                    bValue = new Date(bValue as string).getTime();
+                }
+
+                if (aValue < bValue) {
+                    return sortConfig.direction === 'asc' ? -1 : 1;
+                }
+                if (aValue > bValue) {
+                    return sortConfig.direction === 'asc' ? 1 : -1;
+                }
+                return 0;
+            });
+        }
+
+        return filtered;
+    }, [activeFilter, requests, sortConfig]);
     
     const requestCounts = useMemo(() => ({
         All: requests.length,
@@ -80,6 +104,18 @@ const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests }) => {
         Rejected: requests.filter(r => r.status === 'Rejected').length,
     }), [requests]);
 
+    const handleSort = (key: SortableKeys) => {
+        let direction: 'asc' | 'desc' = 'asc';
+        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+            direction = 'desc';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const getSortIcon = (key: SortableKeys) => {
+        if (!sortConfig || sortConfig.key !== key) return <ArrowsUpDownIcon className="w-4 h-4 text-slate-400" />;
+        return sortConfig.direction === 'asc' ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />;
+    };
 
     return (
         <div className="space-y-6">
@@ -101,14 +137,14 @@ const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests }) => {
                     <table className="w-full text-sm text-right text-slate-500">
                         <thead className="text-xs text-slate-700 uppercase bg-slate-100">
                             <tr>
-                                <th scope="col" className="px-6 py-3 w-1/4">نوع الطلب</th>
-                                <th scope="col" className="px-6 py-3 w-1/4">تاريخ التقديم</th>
-                                <th scope="col" className="px-6 py-3 w-2/4">التفاصيل</th>
-                                <th scope="col" className="px-6 py-3">الحالة</th>
+                                <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('type')} className="flex items-center gap-1">نوع الطلب {getSortIcon('type')}</button></th>
+                                <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('submissionDate')} className="flex items-center gap-1">تاريخ التقديم {getSortIcon('submissionDate')}</button></th>
+                                <th scope="col" className="px-6 py-3">التفاصيل</th>
+                                <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('status')} className="flex items-center gap-1">الحالة {getSortIcon('status')}</button></th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredRequests.map((request) => {
+                            {sortedAndFilteredRequests.map((request) => {
                                 const typeInfo = REQUEST_TYPE_INFO[request.type];
                                 const Icon = typeInfo.icon;
                                 return (
@@ -135,7 +171,7 @@ const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests }) => {
                             })}
                         </tbody>
                     </table>
-                     {filteredRequests.length === 0 && (
+                     {sortedAndFilteredRequests.length === 0 && (
                         <div className="text-center py-12 text-slate-500">
                             <p className="font-semibold text-lg">لا توجد طلبات تطابق هذا الفلتر.</p>
                             <p className="text-sm">حاول تحديد فلتر مختلف لعرض طلباتك.</p>

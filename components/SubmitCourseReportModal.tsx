@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { XMarkIcon, ArrowUpTrayIcon } from './icons/Icons';
 import type { Course, EmployeeCourse, CourseStatus } from '../types';
@@ -6,13 +7,16 @@ interface SubmitCourseReportModalProps {
     isOpen: boolean;
     onClose: () => void;
     course: Course & EmployeeCourse;
-    onSubmit: (courseId: string, updateData: { status: CourseStatus; notes: string; certificate?: File | null }) => void;
+    onSubmit: (courseId: string, updateData: { status: CourseStatus; notes: string; certificate?: File | null; result?: string; performanceRating?: number; }) => void;
 }
 
 const SubmitCourseReportModal: React.FC<SubmitCourseReportModalProps> = ({ isOpen, onClose, course, onSubmit }) => {
     const [status, setStatus] = useState<CourseStatus>(course.status);
     const [notes, setNotes] = useState('');
     const [certificate, setCertificate] = useState<File | null>(null);
+    const [result, setResult] = useState('');
+    const [performanceRating, setPerformanceRating] = useState<number>(5);
+
 
     if (!isOpen) return null;
 
@@ -22,7 +26,7 @@ const SubmitCourseReportModal: React.FC<SubmitCourseReportModalProps> = ({ isOpe
             alert("يرجى كتابة ملاحظات حول تقدمك.");
             return;
         }
-        onSubmit(course.id, { status, notes, certificate });
+        onSubmit(course.id, { status, notes, certificate, result, performanceRating });
         onClose();
     };
 
@@ -57,6 +61,16 @@ const SubmitCourseReportModal: React.FC<SubmitCourseReportModalProps> = ({ isOpe
                             <option value="In Progress">قيد التنفيذ</option>
                             <option value="Completed">مكتملة</option>
                         </select>
+                    </div>
+                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                           <label htmlFor="result" className="block text-sm font-medium text-slate-700 mb-1">النتيجة</label>
+                           <input type="text" id="result" value={result} onChange={e => setResult(e.target.value)} placeholder="مثال: ناجح، 95/100" className="w-full p-2 border rounded-lg"/>
+                        </div>
+                        <div>
+                           <label htmlFor="performanceRating" className="block text-sm font-medium text-slate-700 mb-1">تقييم الأداء (1-5)</label>
+                           <input type="number" id="performanceRating" min="1" max="5" value={performanceRating} onChange={e => setPerformanceRating(Number(e.target.value))} className="w-full p-2 border rounded-lg"/>
+                        </div>
                     </div>
                     <div>
                         <label htmlFor="notes" className="block text-sm font-medium text-slate-700 mb-1">ملاحظات للمدير</label>

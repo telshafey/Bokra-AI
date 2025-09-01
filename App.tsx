@@ -1,4 +1,6 @@
 
+
+
 import React, { useState, useMemo, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -39,10 +41,19 @@ import MyRequestsPage from './components/MyRequestsPage';
 import ContractsPage from './components/ContractsPage';
 import TurnoverReportPage from './components/TurnoverReportPage';
 import ManagerPerformancePage from './components/ManagerPerformancePage';
+import AssetsManagementPage from './components/AssetsManagementPage';
+import MyAssetsPage from './components/MyAssetsPage';
+
+import { useAssetsContext } from './components/contexts/AssetsContext';
+import { usePoliciesContext } from './components/contexts/PoliciesContext';
+import { useUserContext } from './components/contexts/UserContext';
+import { useCompanyStructureContext } from './components/contexts/CompanyStructureContext';
+import { useRequestContext } from './components/contexts/RequestContext';
 
 
-import { ALL_EMPLOYEES, INITIAL_USER_ID, MOCK_ALL_REQUESTS, MOCK_LEAVE_REQUESTS_INITIAL, getDerivedData, MOCK_ATTENDANCE_RECORDS as INITIAL_ATTENDANCE, COMPANY_BRANCHES, NAV_GROUPS, BOTTOM_NAV_ITEMS, MOCK_PERFORMANCE_REVIEWS as INITIAL_PERFORMANCE_REVIEWS, MOCK_EMPLOYEE_DOCUMENTS, MOCK_ATTENDANCE_POLICY, MOCK_LEAVE_POLICY, MOCK_EMPLOYEE_INFRACTIONS, generatePayslips, MOCK_JOB_TITLES, MOCK_COURSES, MOCK_EMPLOYEE_COURSES, MOCK_NOTIFICATIONS, MOCK_MONTHLY_CHECK_INS, MOCK_SALARY_COMPONENTS, MOCK_COMPENSATION_PACKAGES, MOCK_SUPPORT_TICKETS, MOCK_OVERTIME_POLICY, MOCK_ADJUSTMENT_REQUESTS_INITIAL, MOCK_LEAVE_PERMIT_REQUESTS_INITIAL, MOCK_JOB_OPENINGS, MOCK_CANDIDATES, MOCK_ONBOARDING_TEMPLATES, MOCK_ONBOARDING_PROCESSES, MOCK_OFFBOARDING_TEMPLATES, MOCK_OFFBOARDING_PROCESSES, MOCK_WORK_LOCATIONS, MOCK_ATTENDANCE_EVENTS, MOCK_EXTERNAL_TASKS, MOCK_GOALS } from './constants';
-import { EmployeeProfile, HRRequest, LeaveRequest, RequestStatus, Goal, PerformanceReview, EmployeeDocument, AttendanceRecord, UserRole, Branch, NewUserPayload, AttendancePolicy, EmployeeInfraction, LeavePolicy, JobTitle, Course, EmployeeCourse, Notification, MonthlyCheckIn, SalaryComponent, CompensationPackage, SupportTicket, TicketStatus, OvertimePolicy, AttendanceAdjustmentRequest, LeavePermitRequest, JobOpening, Candidate, CandidateStage, OnboardingProcess, OnboardingTemplate, OffboardingProcess, OffboardingTemplate, AppModule, WorkLocation, AttendanceEvent, ExternalTask, CourseStatus } from './types';
+import { INITIAL_USER_ID, getDerivedData, MOCK_ATTENDANCE_RECORDS as INITIAL_ATTENDANCE, NAV_GROUPS, BOTTOM_NAV_ITEMS, MOCK_PERFORMANCE_REVIEWS as INITIAL_PERFORMANCE_REVIEWS, MOCK_EMPLOYEE_DOCUMENTS, generatePayslips, MOCK_COURSES, MOCK_EMPLOYEE_COURSES, MOCK_NOTIFICATIONS, MOCK_MONTHLY_CHECK_INS, MOCK_SALARY_COMPONENTS, MOCK_COMPENSATION_PACKAGES, MOCK_SUPPORT_TICKETS, MOCK_JOB_OPENINGS, MOCK_CANDIDATES, MOCK_ONBOARDING_TEMPLATES, MOCK_ONBOARDING_PROCESSES, MOCK_OFFBOARDING_TEMPLATES, MOCK_OFFBOARDING_PROCESSES, MOCK_WORK_LOCATIONS, MOCK_ATTENDANCE_EVENTS, MOCK_EXTERNAL_TASKS, MOCK_GOALS, MOCK_EMPLOYEE_INFRACTIONS } from './constants';
+// FIX: Import EmployeeProfile type to resolve TypeScript error.
+import { HRRequest, LeaveRequest, RequestStatus, PerformanceReview, EmployeeDocument, AttendanceRecord, AppModule, WorkLocation, AttendanceEvent, ExternalTask, CourseStatus, TicketStatus, Course, EmployeeCourse, Notification, MonthlyCheckIn, SalaryComponent, CompensationPackage, SupportTicket, AttendanceAdjustmentRequest, LeavePermitRequest, JobOpening, Candidate, CandidateStage, OnboardingProcess, OnboardingTemplate, OffboardingProcess, OffboardingTemplate, EmployeeProfile } from './types';
 
 
 const App: React.FC = () => {
@@ -51,26 +62,15 @@ const App: React.FC = () => {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Module Management
-  const ALL_MODULES: AppModule[] = ['performance', 'learning', 'recruitment', 'onboarding', 'offboarding', 'support', 'compensation', 'job_titles', 'documents'];
+  const ALL_MODULES: AppModule[] = ['performance', 'learning', 'recruitment', 'onboarding', 'offboarding', 'support', 'compensation', 'job_titles', 'documents', 'assets'];
   const [activeModules, setActiveModules] = useState<Set<AppModule>>(new Set(ALL_MODULES));
 
-  // State Management
-  const [employees, setEmployees] = useState<EmployeeProfile[]>(ALL_EMPLOYEES);
-  const [requests, setRequests] = useState<HRRequest[]>(MOCK_ALL_REQUESTS);
-  const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(MOCK_LEAVE_REQUESTS_INITIAL);
-  const [attendanceAdjustmentRequests, setAttendanceAdjustmentRequests] = useState<AttendanceAdjustmentRequest[]>(MOCK_ADJUSTMENT_REQUESTS_INITIAL);
-  const [leavePermitRequests, setLeavePermitRequests] = useState<LeavePermitRequest[]>(MOCK_LEAVE_PERMIT_REQUESTS_INITIAL);
+  // State Management (non-refactored parts)
   const [currentUserId, setCurrentUserId] = useState(INITIAL_USER_ID);
   const [companyName, setCompanyName] = useState('Bokra HR');
   const [employeeDocuments, setEmployeeDocuments] = useState<EmployeeDocument[]>(MOCK_EMPLOYEE_DOCUMENTS);
   const [attendanceRecords, setAttendanceRecords] = useState<AttendanceRecord[]>(INITIAL_ATTENDANCE);
-  const [branches, setBranches] = useState<Branch[]>(COMPANY_BRANCHES);
   const [performanceReviews, setPerformanceReviews] = useState<PerformanceReview[]>(INITIAL_PERFORMANCE_REVIEWS);
-  const [attendancePolicies, setAttendancePolicies] = useState<AttendancePolicy[]>(MOCK_ATTENDANCE_POLICY);
-  const [overtimePolicies, setOvertimePolicies] = useState<OvertimePolicy[]>(MOCK_OVERTIME_POLICY);
-  const [leavePolicies, setLeavePolicies] = useState<LeavePolicy[]>(MOCK_LEAVE_POLICY);
-  const [employeeInfractions, setEmployeeInfractions] = useState<EmployeeInfraction[]>(MOCK_EMPLOYEE_INFRACTIONS);
-  const [jobTitles, setJobTitles] = useState<JobTitle[]>(MOCK_JOB_TITLES);
   const [courses, setCourses] = useState<Course[]>(MOCK_COURSES);
   const [employeeCourses, setEmployeeCourses] = useState<EmployeeCourse[]>(MOCK_EMPLOYEE_COURSES);
   const [notifications, setNotifications] = useState<Notification[]>(MOCK_NOTIFICATIONS);
@@ -87,6 +87,51 @@ const App: React.FC = () => {
   const [workLocations, setWorkLocations] = useState<WorkLocation[]>(MOCK_WORK_LOCATIONS);
   const [attendanceEvents, setAttendanceEvents] = useState<AttendanceEvent[]>(MOCK_ATTENDANCE_EVENTS);
   const [externalTasks, setExternalTasks] = useState<ExternalTask[]>(MOCK_EXTERNAL_TASKS);
+
+  // Context Consumers
+  const { assets } = useAssetsContext();
+  const { 
+    attendancePolicies, 
+    overtimePolicies, 
+    leavePolicies,
+    saveAttendancePolicy,
+    archiveAttendancePolicy,
+    bulkArchiveAttendancePolicies,
+    updateAttendancePolicyStatus,
+    saveOvertimePolicy,
+    archiveOvertimePolicy,
+    bulkArchiveOvertimePolicies,
+    updateOvertimePolicyStatus,
+    saveLeavePolicy,
+    archiveLeavePolicy,
+    bulkArchiveLeavePolicies,
+    updateLeavePolicyStatus,
+} = usePoliciesContext();
+  const { 
+    employees, 
+    updateProfile,
+    updateUserRole,
+    deactivateUser,
+    bulkDeactivateUsers,
+    reactivateUser,
+    bulkAssignAttendancePolicy,
+    bulkAssignOvertimePolicy,
+    bulkAssignLeavePolicy,
+    addNewUser,
+    updateUser,
+    updateBranchManager,
+} = useUserContext();
+  const { 
+    branches, 
+    jobTitles,
+    addBranch,
+    updateBranch,
+    archiveBranch,
+    saveJobTitle,
+    deleteJobTitle,
+} = useCompanyStructureContext();
+  const { requests, attendanceAdjustmentRequests, leavePermitRequests } = useRequestContext();
+
 
   const toggleSidebar = () => {
     setIsSidebarCollapsed(prev => !prev);
@@ -115,15 +160,15 @@ const App: React.FC = () => {
     teamGoals,
     managerPerformanceData,
   } = useMemo(() => getDerivedData(
-      currentUserId, employees, branches, employeeInfractions, attendancePolicies, 
+      currentUserId, employees, branches, MOCK_EMPLOYEE_INFRACTIONS, attendancePolicies, 
       overtimePolicies, leavePolicies, jobTitles, courses, employeeCourses, monthlyCheckIns, 
       supportTickets, notifications, requests, attendanceRecords, 
-      employeeDocuments, performanceReviews, externalTasks, MOCK_GOALS, attendanceEvents
+      employeeDocuments, performanceReviews, externalTasks, MOCK_GOALS, attendanceEvents, assets
   ), [
-      currentUserId, employees, branches, employeeInfractions, attendancePolicies, 
+      currentUserId, employees, branches, attendancePolicies, 
       overtimePolicies, leavePolicies, jobTitles, courses, employeeCourses, monthlyCheckIns, 
       supportTickets, notifications, requests, attendanceRecords, 
-      employeeDocuments, performanceReviews, externalTasks, attendanceEvents
+      employeeDocuments, performanceReviews, externalTasks, attendanceEvents, assets
   ]);
   
   const currentUserOnboardingProcess = useMemo(() => onboardingProcesses.find(p => p.employeeId === currentUserId), [onboardingProcesses, currentUserId]);
@@ -194,359 +239,7 @@ const App: React.FC = () => {
     });
   };
 
-  const handleUpdateUserRole = (userId: string, newRole: UserRole) => {
-    setEmployees(prev => prev.map(emp => 
-        emp.id === userId ? { ...emp, role: newRole } : emp
-    ));
-  };
-
-  const handleDeactivateUser = (userId: string) => {
-      setEmployees(prev => prev.map(emp => 
-          emp.id === userId ? { ...emp, employmentStatus: 'Inactive' } : emp
-      ));
-  };
-    
-  const handleBulkDeactivateUsers = (userIds: string[]) => {
-      setEmployees(prev => prev.map(emp => 
-          userIds.includes(emp.id) ? { ...emp, employmentStatus: 'Inactive' } : emp
-      ));
-  };
-  
-  const handleReactivateUser = (userId: string) => {
-      setEmployees(prev => prev.map(emp => 
-          emp.id === userId ? { ...emp, employmentStatus: 'دوام كامل' } : emp
-      ));
-  };
-
   // Workflow Handlers
-  const handleRequestAction = (requestId: number, newStatus: RequestStatus) => {
-    // Update the main request list
-    const updatedRequests = requests.map(req => 
-      req.id === requestId ? { ...req, status: newStatus } : req
-    );
-    setRequests(updatedRequests);
-
-    // If it's a Leave request and it's approved, update leave balances
-    const leaveReq = leaveRequests.find(lr => lr.id === requestId);
-    if (leaveReq) {
-        const updatedLeaveRequests = leaveRequests.map(lr => lr.id === requestId ? { ...lr, status: newStatus } : lr);
-        setLeaveRequests(updatedLeaveRequests);
-
-        if (newStatus === 'Approved') {
-            const employeeToUpdate = employees.find(e => e.id === leaveReq.employeeId);
-            if (employeeToUpdate) {
-                const updatedBalances = employeeToUpdate.leaveBalances.map(balance => {
-                    if (balance.type === leaveReq.leaveType) {
-                        return { ...balance, used: balance.used + leaveReq.duration };
-                    }
-                    return balance;
-                });
-
-                const updatedEmployees = employees.map(emp => 
-                    emp.id === employeeToUpdate.id ? { ...emp, leaveBalances: updatedBalances } : emp
-                );
-                setEmployees(updatedEmployees);
-            }
-        }
-    }
-
-    const adjReq = attendanceAdjustmentRequests.find(ar => ar.id === requestId);
-    if(adjReq) {
-        const updatedAdjRequests = attendanceAdjustmentRequests.map(ar => ar.id === requestId ? { ...ar, status: newStatus } : ar);
-        setAttendanceAdjustmentRequests(updatedAdjRequests);
-    }
-
-    const permitReq = leavePermitRequests.find(pr => pr.id === requestId);
-      if(permitReq) {
-          const updatedPermitRequests = leavePermitRequests.map(pr => pr.id === requestId ? { ...pr, status: newStatus } : pr);
-          setLeavePermitRequests(updatedPermitRequests);
-    }
-  };
-  
-  const handleNewLeaveRequest = (newRequestData: Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => {
-      const newId = Math.max(...requests.map(r => r.id), 0) + 1;
-      const newLeaveRequest: LeaveRequest = {
-          id: newId,
-          status: 'Pending',
-          type: 'Leave',
-          submissionDate: newRequestData.startDate,
-          ...newRequestData
-      };
-      setLeaveRequests(prev => [...prev, newLeaveRequest]);
-      setRequests(prev => [...prev, newLeaveRequest]);
-  };
-
-   const handleNewAttendanceAdjustmentRequest = (newRequestData: Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => {
-    const newId = Math.max(...requests.map(r => r.id), 0) + 1;
-    const newAdjRequest: AttendanceAdjustmentRequest = {
-        id: newId,
-        status: 'Pending',
-        type: 'AttendanceAdjustment',
-        submissionDate: newRequestData.date,
-        ...newRequestData
-    };
-    setAttendanceAdjustmentRequests(prev => [...prev, newAdjRequest]);
-    setRequests(prev => [...prev, newAdjRequest]);
-  };
-
-  const handleNewLeavePermitRequest = (newRequestData: Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'employeeId' | 'durationHours'>) => {
-        const userAttendancePolicy = attendancePolicies.find(p => p.id === currentUser.attendancePolicyId);
-
-        const start = new Date(`${newRequestData.date}T${newRequestData.startTime}`);
-        const end = new Date(`${newRequestData.date}T${newRequestData.endTime}`);
-        const durationHours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
-        const durationMinutes = durationHours * 60;
-
-        if (userAttendancePolicy) {
-            if (durationMinutes < userAttendancePolicy.minPermitDurationMinutes) {
-                alert(`مدة الإذن يجب أن لا تقل عن ${userAttendancePolicy.minPermitDurationMinutes} دقيقة.`);
-                return;
-            }
-            if (durationHours > userAttendancePolicy.maxPermitDurationHours) {
-                alert(`مدة الإذن يجب أن لا تزيد عن ${userAttendancePolicy.maxPermitDurationHours} ساعات.`);
-                return;
-            }
-
-            const currentMonth = new Date(newRequestData.date).getMonth();
-            const currentYear = new Date(newRequestData.date).getFullYear();
-            const permitsThisMonth = leavePermitRequests.filter(p =>
-                p.employeeId === currentUser.id &&
-                p.status !== 'Rejected' &&
-                new Date(p.date).getMonth() === currentMonth &&
-                new Date(p.date).getFullYear() === currentYear
-            ).length;
-
-            if (permitsThisMonth >= userAttendancePolicy.maxPermitsPerMonth) {
-                alert(`لقد تجاوزت الحد الأقصى للأذونات هذا الشهر (${userAttendancePolicy.maxPermitsPerMonth}).`);
-                return;
-            }
-        }
-
-        const newId = Math.max(...requests.map(r => r.id), 0) + 1;
-        const newPermitRequest: LeavePermitRequest = {
-            id: newId,
-            status: 'Pending',
-            type: 'LeavePermit',
-            submissionDate: newRequestData.date,
-            employeeId: currentUser.id,
-            durationHours,
-            ...newRequestData
-        };
-        setLeavePermitRequests(prev => [...prev, newPermitRequest]);
-        setRequests(prev => [...prev, newPermitRequest]);
-  };
-
-  const handleUpdateProfile = (updatedProfile: EmployeeProfile) => {
-      setEmployees(prev => prev.map(emp => emp.id === updatedProfile.id ? updatedProfile : emp));
-  };
-  
-  const handleAddNewUser = (newUserPayload: NewUserPayload) => {
-      const newEmployeeId = `BOK-${Math.floor(1000 + Math.random() * 9000)}`;
-      const newId = `emp-${Math.floor(1000 + Math.random() * 9000)}`;
-
-      const newUserProfile: EmployeeProfile = {
-          id: newId,
-          employeeId: newEmployeeId,
-          name: newUserPayload.name,
-          jobTitleId: newUserPayload.jobTitleId,
-          title: jobTitles.find(jt => jt.id === newUserPayload.jobTitleId)?.name || '',
-          role: newUserPayload.role,
-          isEmployee: true,
-          avatarUrl: `https://i.pravatar.cc/100?u=${newId}`,
-          department: newUserPayload.department,
-          hireDate: newUserPayload.hireDate,
-          employmentStatus: 'دوام كامل',
-          managerId: newUserPayload.managerId,
-          branchId: newUserPayload.branchId,
-          checkInStatus: 'CheckedOut',
-          leaveBalances: [],
-          baseSalary: newUserPayload.baseSalary,
-          attendancePolicyId: newUserPayload.attendancePolicyId,
-          overtimePolicyId: newUserPayload.overtimePolicyId,
-          leavePolicyId: newUserPayload.leavePolicyId,
-          compensationPackageId: newUserPayload.compensationPackageId,
-          contact: {
-              phone: newUserPayload.phone,
-              workEmail: newUserPayload.workEmail,
-              personalEmail: newUserPayload.personalEmail,
-          },
-          personal: {
-              dateOfBirth: newUserPayload.dateOfBirth,
-              nationality: newUserPayload.nationality,
-              nationalId: newUserPayload.nationalId,
-              maritalStatus: newUserPayload.maritalStatus,
-              gender: newUserPayload.gender,
-              religion: newUserPayload.religion,
-          },
-          address: newUserPayload.address,
-          performanceScore: 4.0, 
-          satisfactionSurveyScore: 4.0,
-          lastPromotionDate: null,
-          salaryComparedToMarket: 'Average',
-      };
-      setEmployees(prev => [...prev, newUserProfile]);
-  };
-  
-   const handleUpdateUser = (userId: string, updatedData: NewUserPayload) => {
-        setEmployees(prev => prev.map(emp => {
-            if (emp.id === userId) {
-                return {
-                    ...emp,
-                    name: updatedData.name,
-                    jobTitleId: updatedData.jobTitleId,
-                    title: jobTitles.find(jt => jt.id === updatedData.jobTitleId)?.name || emp.title,
-                    department: updatedData.department,
-                    hireDate: updatedData.hireDate,
-                    branchId: updatedData.branchId,
-                    role: updatedData.role,
-                    managerId: updatedData.managerId,
-                    baseSalary: updatedData.baseSalary,
-                    attendancePolicyId: updatedData.attendancePolicyId,
-                    overtimePolicyId: updatedData.overtimePolicyId,
-                    leavePolicyId: updatedData.leavePolicyId,
-                    compensationPackageId: updatedData.compensationPackageId,
-                    contact: {
-                        phone: updatedData.phone,
-                        workEmail: updatedData.workEmail,
-                        personalEmail: updatedData.personalEmail,
-                    },
-                    personal: {
-                        ...emp.personal,
-                        dateOfBirth: updatedData.dateOfBirth,
-                        nationality: updatedData.nationality,
-                        nationalId: updatedData.nationalId,
-                        maritalStatus: updatedData.maritalStatus,
-                        gender: updatedData.gender,
-                        religion: updatedData.religion,
-                    },
-                    address: updatedData.address,
-                };
-            }
-            return emp;
-        }));
-    };
-  
-    const handleAddBranch = (name: string, managerId: string) => {
-        const newBranchId = `branch-${name.toLowerCase().replace(/\s/g, '-')}`;
-        const newBranch: Branch = { id: newBranchId, name, status: 'Active' };
-        setBranches(prev => [...prev, newBranch]);
-        
-        if (managerId) {
-            setEmployees(prev => prev.map(emp => {
-                if (emp.id === managerId) {
-                    return { ...emp, branchId: newBranchId, role: 'Branch Admin' };
-                }
-                return emp;
-            }));
-        }
-    };
-    
-    const handleUpdateBranch = (id: string, name: string, managerId: string) => {
-        setBranches(prev => prev.map(b => b.id === id ? { ...b, name } : b));
-
-        setEmployees(prev => prev.map(emp => {
-            if (emp.branchId === id && emp.role === 'Branch Admin' && emp.id !== managerId) {
-                 return { ...emp, role: 'Employee' }; // Demote old manager
-            }
-            if (emp.id === managerId) {
-                return { ...emp, branchId: id, role: 'Branch Admin' }; // Assign new manager
-            }
-            return emp;
-        }));
-    };
-
-    const handleArchiveBranch = (id: string) => {
-        setBranches(prev => prev.map(b => b.id === id ? { ...b, status: 'Archived' } : b));
-    };
-
-    const handleSaveAttendancePolicy = (policy: AttendancePolicy) => {
-      const isNew = !attendancePolicies.some(p => p.id === policy.id);
-      if (isNew) {
-        const newPolicy = {...policy, status: (currentUser.role === 'Super Admin' ? 'Active' : 'PendingApproval') as 'Active' | 'PendingApproval'};
-        setAttendancePolicies(prev => [...prev, newPolicy]);
-      } else {
-        setAttendancePolicies(prev => prev.map(p => p.id === policy.id ? policy : p));
-      }
-    };
-    const handleDeleteAttendancePolicy = (policyId: string) => {
-        setAttendancePolicies(prev => prev.filter(p => p.id !== policyId));
-        setEmployees(prev => prev.map(e => e.attendancePolicyId === policyId ? {...e, attendancePolicyId: undefined} : e));
-    };
-    const handleBulkAssignAttendancePolicy = (policyId: string, employeeIds: string[]) => {
-      setEmployees(prev => prev.map(emp => {
-          if (employeeIds.includes(emp.id)) {
-              return { ...emp, attendancePolicyId: policyId };
-          }
-          if (emp.attendancePolicyId === policyId && !employeeIds.includes(emp.id)) {
-              return { ...emp, attendancePolicyId: undefined };
-          }
-          return emp;
-      }));
-    };
-
-    const handleSaveOvertimePolicy = (policy: OvertimePolicy) => {
-        const isNew = !overtimePolicies.some(p => p.id === policy.id);
-        if (isNew) {
-          const newPolicy = {...policy, status: (currentUser.role === 'Super Admin' ? 'Active' : 'PendingApproval') as 'Active' | 'PendingApproval'};
-          setOvertimePolicies(prev => [...prev, newPolicy]);
-        } else {
-          setOvertimePolicies(prev => prev.map(p => p.id === policy.id ? policy : p));
-        }
-      };
-      const handleDeleteOvertimePolicy = (policyId: string) => {
-          setOvertimePolicies(prev => prev.filter(p => p.id !== policyId));
-          setEmployees(prev => prev.map(e => e.overtimePolicyId === policyId ? {...e, overtimePolicyId: undefined} : e));
-      };
-      const handleBulkAssignOvertimePolicy = (policyId: string, employeeIds: string[]) => {
-        setEmployees(prev => prev.map(emp => {
-            if (employeeIds.includes(emp.id)) {
-                return { ...emp, overtimePolicyId: policyId };
-            }
-            if (emp.overtimePolicyId === policyId && !employeeIds.includes(emp.id)) {
-                return { ...emp, overtimePolicyId: undefined };
-            }
-            return emp;
-        }));
-      };
-
-    const handleSaveLeavePolicy = (policy: LeavePolicy) => {
-        const isNew = !leavePolicies.some(p => p.id === policy.id);
-        if (isNew) {
-            const newPolicy = {...policy, status: (currentUser.role === 'Super Admin' ? 'Active' : 'PendingApproval') as 'Active' | 'PendingApproval'};
-            setLeavePolicies(prev => [...prev, newPolicy]);
-        } else {
-            setLeavePolicies(prev => prev.map(p => p.id === policy.id ? policy : p));
-        }
-    };
-    const handleDeleteLeavePolicy = (policyId: string) => {
-        setLeavePolicies(prev => prev.filter(p => p.id !== policyId));
-        setEmployees(prev => prev.map(e => e.leavePolicyId === policyId ? {...e, leavePolicyId: undefined} : e));
-    };
-    const handleBulkAssignLeavePolicy = (policyId: string, employeeIds: string[]) => {
-        setEmployees(prev => prev.map(emp => {
-            if (employeeIds.includes(emp.id)) {
-                return { ...emp, leavePolicyId: policyId };
-            }
-            // Also unassign if they were previously assigned but are not in the new list
-            if (emp.leavePolicyId === policyId && !employeeIds.includes(emp.id)) {
-                 return { ...emp, leavePolicyId: undefined };
-            }
-            return emp;
-        }));
-    };
-    
-    const handleSaveJobTitle = (jobTitle: JobTitle) => {
-        const isNew = !jobTitles.some(jt => jt.id === jobTitle.id);
-        if(isNew) {
-            setJobTitles(prev => [...prev, jobTitle]);
-        } else {
-            setJobTitles(prev => prev.map(jt => jt.id === jobTitle.id ? jobTitle : jt));
-        }
-    };
-    const handleDeleteJobTitle = (jobTitleId: string) => {
-        setJobTitles(prev => prev.filter(jt => jt.id !== jobTitleId));
-    };
-
     const handleCourseApprovalAction = (employeeId: string, courseId: string, action: 'Approve' | 'Reject') => {
         setEmployeeCourses(prev => prev.map(ec => 
             (ec.employeeId === employeeId && ec.courseId === courseId) 
@@ -622,16 +315,6 @@ const App: React.FC = () => {
             t.id === ticketId ? { ...t, status: newStatus, updatedAt: new Date().toISOString() } : t
         ));
     };
-    
-    const handleUpdatePolicyStatus = (policyId: string, type: 'attendance' | 'leave' | 'overtime', newStatus: 'Active' | 'Rejected') => {
-        if(type === 'attendance') {
-            setAttendancePolicies(prev => prev.map(p => p.id === policyId ? {...p, status: newStatus === 'Active' ? 'Active' : 'PendingApproval'} : p));
-        } else if (type === 'leave') {
-            setLeavePolicies(prev => prev.map(p => p.id === policyId ? {...p, status: newStatus === 'Active' ? 'Active' : 'PendingApproval'} : p));
-        } else if (type === 'overtime') {
-            setOvertimePolicies(prev => prev.map(p => p.id === policyId ? {...p, status: newStatus === 'Active' ? 'Active' : 'PendingApproval'} : p));
-        }
-    };
 
     const handleUpdateCandidateStage = (candidateId: string, newStage: CandidateStage) => {
         setCandidates(prev => prev.map(c => c.id === candidateId ? { ...c, stage: newStage } : c));
@@ -640,13 +323,15 @@ const App: React.FC = () => {
     const handleSaveDocument = (document: EmployeeDocument) => {
         const isNew = !employeeDocuments.some(d => d.id === document.id);
         if (isNew) {
-            // If it's a manager saving it for someone else, the employeeId is already set.
-            // If it's an employee saving it for themself, we set it here.
             const docToSave = document.employeeId ? document : {...document, employeeId: currentUserId};
             setEmployeeDocuments(prev => [...prev, docToSave]);
         } else {
             setEmployeeDocuments(prev => prev.map(d => d.id === document.id ? document : d));
         }
+    };
+
+    const handleBulkDeleteDocuments = (documentIds: string[]) => {
+        setEmployeeDocuments(prev => prev.filter(doc => !documentIds.includes(doc.id)));
     };
 
     const handleSavePerformanceReview = (review: PerformanceReview) => {
@@ -911,24 +596,24 @@ const App: React.FC = () => {
                 return [...prev, newRecord];
             }
         });
-
-        // Update user's checkInStatus
-        setEmployees(prev => prev.map(emp => 
-            emp.id === currentUser.id ? { ...emp, checkInStatus: nextEventType === 'CheckIn' ? 'CheckedIn' : 'CheckedOut' } : emp
-        ));
+        
+        const updatedUser = { ...currentUser, checkInStatus: nextEventType === 'CheckIn' ? 'CheckedIn' : 'CheckedOut' } as EmployeeProfile;
+        updateProfile(updatedUser);
     };
 
-    const handleRegisterExternalCourse = (courseData: { title: string; provider: string; url: string; }) => {
+    const handleRegisterExternalCourse = (courseData: { title: string; provider: string; url: string; venue?: any; locationDetails?: string; }) => {
         const newCourse: Course = {
-            id: `c-ext-${Date.now()}`,
-            type: 'External',
-            title: courseData.title,
-            provider: courseData.provider,
-            url: courseData.url,
-            category: 'Technical', // default
-            durationHours: 0, // default
-            description: 'دورة خارجية تم تسجيلها بواسطة الموظف.',
-            isMandatory: false,
+           id: `c-ext-${Date.now()}`,
+           type: 'External',
+           title: courseData.title,
+           provider: courseData.provider,
+           url: courseData.url,
+           venue: courseData.venue,
+           locationDetails: courseData.locationDetails,
+           category: 'Technical', // Default value
+           durationHours: 0, // Default value
+           description: `دورة خارجية مقدمة من ${courseData.provider}`, // Default value
+           isMandatory: false, // Default value
         };
         setCourses(prev => [...prev, newCourse]);
 
@@ -943,10 +628,10 @@ const App: React.FC = () => {
         setEmployeeCourses(prev => [...prev, newEmployeeCourse]);
     };
 
-    const handleSubmitCourseUpdate = (courseId: string, updateData: { status: CourseStatus; notes: string; certificate?: File | null }) => {
+    const handleSubmitCourseUpdate = (courseId: string, updateData: { status: CourseStatus; notes: string; certificate?: File | null; result?: string; performanceRating?: number; }) => {
         setEmployeeCourses(prev => prev.map(ec => 
             ec.courseId === courseId && ec.employeeId === currentUserId
-            ? { ...ec, status: updateData.status, submittedNotes: updateData.notes, certificateUrl: updateData.certificate?.name }
+            ? { ...ec, ...updateData, certificateUrl: updateData.certificate?.name }
             : ec
         ));
     };
@@ -960,6 +645,29 @@ const App: React.FC = () => {
         }
     };
 
+    // FIX: Add handlers for branch and policy management to pass as props.
+    const handleAddBranch = (name: string, managerId: string) => {
+        const newBranch = addBranch(name);
+        if (managerId) {
+            updateBranchManager(newBranch.id, managerId);
+        }
+    };
+
+    const handleUpdateBranch = (id: string, name: string, managerId: string) => {
+        updateBranch(id, name);
+        updateBranchManager(id, managerId);
+    };
+
+    const handleUpdatePolicyStatus = (policyId: string, type: 'attendance' | 'leave' | 'overtime', newStatus: 'Active' | 'Rejected') => {
+        if (type === 'attendance') {
+            updateAttendancePolicyStatus(policyId, newStatus);
+        } else if (type === 'overtime') {
+            updateOvertimePolicyStatus(policyId, newStatus);
+        } else if (type === 'leave') {
+            updateLeavePolicyStatus(policyId, newStatus);
+        }
+    };
+    
     const renderPage = () => {
         const teamMemberIds = teamMembers.map(m => m.id);
         
@@ -971,23 +679,26 @@ const App: React.FC = () => {
                  return <AttendancePage 
                     records={attendanceRecords.filter(r => teamMemberIds.includes(r.employeeId) || r.employeeId === currentUserId)}
                     attendanceEvents={attendanceEvents.filter(e => teamMemberIds.includes(e.employeeId) || e.employeeId === currentUserId)}
-                    infractions={employeeInfractions.filter(i => teamMemberIds.includes(i.employeeId) || i.employeeId === currentUserId)}
+                    infractions={MOCK_EMPLOYEE_INFRACTIONS.filter(i => i.employeeId === currentUserId)}
                     currentUser={currentUser}
-                    attendancePolicies={attendancePolicies}
-                    adjustmentRequests={attendanceAdjustmentRequests}
-                    onNewAdjustmentRequest={handleNewAttendanceAdjustmentRequest}
-                    permitRequests={leavePermitRequests}
-                    onNewPermitRequest={handleNewLeavePermitRequest}
-                    externalTasks={externalTasks}
+                    externalTasks={externalTasks.filter(t => t.employeeId === currentUserId)}
                  />;
             case 'كشف الراتب':
                 return <PayslipPage payslips={generatedPayslips} />;
             case 'الإجازات':
-                return <LeavePage currentUser={currentUser} userLeaveRequests={leaveRequests.filter(r => r.employeeId === currentUserId)} onSubmitRequest={handleNewLeaveRequest} />;
+                return <LeavePage currentUser={currentUser} />;
             case 'ملفي الشخصي':
-                return <ProfilePage currentUser={currentUser} branches={branches} attendancePolicies={attendancePolicies} overtimePolicies={overtimePolicies} leavePolicies={leavePolicies} jobTitles={jobTitles} onUpdateProfile={handleUpdateProfile} />;
+                return <ProfilePage 
+                    currentUser={currentUser} 
+                    branches={branches}
+                    attendancePolicies={attendancePolicies}
+                    overtimePolicies={overtimePolicies}
+                    leavePolicies={leavePolicies}
+                    jobTitles={jobTitles}
+                    onUpdateProfile={updateProfile}
+                />;
             case 'لوحة تحكم الفريق':
-                return <TeamDashboard currentUser={currentUser} teamMembers={teamMembers} dashboardData={teamDashboardData} setActivePage={setActivePage} onAction={handleRequestAction} />;
+                return <TeamDashboard currentUser={currentUser} teamMembers={teamMembers} dashboardData={teamDashboardData} setActivePage={setActivePage} />;
             case 'التقارير':
                 return <ManagerReportsPage 
                     reportsData={teamReportsData} 
@@ -1002,29 +713,118 @@ const App: React.FC = () => {
             case 'تحليل مخاطر التسرب':
                  return <TurnoverReportPage teamMembers={teamMembers} />;
             case 'تحليلات الفريق':
-                return <TeamAnalyticsPage teamDetails={teamDetails} currentUser={currentUser} onUpdateProfile={handleUpdateUser} branches={branches} attendancePolicies={attendancePolicies} overtimePolicies={overtimePolicies} leavePolicies={leavePolicies} jobTitles={jobTitles} onCourseApprovalAction={handleCourseApprovalAction} onSaveMonthlyCheckIn={handleSaveMonthlyCheckIn} performanceReviews={performanceReviews} onSavePerformanceReview={handleSavePerformanceReview} activeModules={activeModules} salaryComponents={salaryComponents} compensationPackages={compensationPackages} onSaveDocument={handleSaveDocument} />;
+                return <TeamAnalyticsPage 
+                    teamDetails={teamDetails} 
+                    currentUser={currentUser} 
+                    // FIX: Renamed prop to match the handler function name.
+                    onCourseApprovalAction={handleCourseApprovalAction} 
+                    onSaveMonthlyCheckIn={handleSaveMonthlyCheckIn} 
+                    performanceReviews={performanceReviews} 
+                    onSavePerformanceReview={handleSavePerformanceReview} 
+                    activeModules={activeModules} 
+                    salaryComponents={salaryComponents} 
+                    compensationPackages={compensationPackages} 
+                    onSaveDocument={handleSaveDocument}
+                    onUpdateProfile={updateUser}
+                    branches={branches}
+                    attendancePolicies={attendancePolicies}
+                    overtimePolicies={overtimePolicies}
+                    leavePolicies={leavePolicies}
+                    jobTitles={jobTitles}
+                />;
             case 'الأداء':
                 return <PerformancePage reviews={performanceReviews.filter(r => r.employeeId === currentUserId)} monthlyCheckIns={monthlyCheckIns.filter(mci => mci.employeeId === currentUserId)} />;
             case 'أوراقي':
                 return <MyDocumentsPage documents={employeeDocuments.filter(d => d.employeeId === currentUserId)} onSaveDocument={handleSaveDocument} />;
+            case 'عهدتي':
+                return <MyAssetsPage currentUserId={currentUserId} />;
             case 'الإعدادات':
                 return <SettingsPage theme={theme} setTheme={setTheme} currentUser={currentUser} setActivePage={setActivePage} />;
             case 'إدارة الموظفين':
-                return <SystemAdminPage allUsers={employees} branches={branches} attendancePolicies={attendancePolicies} overtimePolicies={overtimePolicies} leavePolicies={leavePolicies} jobTitles={jobTitles} compensationPackages={compensationPackages} onUpdateUserRole={handleUpdateUserRole} onDeactivateUser={handleDeactivateUser} onReactivateUser={handleReactivateUser} onAddNewUser={handleAddNewUser} onUpdateUser={handleUpdateUser} onBulkDeactivateUsers={handleBulkDeactivateUsers} onBulkAssignAttendancePolicy={handleBulkAssignAttendancePolicy} onBulkAssignLeavePolicy={handleBulkAssignLeavePolicy} onBulkAssignOvertimePolicy={handleBulkAssignOvertimePolicy} />;
+                // FIX: Pass all required props to SystemAdminPage.
+                return <SystemAdminPage 
+                    allUsers={employees}
+                    branches={branches}
+                    attendancePolicies={attendancePolicies}
+                    overtimePolicies={overtimePolicies}
+                    leavePolicies={leavePolicies}
+                    jobTitles={jobTitles}
+                    compensationPackages={compensationPackages}
+                    onUpdateUserRole={updateUserRole}
+                    onDeactivateUser={deactivateUser}
+                    onReactivateUser={reactivateUser}
+                    onAddNewUser={addNewUser}
+                    onUpdateUser={updateUser}
+                    onBulkDeactivateUsers={bulkDeactivateUsers}
+                    onBulkAssignAttendancePolicy={bulkAssignAttendancePolicy}
+                    onBulkAssignOvertimePolicy={bulkAssignOvertimePolicy}
+                    onBulkAssignLeavePolicy={bulkAssignLeavePolicy}
+                />;
             case 'إدارة الفروع':
-                return <BranchManagementPage branches={branches} employees={employees} onAddBranch={handleAddBranch} onUpdateBranch={handleUpdateBranch} onArchiveBranch={handleArchiveBranch} />;
+                // FIX: Pass all required props to BranchManagementPage.
+                return <BranchManagementPage 
+                    branches={branches}
+                    employees={employees}
+                    onAddBranch={handleAddBranch}
+                    onUpdateBranch={handleUpdateBranch}
+                    onArchiveBranch={archiveBranch}
+                />;
             case 'التطوير والتدريب':
                 return <LearningPage currentUser={currentUser} allCourses={courses} employeeCourses={employeeCourses.filter(ec => ec.employeeId === currentUserId)} onRegisterExternalCourse={handleRegisterExternalCourse} onSubmitCourseUpdate={handleSubmitCourseUpdate} />;
             case 'إدارة التدريب':
                 return <LearningManagementPage allCourses={courses} onSaveCourse={handleSaveCourse} />;
+            case 'إدارة العهد':
+                return <AssetsManagementPage employees={employees} />;
             case 'سياسات الحضور':
-                return <AttendancePolicyPage attendancePolicies={attendancePolicies} employees={employees} onSaveAttendancePolicy={handleSaveAttendancePolicy} onDeleteAttendancePolicy={handleDeleteAttendancePolicy} onBulkAssignAttendancePolicy={handleBulkAssignAttendancePolicy} currentUser={currentUser} branches={branches} onUpdatePolicyStatus={handleUpdatePolicyStatus} workLocations={workLocations} onAddWorkLocation={handleAddWorkLocation} onUpdateWorkLocation={handleUpdateWorkLocation} />;
+                // FIX: Pass all required props to AttendancePolicyPage.
+                return <AttendancePolicyPage 
+                    attendancePolicies={attendancePolicies}
+                    employees={employees}
+                    onSaveAttendancePolicy={saveAttendancePolicy}
+                    onArchivePolicy={archiveAttendancePolicy}
+                    onBulkAssignPolicy={bulkAssignAttendancePolicy}
+                    onBulkArchivePolicies={bulkArchiveAttendancePolicies}
+                    currentUser={currentUser}
+                    branches={branches}
+                    workLocations={workLocations} 
+                    onAddWorkLocation={handleAddWorkLocation} 
+                    onUpdateWorkLocation={handleUpdateWorkLocation}
+                    onUpdatePolicyStatus={handleUpdatePolicyStatus}
+                />;
             case 'سياسات الوقت الإضافي':
-                return <OvertimePolicyPage overtimePolicies={overtimePolicies} employees={employees} onSaveOvertimePolicy={handleSaveOvertimePolicy} onDeleteOvertimePolicy={handleDeleteOvertimePolicy} onBulkAssignOvertimePolicy={handleBulkAssignOvertimePolicy} currentUser={currentUser} branches={branches} onUpdatePolicyStatus={handleUpdatePolicyStatus} />;
+                // FIX: Pass all required props to OvertimePolicyPage.
+                return <OvertimePolicyPage 
+                    overtimePolicies={overtimePolicies}
+                    employees={employees}
+                    onSaveOvertimePolicy={saveOvertimePolicy}
+                    onArchivePolicy={archiveOvertimePolicy}
+                    onBulkAssignPolicy={bulkAssignOvertimePolicy}
+                    onBulkArchivePolicies={bulkArchiveOvertimePolicies}
+                    currentUser={currentUser} 
+                    branches={branches}
+                    onUpdatePolicyStatus={handleUpdatePolicyStatus}
+                />;
             case 'سياسات الإجازات':
-                return <LeavePolicyPage leavePolicies={leavePolicies} employees={employees} onSaveLeavePolicy={handleSaveLeavePolicy} onDeleteLeavePolicy={handleDeleteLeavePolicy} onBulkAssignLeavePolicy={handleBulkAssignLeavePolicy} currentUser={currentUser} branches={branches} onUpdatePolicyStatus={handleUpdatePolicyStatus} />;
+                // FIX: Pass all required props to LeavePolicyPage.
+                return <LeavePolicyPage 
+                    leavePolicies={leavePolicies}
+                    employees={employees}
+                    onSaveLeavePolicy={saveLeavePolicy}
+                    onArchivePolicy={archiveLeavePolicy}
+                    onBulkAssignPolicy={bulkAssignLeavePolicy}
+                    onBulkArchivePolicies={bulkArchiveLeavePolicies}
+                    currentUser={currentUser} 
+                    branches={branches}
+                    onUpdatePolicyStatus={handleUpdatePolicyStatus}
+                />;
             case 'الهيكل الوظيفي':
-                return <JobTitlesPage jobTitles={jobTitles} employees={employees} onSaveJobTitle={handleSaveJobTitle} onDeleteJobTitle={handleDeleteJobTitle} />;
+                // FIX: Pass all required props to JobTitlesPage.
+                return <JobTitlesPage 
+                    jobTitles={jobTitles}
+                    employees={employees}
+                    onSaveJobTitle={saveJobTitle}
+                    onDeleteJobTitle={deleteJobTitle}
+                />;
             case 'التعويضات والمزايا':
                 return <CompensationPage salaryComponents={salaryComponents} compensationPackages={compensationPackages} onSaveSalaryComponent={handleSaveSalaryComponent} onSaveCompensationPackage={handleSaveCompensationPackage} />;
             case 'تذاكر الدعم':
@@ -1036,7 +836,7 @@ const App: React.FC = () => {
             case 'إنهاء الخدمة':
                 return <OffboardingPage offboardingProcesses={offboardingProcesses} offboardingTemplates={offboardingTemplates} employees={employees} onStartOffboarding={handleStartOffboarding} onUpdateTask={handleUpdateOffboardingTask} />;
             case 'إدارة المستندات':
-                return <DocumentManagementPage allDocuments={employeeDocuments} employees={employees} onSaveDocument={handleSaveDocument} />;
+                return <DocumentManagementPage allDocuments={employeeDocuments} employees={employees} onSaveDocument={handleSaveDocument} onBulkDeleteDocuments={handleBulkDeleteDocuments} />;
             case 'قوالب التعيين':
                 return <OnboardingTemplatesPage onboardingTemplates={onboardingTemplates} onboardingProcesses={onboardingProcesses} onSaveTemplate={handleSaveOnboardingTemplate} onDeleteTemplate={handleDeleteOnboardingTemplate} />;
             case 'قوالب إنهاء الخدمة':
@@ -1049,8 +849,6 @@ const App: React.FC = () => {
                 return <ModuleManagementPage activeModules={activeModules} onToggleModule={handleToggleModule} />;
             case 'طلباتي':
                 return <MyRequestsPage requests={requests.filter(r => r.employeeId === currentUserId)} />;
-            case 'إدارة العقود':
-                return <ContractsPage />;
             case 'مهامي الخارجية':
                 return <MyTasksPage externalTasks={externalTasks.filter(t => t.employeeId === currentUserId)} onNewRequest={() => {}} />;
             case 'إدارة المهام الخارجية':
@@ -1087,7 +885,6 @@ const App: React.FC = () => {
                     notifications={notifications.filter(n => n.recipientId === currentUserId)}
                     unreadCount={notifications.filter(n => n.recipientId === currentUserId && !n.isRead).length}
                     onMarkAsRead={handleMarkAsRead}
-                    // FIX: Pass missing props for handling all notifications.
                     onMarkAllAsRead={handleMarkAllAsRead}
                     onClearAll={handleClearAllNotifications}
                 />
@@ -1100,5 +897,4 @@ const App: React.FC = () => {
     );
 };
 
-// FIX: Export the App component to be used in index.tsx.
 export default App;

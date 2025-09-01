@@ -6,6 +6,7 @@ import { CalendarIcon, BriefcaseIcon, ClockIcon, XCircleIcon, PlusCircleIcon } f
 import RequestLeaveModal from './RequestLeaveModal';
 import Card from './Card';
 import ActionBar from './ActionBar';
+import { useRequestContext } from './contexts/RequestContext';
 
 
 const LEAVE_TYPE_ICONS: Record<LeaveType, React.FC<React.SVGProps<SVGSVGElement>>> = {
@@ -55,13 +56,14 @@ const BalanceCard: React.FC<{ balance: LeaveBalance }> = ({ balance }) => {
 
 interface LeavePageProps {
     currentUser: EmployeeProfile;
-    userLeaveRequests: LeaveRequest[];
-    onSubmitRequest: (newRequest: Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => void;
 }
 
-const LeavePage: React.FC<LeavePageProps> = ({ currentUser, userLeaveRequests, onSubmitRequest }) => {
+const LeavePage: React.FC<LeavePageProps> = ({ currentUser }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { leaveRequests, handleNewLeaveRequest } = useRequestContext();
     
+    const userLeaveRequests = leaveRequests.filter(r => r.employeeId === currentUser.id);
+
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -118,7 +120,7 @@ const LeavePage: React.FC<LeavePageProps> = ({ currentUser, userLeaveRequests, o
             <RequestLeaveModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
-                onSubmit={(data) => onSubmitRequest({...data, employeeId: currentUser.id})}
+                onSubmit={(data) => handleNewLeaveRequest({...data, employeeId: currentUser.id})}
             />
 
         </div>

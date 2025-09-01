@@ -1,6 +1,7 @@
+
 import React from 'react';
-import type { Course, CourseStatus, CourseCategory, ManagerApprovalStatus, EmployeeCourse } from '../types';
-import { BookOpenIcon, ClockIcon, InformationCircleIcon, LinkIcon } from './icons/Icons';
+import type { Course, CourseStatus, CourseCategory, ManagerApprovalStatus, EmployeeCourse, ExternalCourseVenue } from '../types';
+import { BookOpenIcon, ClockIcon, InformationCircleIcon, LinkIcon, MapPinIcon } from './icons/Icons';
 
 const CATEGORY_STYLES: Record<CourseCategory, { text: string; bg: string; }> = {
     'Technical': { text: 'text-sky-800', bg: 'bg-sky-100' },
@@ -27,6 +28,12 @@ const APPROVAL_STATUS_TRANSLATION: Record<ManagerApprovalStatus, string> = {
     'Approved': 'تمت الموافقة',
     'Rejected': 'مرفوضة',
     'NotSubmitted': 'لم تقدم',
+};
+
+const VENUE_TRANSLATION: Record<ExternalCourseVenue, string> = {
+    'Online': 'عبر الإنترنت',
+    'On-site': 'في موقع العميل',
+    'Training Center': 'مركز تدريب',
 };
 
 
@@ -97,6 +104,13 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onUpdateProgress = () =
                                 <LinkIcon className="w-4 h-4"/>
                             </a>
                         )}
+                    </div>
+                )}
+                
+                {isExternal && course.venue && (
+                     <div className="text-xs text-slate-600 mb-2 flex items-center gap-1.5">
+                        <MapPinIcon className="w-4 h-4" />
+                        <span>{VENUE_TRANSLATION[course.venue]} {course.locationDetails && `(${course.locationDetails})`}</span>
                     </div>
                 )}
 

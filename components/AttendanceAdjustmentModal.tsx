@@ -6,7 +6,7 @@ interface AttendanceAdjustmentModalProps {
     isOpen: boolean;
     onClose: () => void;
 // FIX: Corrected the onSubmit prop type to match what the form actually provides.
-    onSubmit: (newRequest: Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'employeeId' | 'type' | 'submissionDate'>) => void;
+    onSubmit: (newRequest: Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => void;
 }
 
 const AttendanceAdjustmentModal: React.FC<AttendanceAdjustmentModalProps> = ({ isOpen, onClose, onSubmit }) => {
@@ -29,7 +29,7 @@ const AttendanceAdjustmentModal: React.FC<AttendanceAdjustmentModalProps> = ({ i
             date,
             time,
             reason,
-        });
+        } as Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate'>);
 
         // Reset form and close modal
         setAdjustmentType('LateArrival');

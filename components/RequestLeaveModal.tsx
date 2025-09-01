@@ -6,7 +6,7 @@ interface RequestLeaveModalProps {
     isOpen: boolean;
     onClose: () => void;
 // FIX: Corrected the onSubmit prop type to match what the form actually provides, excluding properties added by the parent handler.
-    onSubmit: (newRequest: Omit<LeaveRequest, 'id' | 'status' | 'employeeId' | 'type' | 'submissionDate'>) => void;
+    onSubmit: (newRequest: Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => void;
 }
 
 const RequestLeaveModal: React.FC<RequestLeaveModalProps> = ({ isOpen, onClose, onSubmit }) => {
@@ -40,7 +40,7 @@ const RequestLeaveModal: React.FC<RequestLeaveModalProps> = ({ isOpen, onClose, 
             endDate,
             reason,
             duration,
-        });
+        } as Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate'>);
 
         // Reset form and close modal
         setLeaveType('Annual');

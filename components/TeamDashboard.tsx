@@ -6,18 +6,19 @@ import AttentionWidget from './AttentionWidget';
 import TeamLearningOverviewWidget from './TeamLearningOverviewWidget';
 import TeamAttendance from './TeamAttendance';
 import ApprovalModal from './ApprovalModal';
+import { useRequestContext } from './contexts/RequestContext';
 
 interface TeamDashboardProps {
   currentUser: EmployeeProfile;
   teamMembers: EmployeeProfile[];
   dashboardData: TeamDashboardData;
   setActivePage: (page: string) => void;
-  onAction: (requestId: number, newStatus: RequestStatus) => void;
 }
 
-const TeamDashboard: React.FC<TeamDashboardProps> = ({ currentUser, teamMembers, dashboardData, setActivePage, onAction }) => {
+const TeamDashboard: React.FC<TeamDashboardProps> = ({ currentUser, teamMembers, dashboardData, setActivePage }) => {
   const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<AttentionItem | null>(null);
+  const { handleRequestAction } = useRequestContext();
 
   const handleItemClick = (item: AttentionItem) => {
     if (item.type === 'leave' && item.context) {
@@ -59,7 +60,7 @@ const TeamDashboard: React.FC<TeamDashboardProps> = ({ currentUser, teamMembers,
         isOpen={isApprovalModalOpen}
         onClose={handleCloseModal}
         item={selectedItem}
-        onAction={onAction}
+        onAction={handleRequestAction}
       />
     </div>
   );

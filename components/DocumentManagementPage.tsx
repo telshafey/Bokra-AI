@@ -1,30 +1,94 @@
 import React, { useState, useMemo } from 'react';
 import { EmployeeDocument, EmployeeProfile, DocumentType } from '../types';
-import { PlusCircleIcon, PencilIcon, TrashIcon } from './icons/Icons';
+import { PlusCircleIcon, PencilIcon, TrashIcon, ArrowsUpDownIcon, ChevronUpIcon, ChevronDownIcon } from './icons/Icons';
 import DocumentAdminModal from './DocumentAdminModal';
 import PageHeader from './PageHeader';
 import Card from './Card';
+import ActionBar from './ActionBar';
+
+type SortableKeys = 'name' | 'employeeId' | 'uploadDate';
 
 interface DocumentManagementPageProps {
     allDocuments: EmployeeDocument[];
     employees: EmployeeProfile[];
     onSaveDocument: (document: EmployeeDocument) => void;
+    onBulkDeleteDocuments: (documentIds: string[]) => void;
 }
 
-const DocumentManagementPage: React.FC<DocumentManagementPageProps> = ({ allDocuments, employees, onSaveDocument }) => {
+const DocumentManagementPage: React.FC<DocumentManagementPageProps> = ({ allDocuments, employees, onSaveDocument, onBulkDeleteDocuments }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingDocument, setEditingDocument] = useState<EmployeeDocument | null>(null);
     const [filter, setFilter] = useState<{ type: string, employeeId: string }>({ type: 'all', employeeId: 'all' });
+    const [sortConfig, setSortConfig] = useState<{ key: SortableKeys, direction: 'asc' | 'desc' } | null>({ key: 'uploadDate', direction: 'desc' });
+    const [selectedDocIds, setSelectedDocIds] = useState<Set<string>>(new Set());
 
     const employeeMap = useMemo(() => new Map(employees.map(e => [e.id, e.name])), [employees]);
 
-    const filteredDocuments = useMemo(() => {
-        return allDocuments.filter(d => {
+    const filteredAndSortedDocuments = useMemo(() => {
+        let docs = allDocuments.filter(d => {
             const typeMatch = filter.type === 'all' || d.type === filter.type;
             const employeeMatch = filter.employeeId === 'all' || d.employeeId === filter.employeeId;
             return typeMatch && employeeMatch;
         });
-    }, [allDocuments, filter]);
+
+        if (sortConfig) {
+            docs.sort((a, b) => {
+                let aValue: string | number = a[sortConfig.key];
+                let bValue: string | number = b[sortConfig.key];
+                
+                if(sortConfig.key === 'employeeId') {
+                    aValue = employeeMap.get(aValue) || '';
+                    bValue = employeeMap.get(bValue) || '';
+                } else if (sortConfig.key === 'uploadDate') {
+                    aValue = new Date(aValue).getTime();
+                    bValue = new Date(bValue).getTime();
+                }
+
+                if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
+                if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
+                return 0;
+            });
+        }
+
+        return docs;
+    }, [allDocuments, filter, sortConfig, employeeMap]);
+
+    const handleSort = (key: SortableKeys) => {
+        setSortConfig(prev => {
+            const isAsc = prev?.key === key && prev.direction === 'asc';
+            return { key, direction: isAsc ? 'desc' : 'asc' };
+        });
+    };
+    
+    const getSortIcon = (key: SortableKeys) => {
+        if (!sortConfig || sortConfig.key !== key) return <ArrowsUpDownIcon className="w-4 h-4 text-slate-400" />;
+        return sortConfig.direction === 'asc' ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />;
+    };
+
+    const handleToggleSelect = (docId: string) => {
+        setSelectedDocIds(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(docId)) newSet.delete(docId);
+            else newSet.add(docId);
+            return newSet;
+        });
+    };
+
+    const handleToggleSelectAll = () => {
+        if (selectedDocIds.size === filteredAndSortedDocuments.length) {
+            setSelectedDocIds(new Set());
+        } else {
+            setSelectedDocIds(new Set(filteredAndSortedDocuments.map(d => d.id)));
+        }
+    };
+
+    const handleBulkDelete = () => {
+        if(confirm(`هل أنت متأكد من حذف ${selectedDocIds.size} مستندات؟`)) {
+            onBulkDeleteDocuments(Array.from(selectedDocIds));
+            setSelectedDocIds(new Set());
+        }
+    };
+
 
     const handleOpenAddModal = () => {
         setEditingDocument(null);
@@ -63,9 +127,8 @@ const DocumentManagementPage: React.FC<DocumentManagementPageProps> = ({ allDocu
                 subtitle="تتبع جميع المستندات الرسمية للموظفين في مكان واحد."
                 actionButton={headerAction}
             />
-
-            <Card paddingClass="p-6">
-                <div className="flex items-center gap-4 mb-4 pb-4 border-b">
+             <ActionBar>
+                <div className="flex items-center gap-4">
                     <div>
                         <label className="text-sm font-medium text-slate-600 mr-2">النوع:</label>
                         <select value={filter.type} onChange={e => setFilter(f => ({...f, type: e.target.value}))} className="p-2 border rounded-lg text-sm bg-slate-50">
@@ -82,24 +145,37 @@ const DocumentManagementPage: React.FC<DocumentManagementPageProps> = ({ allDocu
                         </select>
                     </div>
                 </div>
-                
+                <div/>
+            </ActionBar>
+            
+             {selectedDocIds.size > 0 && (
+                <div className="bg-sky-100 p-3 rounded-lg flex justify-between items-center">
+                    <span className="text-sky-800 font-semibold">{selectedDocIds.size} مستندات محددة</span>
+                    <button onClick={handleBulkDelete} className="bg-red-500 text-white font-semibold px-3 py-1 rounded-md text-sm hover:bg-red-600">حذف المحدد</button>
+                </div>
+            )}
+
+
+            <Card paddingClass="p-0">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-right text-slate-500">
                          <thead className="text-xs text-slate-700 uppercase bg-slate-100">
                             <tr>
-                                <th scope="col" className="px-6 py-3">اسم المستند</th>
-                                <th scope="col" className="px-6 py-3">الموظف</th>
-                                <th scope="col" className="px-6 py-3">تاريخ الرفع</th>
-                                <th scope="col" className="px-6 py-3">انتهاء الصلاحية</th>
-                                <th scope="col" className="px-6 py-3">الحالة</th>
-                                <th scope="col" className="px-6 py-3">إجراءات</th>
+                                <th className="p-4"><input type="checkbox" onChange={handleToggleSelectAll} checked={selectedDocIds.size === filteredAndSortedDocuments.length && filteredAndSortedDocuments.length > 0}/></th>
+                                <th className="px-6 py-3"><button onClick={() => handleSort('name')} className="flex items-center gap-1">اسم المستند {getSortIcon('name')}</button></th>
+                                <th className="px-6 py-3"><button onClick={() => handleSort('employeeId')} className="flex items-center gap-1">الموظف {getSortIcon('employeeId')}</button></th>
+                                <th className="px-6 py-3"><button onClick={() => handleSort('uploadDate')} className="flex items-center gap-1">تاريخ الرفع {getSortIcon('uploadDate')}</button></th>
+                                <th className="px-6 py-3">انتهاء الصلاحية</th>
+                                <th className="px-6 py-3">الحالة</th>
+                                <th className="px-6 py-3">إجراءات</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {filteredDocuments.map(doc => {
+                            {filteredAndSortedDocuments.map(doc => {
                                 const status = getStatus(doc);
                                 return (
                                 <tr key={doc.id} className="bg-white border-b hover:bg-slate-50">
+                                    <td className="p-4"><input type="checkbox" checked={selectedDocIds.has(doc.id)} onChange={() => handleToggleSelect(doc.id)} /></td>
                                     <td className="px-6 py-4 font-semibold text-slate-800">{doc.name}</td>
                                     <td className="px-6 py-4">{employeeMap.get(doc.employeeId) || 'N/A'}</td>
                                     <td className="px-6 py-4">{new Date(doc.uploadDate).toLocaleDateString('ar-EG-u-nu-latn')}</td>
@@ -113,7 +189,7 @@ const DocumentManagementPage: React.FC<DocumentManagementPageProps> = ({ allDocu
                                         <button onClick={() => handleOpenEditModal(doc)} className="p-2 text-slate-500 hover:text-sky-600" title="تعديل">
                                             <PencilIcon className="w-5 h-5"/>
                                         </button>
-                                         <button className="p-2 text-slate-500 hover:text-red-600" title="حذف">
+                                         <button onClick={() => onBulkDeleteDocuments([doc.id])} className="p-2 text-slate-500 hover:text-red-600" title="حذف">
                                             <TrashIcon className="w-5 h-5"/>
                                         </button>
                                     </td>
