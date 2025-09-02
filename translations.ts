@@ -1,4 +1,3 @@
-
 // translations.ts
 export const translations = {
   ar: {
@@ -34,6 +33,7 @@ export const translations = {
       onboarding: 'التعيينات الجديدة',
       offboarding: 'إنهاء الخدمة',
       employeeManagement: 'إدارة الموظفين',
+      orgChart: 'الهيكل التنظيمي',
       moduleManagement: 'إدارة الوحدات',
       branchManagement: 'إدارة الفروع',
       learningManagement: 'إدارة التدريب',
@@ -86,6 +86,7 @@ export const translations = {
       onboarding: 'إدارة التعيينات الجديدة',
       offboarding: 'إدارة إنهاء الخدمة',
       employeeManagement: 'إدارة الموظفين',
+      orgChart: 'الهيكل التنظيمي',
       moduleManagement: 'إدارة الوحدات',
       branchManagement: 'إدارة الفروع',
       learningManagement: 'إدارة التدريب',
@@ -242,6 +243,9 @@ export const translations = {
         printTitle: "طباعة العقد",
     },
     turnover: {
+        pageHeaderTitle: 'تحليل مخاطر تسرب الموظفين',
+        pageHeaderSubtitle: 'استخدم الذكاء الاصطناعي لتحليل بيانات الموظفين وتوقع احتمالية مغادرتهم.',
+        analysis: 'التحليل',
         title: "تحليل احتمالية ترك العمل (AI)",
         expectedRiskLevel: "مستوى الخطر المتوقع",
         keyFactors: "العوامل الرئيسية المؤثرة",
@@ -256,7 +260,8 @@ export const translations = {
             Medium: 'متوسط',
             High: 'مرتفع',
             Unknown: 'غير معروف',
-        }
+        },
+        riskLevelLabel: 'مستوى الخطر',
     },
     attendance: {
       requestPermit: "طلب إذن انصراف (مسبق)",
@@ -347,6 +352,9 @@ export const translations = {
         latenessDeduction: "خصم تأخير",
         earlyDepartureDeduction: "خصم انصراف مبكر",
         sickLeaveDeduction: "خصم إجازة مرضية ({{days}} أيام)",
+    },
+    orgChart: {
+      noData: 'لا يوجد هيكل تنظيمي لعرضه.'
     }
   },
   en: {
@@ -382,6 +390,7 @@ export const translations = {
       onboarding: 'Onboarding',
       offboarding: 'Offboarding',
       employeeManagement: 'Employee Management',
+      orgChart: 'Organization Chart',
       moduleManagement: 'Module Management',
       branchManagement: 'Branch Management',
       learningManagement: 'Learning Management',
@@ -434,6 +443,7 @@ export const translations = {
       onboarding: 'Onboarding Management',
       offboarding: 'Offboarding Management',
       employeeManagement: 'Employee Management',
+      orgChart: 'Organization Chart',
       moduleManagement: 'Module Management',
       branchManagement: 'Branch Management',
       learningManagement: 'Learning Management',
@@ -590,6 +600,9 @@ export const translations = {
         printTitle: "Print Contract",
     },
     turnover: {
+        pageHeaderTitle: 'Turnover Risk Analysis',
+        pageHeaderSubtitle: 'Use AI to analyze employee data and predict their turnover probability.',
+        analysis: 'Analysis',
         title: "Turnover Risk Analysis (AI)",
         expectedRiskLevel: "Expected Risk Level",
         keyFactors: "Key Influencing Factors",
@@ -604,7 +617,8 @@ export const translations = {
             Medium: 'Medium',
             High: 'High',
             Unknown: 'Unknown',
-        }
+        },
+        riskLevelLabel: 'Risk Level',
     },
     attendance: {
       requestPermit: "Request Permit (Pre-approved)",
@@ -695,6 +709,9 @@ export const translations = {
         latenessDeduction: "Lateness Deduction",
         earlyDepartureDeduction: "Early Departure Deduction",
         sickLeaveDeduction: "Sick Leave Deduction ({{days}} days)",
+    },
+    orgChart: {
+      noData: 'No organizational structure to display.'
     }
   },
 };

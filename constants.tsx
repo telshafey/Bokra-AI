@@ -1,7 +1,9 @@
 
 
+
 import React from 'react';
-import { HomeIcon, CalendarIcon, DocumentTextIcon, UserCircleIcon, CogIcon, ArrowLeftOnRectangleIcon, BriefcaseIcon, BanknotesIcon, ChartPieIcon, AcademicCapIcon, UserGroupIcon, ClipboardDocumentListIcon, DocumentCheckIcon, BuildingOfficeIcon, PresentationChartLineIcon, CheckCircleIcon, ShieldCheckIcon, ShieldExclamationIcon, BookOpenIcon, UsersIcon, DocumentDuplicateIcon, ClockIcon, QuestionMarkCircleIcon, CheckBadgeIcon, ArchiveBoxIcon, ClipboardDocumentCheckIcon, UserPlusIcon, UserMinusIcon, ChevronDownIcon, ExclamationTriangleIcon, ArrowsUpDownIcon, ChevronUpIcon, ComputerDesktopIcon } from './components/icons/Icons';
+import { HomeIcon, CalendarIcon, DocumentTextIcon, UserCircleIcon, CogIcon, ArrowLeftOnRectangleIcon, BriefcaseIcon, BanknotesIcon, ChartPieIcon, AcademicCapIcon, UserGroupIcon, ClipboardDocumentListIcon, DocumentCheckIcon, BuildingOfficeIcon, PresentationChartLineIcon, CheckCircleIcon, ShieldCheckIcon, ShieldExclamationIcon, BookOpenIcon, UsersIcon, DocumentDuplicateIcon, ClockIcon, QuestionMarkCircleIcon, CheckBadgeIcon, ArchiveBoxIcon, ClipboardDocumentCheckIcon, UserPlusIcon, UserMinusIcon, ChevronDownIcon, ExclamationTriangleIcon, ArrowsUpDownIcon, ChevronUpIcon, ComputerDesktopIcon, SitemapIcon } from './components/icons/Icons';
+// FIX: Added all missing type imports.
 import type { NavItem, EmployeeProfile, AttendanceRecord, Payslip, PayslipItem, LeaveRequest, HRRequest, TeamMemberDetails, LeaveType, LeaveDistributionDataItem, TeamWeeklyAttendanceItem, Branch, Goal, PerformanceReview, Skill, DevelopmentSuggestion, AttendancePolicy, LeavePolicy, EmployeeInfraction, JobTitle, Course, EmployeeCourse, Notification, MonthlyCheckIn, SalaryComponent, CompensationPackage, SupportTicket, EmployeeDashboardData, TeamDashboardData, RecentActivityItem, AttentionItem, TeamLearningStat, OvertimePolicy, AttendanceAdjustmentRequest, LeavePermitRequest, TeamMember, JobOpening, Candidate, OnboardingTemplate, OnboardingProcess, OnboardingTaskCategory, OnboardingResponsible, OffboardingTemplate, OffboardingProcess, OffboardingTaskCategory, OffboardingResponsible, NavGroup, EmployeeDocument, WorkLocation, AttendanceEvent, ExternalTask, TeamReportsData, TeamMemberStats, RequestType, AttendanceStatus, ApprovalContext, OverlappingLeave, PerformanceCycle, TeamMemberPerformanceData, ManagerPerformanceData, Asset } from './types';
 
 // =================================================================================
@@ -226,8 +228,11 @@ export const MOCK_ATTENDANCE_POLICY: AttendancePolicy[] = [
 ];
 
 export const MOCK_OVERTIME_POLICY: OvertimePolicy[] = [
+    // FIX: Corrected property name from `allowOver` to `allowOvertime`.
     { id: 'ot-policy-standard', name: 'سياسة الوقت الإضافي القياسية', scope: 'company', status: 'Active', allowOvertime: true, minOvertimeInMinutes: 30, overtimeRateNormal: 1.35, overtimeRateHoliday: 2.0 },
+    // FIX: Corrected property name from `allowOver` to `allowOvertime`.
     { id: 'ot-policy-high-rate', name: 'سياسة الوقت الإضافي للمبيعات', scope: 'company', status: 'Active', allowOvertime: true, minOvertimeInMinutes: 15, overtimeRateNormal: 1.75, overtimeRateHoliday: 2.5 },
+    // FIX: Corrected property name from `allowOver` to `allowOvertime`.
     { id: 'ot-policy-restricted', name: 'سياسة إضافي مقيدة (القاهرة)', scope: 'branch', branchId: 'branch-cai', status: 'Active', allowOvertime: false, minOvertimeInMinutes: 60, overtimeRateNormal: 1.5, overtimeRateHoliday: 2.0 },
 ];
 
@@ -669,16 +674,6 @@ export const MOCK_ASSETS: Asset[] = [
 // ===== NAVIGATION & STATIC CONTENT =====
 // =================================================================================
 
-// FIX: Add LEAVE_TYPE_TRANSLATION export to be used in other components.
-export const LEAVE_TYPE_TRANSLATION: Record<LeaveType, string> = {
-    Annual: 'سنوية',
-    Sick: 'مرضية',
-    Casual: 'عارضة',
-    Unpaid: 'بدون أجر',
-    NewbornRegistration: 'تسجيل مولود',
-    Exam: 'امتحانات',
-};
-
 // FIX: Replace `name`, `groupName`, and `pageTitle` with `nameKey`, `groupNameKey`, and `pageTitleKey` and use translation keys.
 export const NAV_GROUPS: NavGroup[] = [
   {
@@ -729,6 +724,7 @@ export const NAV_GROUPS: NavGroup[] = [
     groupNameKey: 'sidebar.orgManagement',
     items: [
       { nameKey: 'sidebar.employeeManagement', icon: UsersIcon, path: '/system-admin', roles: ['Admin', 'Super Admin', 'Branch Admin'], pageTitleKey: 'pageTitles.employeeManagement' },
+      { nameKey: 'sidebar.orgChart', icon: SitemapIcon, path: '/org-chart', roles: ['Admin', 'Super Admin', 'HR Manager', 'General Manager'], pageTitleKey: 'pageTitles.orgChart' },
       { nameKey: 'sidebar.moduleManagement', icon: CogIcon, path: '/module-management', roles: ['Super Admin'], pageTitleKey: 'pageTitles.moduleManagement' },
       { nameKey: 'sidebar.branchManagement', icon: BuildingOfficeIcon, path: '/branch-management', roles: ['Super Admin'], pageTitleKey: 'pageTitles.branchManagement' },
       { nameKey: 'sidebar.learningManagement', icon: AcademicCapIcon, path: '/learning-management', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitleKey: 'pageTitles.learningManagement', module: 'learning' },
@@ -922,9 +918,11 @@ export const generatePayslips = (
         
         // Calculate overtime
         const overtimeHours = monthAttendance.reduce((sum, rec) => {
+            // FIX: Corrected property access to match the updated OvertimePolicy type.
             if (!overtimePolicy || !overtimePolicy.allowOvertime || !rec.workedHours) return sum;
     
             const dailyOvertimeMinutes = Math.max(0, (rec.workedHours - 8) * 60);
+            // FIX: Corrected property access to match the updated OvertimePolicy type.
             if (dailyOvertimeMinutes >= overtimePolicy.minOvertimeInMinutes) {
                 return sum + (dailyOvertimeMinutes / 60);
             }
@@ -932,6 +930,7 @@ export const generatePayslips = (
         }, 0);
         
         if (overtimeHours > 0 && overtimePolicy) {
+            // FIX: Corrected property access to match the updated OvertimePolicy type.
             const overtimePay = (overtimeHours * hourlyRate * overtimePolicy.overtimeRateNormal);
             earnings.push({ description: 'أجر إضافي', amount: parseFloat(overtimePay.toFixed(2)) });
         }
@@ -1200,7 +1199,7 @@ export const getDerivedData = (
           .sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
           .slice(0, 4)
 // FIX: Changed `page` property to `pageKey` and used translation keys for values to match the `RecentActivityItem` type.
-          .map(n => {
+          .map((n): RecentActivityItem => {
               let pageKey = 'sidebar.personalDashboard'; // Default
               if (n.relatedEntity?.type === 'course') pageKey = 'sidebar.learning';
               else if (n.relatedEntity?.type === 'leave_request') pageKey = 'sidebar.leave';

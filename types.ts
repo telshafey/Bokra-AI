@@ -92,6 +92,31 @@ export interface AssetsProviderProps {
     children: React.ReactNode;
 }
 
+// FIX: Added missing type definitions
+export interface AnnualLeaveTier {
+    id: string;
+    afterYears: number;
+    days: number;
+}
+
+export interface LeavePolicy {
+    id: string;
+    name: string;
+    scope: 'company' | 'branch';
+    branchId?: string;
+    status: 'Active' | 'PendingApproval' | 'Archived' | 'Rejected';
+    newEmployeeBalance: number;
+    newEmployeeEligibilityMonths: number;
+    annualLeaveTiers: AnnualLeaveTier[];
+    specialAnnualLeave: {
+        over50YearsOld: number;
+        specialNeeds: number;
+    };
+    maternityLeaveMonths: number;
+    casualLeaveBalance: number;
+}
+
+
 export interface PoliciesContextType {
     attendancePolicies: AttendancePolicy[];
     overtimePolicies: OvertimePolicy[];
@@ -112,6 +137,32 @@ export interface PoliciesContextType {
 
 export interface PoliciesProviderProps {
     children: React.ReactNode;
+}
+
+// FIX: Added missing type definitions
+export interface NewUserPayload {
+    name: string;
+    jobTitleId: string;
+    department: string;
+    hireDate: string;
+    baseSalary: number | undefined;
+    branchId: string;
+    role: UserRole;
+    managerId: string;
+    attendancePolicyId: string;
+    overtimePolicyId: string;
+    leavePolicyId: string;
+    compensationPackageId: string;
+    workEmail: string;
+    phone: string;
+    personalEmail: string;
+    dateOfBirth: string;
+    nationality: string;
+    nationalId: string;
+    maritalStatus: 'أعزب' | 'متزوج';
+    gender: 'Male' | 'Female';
+    religion: 'Muslim' | 'Christian';
+    address: string;
 }
 
 export interface UserContextType {
@@ -209,6 +260,10 @@ export interface EmployeeProfile extends Employee {
         isSpecialNeeds?: boolean;
     };
     address: string;
+}
+
+export interface OrgTreeNode extends EmployeeProfile {
+    children: OrgTreeNode[];
 }
 
 export interface Stat {
@@ -494,46 +549,276 @@ export interface OvertimePolicy {
     scope: 'company' | 'branch';
     branchId?: string;
     status: 'Active' | 'PendingApproval' | 'Archived' | 'Rejected';
+    // FIX: Completed the interface and corrected property names.
     allowOvertime: boolean;
     minOvertimeInMinutes: number;
-    overtimeRateNormal: number; // e.g., 1.35 for 135%
-    overtimeRateHoliday: number; // e.g., 2 for 200%
+    overtimeRateNormal: number;
+    overtimeRateHoliday: number;
 }
 
-export interface AnnualLeaveTier {
+// --- Learning & Development Types ---
+export type CourseCategory = 'Technical' | 'Soft Skills' | 'Compliance' | 'Leadership';
+export type CourseStatus = 'Not Started' | 'In Progress' | 'Completed';
+export type ManagerApprovalStatus = 'Pending' | 'Approved' | 'Rejected' | 'NotSubmitted';
+export type ExternalCourseVenue = 'Online' | 'On-site' | 'Training Center';
+
+export interface CourseModule {
     id: string;
-    afterYears: number;
-    days: number;
+    title: string;
+    topics: string[];
 }
 
-export interface LeavePolicy {
+export interface Course {
+    id: string;
+    type: 'Internal' | 'External';
+    title: string;
+    category: CourseCategory;
+    durationHours: number;
+    description: string;
+    isMandatory: boolean;
+    // Internal
+    learningObjectives?: string[];
+    modules?: CourseModule[];
+    // External
+    provider?: string;
+    url?: string;
+    venue?: ExternalCourseVenue;
+    locationDetails?: string;
+}
+
+export interface EmployeeCourse {
+    employeeId: string;
+    courseId: string;
+    status: CourseStatus;
+    progress: number;
+    managerApprovalStatus: ManagerApprovalStatus;
+    submittedNotes?: string;
+    certificateUrl?: string; // Storing URL/path after upload
+    result?: string; // e.g., "Pass", "95/100"
+    performanceRating?: number; // 1-5, Manager's rating of employee's performance post-course
+}
+
+export interface CourseOutline {
+    description: string;
+    learningObjectives: string[];
+    modules: {
+        title: string;
+        topics: string[];
+    }[];
+}
+
+// --- Recruitment (ATS) Types ---
+export type CandidateStage = 'Applied' | 'Screening' | 'Interview' | 'Offer' | 'Hired' | 'Rejected';
+
+export interface JobOpening {
+    id: string;
+    title: string;
+    department: string;
+    status: 'Open' | 'Closed';
+    datePosted: string;
+    description: string;
+    requirements: string[];
+}
+
+export interface Candidate {
+    id: string;
+    jobOpeningId: string;
+    name: string;
+    email: string;
+    phone: string;
+    stage: CandidateStage;
+    applicationDate: string;
+    avatarUrl: string;
+}
+
+// --- Onboarding & Offboarding Types ---
+export type OnboardingTaskCategory = 'الأوراق والمستندات' | 'إعدادات تقنية' | 'التعريف بالفريق' | 'سياسات الشركة';
+export type OnboardingResponsible = 'الموظف الجديد' | 'المدير المباشر' | 'الموارد البشرية' | 'تقنية المعلومات';
+export type OffboardingTaskCategory = 'تسليم العهدة' | 'نقل المعرفة' | 'إجراءات الموارد البشرية' | 'التسوية المالية النهائية';
+export type OffboardingResponsible = 'الموظف المغادر' | 'المدير المباشر' | 'الموارد البشرية' | 'تقنية المعلومات';
+
+export interface OnboardingTask {
+    id: string;
+    title: string;
+    category: OnboardingTaskCategory;
+    responsible: OnboardingResponsible;
+    dueOffsetDays: number;
+    isCompleted: boolean;
+    dueDate: string;
+}
+
+export interface OnboardingTemplate {
     id: string;
     name: string;
-    scope: 'company' | 'branch';
-    branchId?: string;
-    status: 'Active' | 'PendingApproval' | 'Archived' | 'Rejected';
-    newEmployeeBalance: number;
-    newEmployeeEligibilityMonths: number;
-    annualLeaveTiers: AnnualLeaveTier[];
-    specialAnnualLeave: {
-        over50YearsOld: number;
-        specialNeeds: number;
-    };
-    maternityLeaveMonths: number;
-    casualLeaveBalance: number;
+    description: string;
+    tasks: Omit<OnboardingTask, 'id' | 'isCompleted' | 'dueDate'>[];
+}
+
+export interface OnboardingProcess {
+    id: string;
+    employeeId: string;
+    templateId: string;
+    startDate: string;
+    tasks: OnboardingTask[];
+}
+
+export interface OffboardingTask {
+    id: string;
+    title: string;
+    category: OffboardingTaskCategory;
+    responsible: OffboardingResponsible;
+    dueOffsetDays: number; // Days *before* last day
+    isCompleted: boolean;
+    dueDate: string;
+}
+
+export interface OffboardingTemplate {
+    id: string;
+    name: string;
+    description: string;
+    tasks: Omit<OffboardingTask, 'id' | 'isCompleted' | 'dueDate'>[];
+}
+
+export interface OffboardingProcess {
+    id: string;
+    employeeId: string;
+    templateId: string;
+    lastDay: string;
+    tasks: OffboardingTask[];
 }
 
 
-// Legacy type for reference, will be phased out.
+// --- Notifications & Support Types ---
+export type NotificationType = 'approval_request' | 'status_update' | 'announcement';
+export type TicketCategory = 'Payroll' | 'Leave Balance' | 'Technical Support' | 'Policy Question' | 'Other';
+export type TicketPriority = 'Low' | 'Medium' | 'High' | 'Urgent';
+export type TicketStatus = 'New' | 'In Progress' | 'Resolved' | 'Closed';
+
+export interface Notification {
+    id: string;
+    recipientId: string;
+    senderId: string;
+    type: NotificationType;
+    message: string;
+    isRead: boolean;
+    timestamp: string; // ISO string
+    relatedEntity?: {
+        type: 'course' | 'leave_request' | 'attendance_adjustment';
+        id: string;
+    };
+}
+
+export interface SupportTicketMessage {
+    id: string;
+    authorId: string;
+    content: string;
+    timestamp: string; // ISO string
+}
+
+export interface SupportTicket {
+    id: string;
+    employeeId: string;
+    title: string;
+    description: string;
+    category: TicketCategory;
+    priority: TicketPriority;
+    status: TicketStatus;
+    assignedToId?: string;
+    createdAt: string; // ISO string
+    updatedAt: string; // ISO string
+    messages: SupportTicketMessage[];
+}
+
+// --- Performance & Goals Types (continued) ---
+export type MonthlyCheckInRating = 'Exceeds Expectations' | 'Meets Expectations' | 'Needs Improvement';
+
+export interface MonthlyCheckIn {
+    id: string;
+    employeeId: string;
+    reviewerId: string;
+    month: number; // 0-11
+    year: number;
+    rating: MonthlyCheckInRating;
+    notes: string;
+    date: string; // ISO string
+}
+
+// --- Policy System Types (continued) ---
 export interface EmployeeInfraction {
     id: string;
     employeeId: string;
     policyId: string;
-    ruleType: ViolationType;
+    ruleType: 'Lateness' | 'Absence';
     date: string;
-    details: string; // e.g., "Arrived at 09:15"
+    details: string;
     penaltyApplied: boolean;
-    penaltyDetails?: string; // e.g., "0.5 days deducted from annual leave"
+    penaltyDetails: string;
+}
+
+// --- External Tasks ---
+export interface ExternalTask {
+    id: string;
+    employeeId: string;
+    managerId: string;
+    requestedById?: string;
+    title: string;
+    description: string;
+    date: string;
+    startTime: string;
+    endTime: string;
+    status: 'PendingApproval' | 'Approved' | 'Rejected' | 'InProgress' | 'Completed' | 'Cancelled';
+    checkInTimestamp?: string;
+    checkInCoords?: { latitude: number; longitude: number; };
+    checkOutTimestamp?: string;
+    checkOutCoords?: { latitude: number; longitude: number; };
+}
+
+// --- Dashboard & Analytics Types ---
+export interface RecentActivityItem {
+    id: string;
+    icon: React.FC<React.SVGProps<SVGSVGElement>>;
+    text: string;
+    timestamp: string;
+    pageKey: string;
+}
+
+export interface AttentionItem {
+    id: string;
+    type: 'leave' | 'attendance_adjustment' | 'leave_permit' | 'course' | 'external_task' | 'ticket';
+    icon: React.FC<React.SVGProps<SVGSVGElement>>;
+    text: string;
+    employeeName: string;
+    employeeAvatarUrl: string;
+    timestamp: string;
+    request: HRRequest; // The original request object
+    context?: ApprovalContext;
+}
+
+export interface EmployeeDashboardData {
+    activeCourse: (Course & EmployeeCourse) | null;
+    latestTicket: SupportTicket | null;
+    recentActivities: RecentActivityItem[];
+    stats: {
+        remainingAnnualLeave: number;
+        pendingRequestsCount: number;
+        overtimeHoursThisMonth: number;
+    };
+}
+
+export interface TeamLearningStat {
+    name: string;
+    progress: number;
+}
+
+export interface TeamDashboardData {
+    attentionItems: AttentionItem[];
+    teamLearningStats: TeamLearningStat[];
+    teamAttendance: {
+        present: number;
+        onLeave: number;
+        absent: number;
+    };
+    teamMembersWithAttendance: TeamMember[];
 }
 
 export interface TeamMemberStats {
@@ -560,130 +845,23 @@ export interface TeamMemberDetails {
     monthlyCheckIns: MonthlyCheckIn[];
     externalTasks: ExternalTask[];
     stats: TeamMemberStats;
-    dailyPunches?: AttendanceEvent[];
+    dailyPunches: AttendanceEvent[];
 }
 
-// Turnover Analysis Types
+
+// --- Turnover Analysis ---
 export type TurnoverRiskLevel = 'Low' | 'Medium' | 'High' | 'Unknown';
+
 export interface TurnoverAnalysisResult {
     riskLevel: TurnoverRiskLevel;
     riskScore: number;
     keyFactors: string[];
 }
 
-// Learning & Development Types
-export type CourseCategory = 'Technical' | 'Soft Skills' | 'Compliance' | 'Leadership';
-export type CourseStatus = 'Not Started' | 'In Progress' | 'Completed';
-export type CourseType = 'Internal' | 'External';
-export type ManagerApprovalStatus = 'Pending' | 'Approved' | 'Rejected' | 'NotSubmitted';
-export type ExternalCourseVenue = 'On-site' | 'Training Center' | 'Online';
-
-
-export interface CourseModule {
-    id: string;
-    title: string;
-    topics: string[];
-}
-
-export interface Course {
-    id: string;
-    title: string;
-    category: CourseCategory;
-    durationHours: number;
-    description: string;
-    learningObjectives?: string[];
-    isMandatory: boolean;
-    modules?: CourseModule[];
-    type: CourseType;
-    provider?: string; // e.g., Coursera, Udemy
-    url?: string;
-    venue?: ExternalCourseVenue;
-    locationDetails?: string;
-}
-
-export interface EmployeeCourse {
-    employeeId: string;
-    courseId: string;
-    status: CourseStatus;
-    progress: number; // 0-100
-    managerApprovalStatus: ManagerApprovalStatus;
-    submittedNotes?: string;
-    certificateUrl?: string; // Placeholder for file path/URL
-    result?: string; // e.g., "Pass", "95/100"
-    performanceRating?: number; // 1-5
-}
-
-export interface CourseOutline {
-    description: string;
-    learningObjectives: string[];
-    modules: { title: string; topics: string[] }[];
-}
-
-
-// Add User Payload
-export interface NewUserPayload {
-    // Job Info
-    name: string;
-    jobTitleId: string;
-    department: string;
-    hireDate: string;
-    branchId: string;
-    role: UserRole;
-    managerId?: string;
-    baseSalary?: number;
-    attendancePolicyId?: string;
-    overtimePolicyId?: string;
-    leavePolicyId?: string;
-    compensationPackageId?: string;
-    // Contact Info
-    workEmail: string;
-    phone: string;
-    personalEmail: string;
-    // Personal Info
-    dateOfBirth: string;
-    nationality: string;
-    nationalId: string;
-    maritalStatus: 'أعزب' | 'متزوج';
-    gender: 'Male' | 'Female';
-    religion: 'Muslim' | 'Christian';
-    // Address
-    address: string;
-}
-
-// --- Notification System Types ---
-export type NotificationType = 'approval_request' | 'status_update';
-
-export interface Notification {
-    id: string;
-    recipientId: string; // ID of the user who should see this
-    senderId: string; // ID of the user who triggered the notification
-    type: NotificationType;
-    message: string;
-    isRead: boolean;
-    timestamp: string; // ISO string
-    relatedEntity?: {
-        type: 'course' | 'leave_request' | 'attendance_adjustment';
-        id: string | number;
-    };
-}
-
 // --- Performance Management ---
-export type MonthlyCheckInRating = 'Exceeds Expectations' | 'Meets Expectations' | 'Needs Improvement';
-
-export interface MonthlyCheckIn {
-    id: string;
-    employeeId: string;
-    reviewerId: string;
-    month: number; // 0-11
-    year: number;
-    rating: MonthlyCheckInRating;
-    notes: string;
-    date: string; // ISO string
-}
-
 export interface PerformanceCycle {
     name: string;
-    status: 'Active' | 'Upcoming' | 'Closed';
+    status: 'Upcoming' | 'Active' | 'Closed';
     startDate: string;
     endDate: string;
 }
@@ -703,182 +881,4 @@ export interface ManagerPerformanceData {
         avgTeamGoalProgress: number;
     };
     teamPerformance: TeamMemberPerformanceData[];
-}
-
-
-// --- Support Ticket System Types ---
-export type TicketStatus = 'New' | 'In Progress' | 'Resolved' | 'Closed';
-export type TicketPriority = 'Low' | 'Medium' | 'High' | 'Urgent';
-export type TicketCategory = 'Payroll' | 'Leave Balance' | 'Technical Support' | 'Policy Question' | 'Other';
-
-export interface TicketMessage {
-    id: string;
-    authorId: string;
-    content: string;
-    timestamp: string; // ISO string
-}
-
-export interface SupportTicket {
-    id: string;
-    employeeId: string;
-    title: string;
-    description: string; // The initial message from the employee
-    category: TicketCategory;
-    priority: TicketPriority;
-    status: TicketStatus;
-    createdAt: string; // ISO string
-    updatedAt: string; // ISO string
-    assignedToId?: string;
-    messages: TicketMessage[];
-}
-
-// --- Dashboard Data Types ---
-export interface RecentActivityItem {
-    id: string;
-    icon: React.FC<React.SVGProps<SVGSVGElement>>;
-    text: string;
-    timestamp: string;
-    pageKey: string; // The page key to navigate to
-}
-
-export interface AttentionItem {
-    id: string;
-    type: 'leave' | 'course' | 'ticket' | 'check-in' | 'attendance_adjustment' | 'leave_permit' | 'external_task';
-    icon: React.FC<React.SVGProps<SVGSVGElement>>;
-    text: string;
-    employeeName: string;
-    employeeAvatarUrl: string;
-    timestamp: string;
-    request: HRRequest; // The original request object
-    context?: ApprovalContext;
-}
-
-export interface TeamLearningStat {
-    name: string;
-    progress: number;
-}
-
-
-export interface EmployeeDashboardData {
-    activeCourse: (Course & EmployeeCourse) | null;
-    latestTicket: SupportTicket | null;
-    recentActivities: RecentActivityItem[];
-    stats: {
-        remainingAnnualLeave: number;
-        pendingRequestsCount: number;
-        overtimeHoursThisMonth: number;
-    };
-}
-
-export interface TeamDashboardData {
-    attentionItems: AttentionItem[];
-    teamLearningStats: TeamLearningStat[];
-    teamAttendance: {
-        present: number;
-        absent: number;
-        onLeave: number;
-    }
-    teamMembersWithAttendance: TeamMember[];
-}
-
-// --- Recruitment (ATS) Types ---
-export type JobOpeningStatus = 'Open' | 'Closed' | 'Draft';
-export type CandidateStage = 'Applied' | 'Screening' | 'Interview' | 'Offer' | 'Hired' | 'Rejected';
-
-export interface JobOpening {
-    id: string;
-    title: string;
-    department: string;
-    status: JobOpeningStatus;
-    datePosted: string;
-    description: string;
-    requirements: string[];
-}
-
-export interface Candidate {
-    id: string;
-    jobOpeningId: string;
-    name: string;
-    email: string;
-    phone: string;
-    stage: CandidateStage;
-    applicationDate: string;
-    avatarUrl: string;
-}
-
-// --- Onboarding & Offboarding Types ---
-export type OnboardingTaskCategory = 'الأوراق والمستندات' | 'إعدادات تقنية' | 'التعريف بالفريق' | 'سياسات الشركة';
-export type OnboardingResponsible = 'الموظف الجديد' | 'المدير المباشر' | 'الموارد البشرية' | 'تقنية المعلومات';
-
-export interface OnboardingTask {
-    id: string;
-    title: string;
-    category: OnboardingTaskCategory;
-    responsible: OnboardingResponsible;
-    dueOffsetDays: number; // e.g., 0 for on start date, 1 for one day after
-    isCompleted: boolean;
-    dueDate?: string; // Will be calculated dynamically
-}
-
-export interface OnboardingTemplate {
-    id: string;
-    name: string;
-    description: string;
-    tasks: Omit<OnboardingTask, 'isCompleted' | 'dueDate' | 'id'>[];
-}
-
-export interface OnboardingProcess {
-    id: string;
-    employeeId: string;
-    templateId: string;
-    startDate: string;
-    tasks: OnboardingTask[];
-}
-
-export type OffboardingTaskCategory = 'تسليم العهدة' | 'نقل المعرفة' | 'إجراءات الموارد البشرية' | 'التسوية المالية النهائية';
-export type OffboardingResponsible = 'الموظف المغادر' | 'المدير المباشر' | 'الموارد البشرية' | 'تقنية المعلومات';
-
-export interface OffboardingTask {
-    id: string;
-    title: string;
-    category: OffboardingTaskCategory;
-    responsible: OffboardingResponsible;
-    dueOffsetDays: number; // Days *before* last day
-    isCompleted: boolean;
-    dueDate?: string;
-}
-
-export interface OffboardingTemplate {
-    id: string;
-    name: string;
-    description: string;
-    tasks: Omit<OffboardingTask, 'isCompleted' | 'dueDate' | 'id'>[];
-}
-
-export interface OffboardingProcess {
-    id: string;
-    employeeId: string;
-    templateId: string;
-    lastDay: string;
-    tasks: OffboardingTask[];
-}
-
-// --- External Tasks ---
-export type ExternalTaskStatus = 'PendingApproval' | 'Approved' | 'Rejected' | 'InProgress' | 'Completed' | 'Cancelled';
-
-export interface ExternalTask {
-    id: string;
-    employeeId: string;
-    managerId: string;
-    title: string;
-    description: string;
-    date: string;
-    startTime: string;
-    endTime: string;
-    status: ExternalTaskStatus;
-    requestedById?: string; // Employee who requested it (if not manager)
-    checkInTimestamp?: string;
-    checkInCoords?: { latitude: number; longitude: number };
-    checkOutTimestamp?: string;
-    checkOutCoords?: { latitude: number; longitude: number };
 }

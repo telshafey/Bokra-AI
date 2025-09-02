@@ -4,6 +4,7 @@ import PageHeader from './PageHeader';
 import Card from './Card';
 import StatCard from './StatCard';
 import { PresentationChartLineIcon, CheckCircleIcon, UserGroupIcon, StarIcon } from './icons/Icons';
+import { useTranslation } from './contexts/LanguageContext';
 
 const ProgressBar: React.FC<{ progress: number }> = ({ progress }) => {
     let bgColor = 'bg-sky-500';
@@ -27,12 +28,6 @@ const RATING_STYLES: Record<MonthlyCheckInRating, { text: string; bg: string; }>
     'Needs Improvement': { text: 'text-amber-800 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-amber-900/60' },
 };
 
-const RATING_TRANSLATION: Record<MonthlyCheckInRating, string> = {
-    'Exceeds Expectations': 'يفوق التوقعات',
-    'Meets Expectations': 'يلبي التوقعات',
-    'Needs Improvement': 'يحتاج إلى تحسين',
-};
-
 const REVIEW_STATUS_STYLES: Record<TeamMemberPerformanceData['reviewStatus'], { text: string; bg: string; }> = {
     'Completed': { text: 'text-emerald-800 dark:text-emerald-300', bg: 'bg-emerald-100 dark:bg-emerald-900/60' },
     'In Progress': { text: 'text-sky-800 dark:text-sky-300', bg: 'bg-sky-100 dark:bg-sky-900/60' },
@@ -44,19 +39,20 @@ interface ManagerPerformancePageProps {
 }
 
 const ManagerPerformancePage: React.FC<ManagerPerformancePageProps> = ({ data }) => {
+    const { t } = useTranslation();
     const { cycle, cycleStats, teamPerformance } = data;
 
     return (
         <div className="space-y-6">
             <PageHeader 
-                title="إدارة الأداء"
-                subtitle={`نظرة عامة على أداء الفريق لدورة: ${cycle.name}`}
+                title={t('managerPerformance.pageHeaderTitle')}
+                subtitle={t('managerPerformance.pageHeaderSubtitle', { cycleName: cycle.name })}
             />
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <StatCard title="اكتمال المراجعات" value={`${cycleStats.reviewsCompleted} / ${cycleStats.totalReviews}`} icon={CheckCircleIcon} color="bg-emerald-500" />
-                <StatCard title="متوسط إنجاز الأهداف" value={`${cycleStats.avgTeamGoalProgress}%`} icon={PresentationChartLineIcon} color="bg-sky-500" />
-                <StatCard title="حالة الدورة الحالية" value={cycle.status === 'Active' ? 'نشطة' : 'مغلقة'} icon={UserGroupIcon} color="bg-purple-500" />
+                <StatCard title={t('managerPerformance.reviewsCompleted')} value={`${cycleStats.reviewsCompleted} / ${cycleStats.totalReviews}`} icon={CheckCircleIcon} color="bg-emerald-500" />
+                <StatCard title={t('managerPerformance.avgGoalProgress')} value={`${cycleStats.avgTeamGoalProgress}%`} icon={PresentationChartLineIcon} color="bg-sky-500" />
+                <StatCard title={t('managerPerformance.cycleStatus')} value={t(`managerPerformance.cycleStatuses.${cycle.status}`)} icon={UserGroupIcon} color="bg-purple-500" />
             </div>
 
             <Card paddingClass="p-0">
@@ -64,11 +60,11 @@ const ManagerPerformancePage: React.FC<ManagerPerformancePageProps> = ({ data })
                     <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
                         <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-50 dark:bg-slate-700">
                             <tr>
-                                <th className="px-6 py-3">الموظف</th>
-                                <th className="px-6 py-3">تقدم الأهداف</th>
-                                <th className="px-6 py-3">آخر متابعة شهرية</th>
-                                <th className="px-6 py-3">حالة المراجعة</th>
-                                <th className="px-6 py-3">إجراء</th>
+                                <th className="px-6 py-3">{t('general.employee')}</th>
+                                <th className="px-6 py-3">{t('managerPerformance.goalProgress')}</th>
+                                <th className="px-6 py-3">{t('managerPerformance.latestCheckIn')}</th>
+                                <th className="px-6 py-3">{t('managerPerformance.reviewStatus')}</th>
+                                <th className="px-6 py-3">{t('general.actions')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -93,7 +89,7 @@ const ManagerPerformancePage: React.FC<ManagerPerformancePageProps> = ({ data })
                                         {item.latestCheckIn ? (
                                             <span className={`px-2 py-1 rounded-full text-xs font-semibold ${RATING_STYLES[item.latestCheckIn.rating].bg} ${RATING_STYLES[item.latestCheckIn.rating].text}`}>
                                                 <StarIcon className="w-3 h-3 inline-block ml-1"/>
-                                                {RATING_TRANSLATION[item.latestCheckIn.rating]}
+                                                {t(`performanceReview.ratings.${item.latestCheckIn.rating}`)}
                                             </span>
                                         ) : (
                                             <span className="text-slate-400">-</span>
@@ -101,12 +97,12 @@ const ManagerPerformancePage: React.FC<ManagerPerformancePageProps> = ({ data })
                                     </td>
                                     <td className="px-6 py-4">
                                          <span className={`px-2 py-1 rounded-full text-xs font-semibold ${REVIEW_STATUS_STYLES[item.reviewStatus].bg} ${REVIEW_STATUS_STYLES[item.reviewStatus].text}`}>
-                                            {item.reviewStatus}
+                                            {t(`performanceReview.teamStatus.${item.reviewStatus}`)}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
                                         <button className="font-medium text-sky-600 dark:text-sky-400 hover:underline">
-                                            {item.reviewStatus === 'Completed' ? 'عرض التقييم' : 'بدء التقييم'}
+                                            {t(`managerPerformance.action.${item.reviewStatus}`)}
                                         </button>
                                     </td>
                                 </tr>

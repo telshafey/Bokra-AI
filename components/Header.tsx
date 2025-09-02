@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import { BellIcon, SunIcon, MoonIcon, LanguageIcon } from './icons/Icons';
 import { EmployeeProfile, Notification } from '../types';
@@ -89,7 +88,7 @@ const Header: React.FC<HeaderProps> = ({
           <button
             onClick={handleLanguageToggle}
             className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-            aria-label="Toggle language"
+            aria-label={t('header.toggleLanguage')}
           >
             <LanguageIcon className="h-6 w-6" />
           </button>
@@ -98,7 +97,7 @@ const Header: React.FC<HeaderProps> = ({
           <button
             onClick={handleThemeToggle}
             className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
-            aria-label="Toggle theme"
+            aria-label={t('header.toggleTheme')}
           >
             {theme === 'light' ? <MoonIcon className="h-6 w-6" /> : <SunIcon className="h-6 w-6" />}
           </button>

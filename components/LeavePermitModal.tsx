@@ -1,17 +1,19 @@
+
 import React, { useState, useMemo } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { LeavePermitRequest, AttendancePolicy } from '../types';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface LeavePermitModalProps {
     isOpen: boolean;
     onClose: () => void;
-    // FIX: Corrected the onSubmit prop type to match what the form actually provides, excluding properties added by the parent handler.
-    onSubmit: (newRequest: Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'durationHours'>) => void;
+    onSubmit: (newRequest: Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'durationHours' | 'employeeId'>) => void;
     attendancePolicy?: AttendancePolicy;
     permitRequests: LeavePermitRequest[];
 }
 
 const LeavePermitModal: React.FC<LeavePermitModalProps> = ({ isOpen, onClose, onSubmit, attendancePolicy, permitRequests }) => {
+    const { t } = useTranslation();
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
@@ -32,21 +34,34 @@ const LeavePermitModal: React.FC<LeavePermitModalProps> = ({ isOpen, onClose, on
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if(!date || !startTime || !endTime || !reason.trim()) {
-            alert("يرجى تعبئة جميع الحقول المطلوبة.");
+            alert(t('alerts.formErrors.requiredFields'));
             return;
         }
         
         if (startTime >= endTime) {
-            alert("وقت الانتهاء يجب أن يكون بعد وقت البدء.");
+            alert(t('alerts.formErrors.endDateAfterStart'));
             return;
         }
+
+        const start = new Date(`${date}T${startTime}`);
+        const end = new Date(`${date}T${endTime}`);
+        const durationHours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+        const durationMinutes = durationHours * 60;
+        
+        if (attendancePolicy) {
+            if (durationMinutes < attendancePolicy.minPermitDurationMinutes || durationHours > attendancePolicy.maxPermitDurationHours) {
+                alert(t('alerts.formErrors.permitPolicyViolation'));
+                return;
+            }
+        }
+
 
         onSubmit({
             date,
             startTime,
             endTime,
             reason,
-        } as Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'durationHours'>);
+        });
 
         // Reset form and close modal
         setDate(new Date().toISOString().split('T')[0]);
@@ -62,55 +77,55 @@ const LeavePermitModal: React.FC<LeavePermitModalProps> = ({ isOpen, onClose, on
             onClick={onClose}
         >
             <div 
-                className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-lg transform transition-all"
+                className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-8 w-full max-w-lg transform transition-all"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-slate-800">طلب إذن انصراف (مسبق)</h2>
-                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+                    <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{t('leave.permitModalTitle')}</h2>
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
                         <XMarkIcon className="w-7 h-7" />
                     </button>
                 </div>
 
                 {attendancePolicy && (
-                    <div className="mb-4 p-3 bg-sky-50 border border-sky-200 text-sky-800 rounded-lg text-sm text-center">
-                        لقد استخدمت <span className="font-bold">{usedPermitsThisMonth}</span> من <span className="font-bold">{attendancePolicy.maxPermitsPerMonth}</span> أذونات هذا الشهر.
+                    <div className="mb-4 p-3 bg-sky-50 dark:bg-sky-900/50 border border-sky-200 dark:border-sky-800 text-sky-800 dark:text-sky-300 rounded-lg text-sm text-center">
+                       {t('leave.permitUsage', { used: usedPermitsThisMonth, max: attendancePolicy.maxPermitsPerMonth })}
                     </div>
                 )}
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label htmlFor="permit_date" className="block text-sm font-medium text-slate-700 mb-1">تاريخ الإذن</label>
-                        <input type="date" id="permit_date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500" required />
+                        <label htmlFor="permit_date" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('leave.permitDate')}</label>
+                        <input type="date" id="permit_date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-700 dark:text-white" required />
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label htmlFor="permit_startTime" className="block text-sm font-medium text-slate-700 mb-1">من الساعة</label>
-                            <input type="time" id="permit_startTime" value={startTime} onChange={(e) => setStartTime(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500" required />
+                            <label htmlFor="permit_startTime" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('leave.fromTime')}</label>
+                            <input type="time" id="permit_startTime" value={startTime} onChange={(e) => setStartTime(e.target.value)} className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-700 dark:text-white" required />
                         </div>
                         <div>
-                            <label htmlFor="permit_endTime" className="block text-sm font-medium text-slate-700 mb-1">إلى الساعة</label>
-                            <input type="time" id="permit_endTime" value={endTime} onChange={(e) => setEndTime(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500" required />
+                            <label htmlFor="permit_endTime" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('leave.toTime')}</label>
+                            <input type="time" id="permit_endTime" value={endTime} onChange={(e) => setEndTime(e.target.value)} className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-700 dark:text-white" required />
                         </div>
                     </div>
 
                     <div>
-                        <label htmlFor="permit_reason" className="block text-sm font-medium text-slate-700 mb-1">السبب</label>
+                        <label htmlFor="permit_reason" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('leave.reason')}</label>
                         <textarea
                             id="permit_reason"
                             rows={3}
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
-                            className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
-                            placeholder="اذكر سبب طلب الإذن..."
+                            className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-700 dark:text-white"
+                            placeholder={t('leave.permitReasonPlaceholder')}
                             required
                         ></textarea>
                     </div>
 
                     <div className="flex justify-end gap-4 pt-4">
-                        <button type="button" onClick={onClose} className="py-2 px-6 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200">إلغاء</button>
-                        <button type="submit" className="py-2 px-6 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 shadow-sm hover:shadow-md">إرسال الطلب</button>
+                        <button type="button" onClick={onClose} className="py-2 px-6 bg-slate-100 dark:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg font-semibold hover:bg-slate-200 dark:hover:bg-slate-500">{t('general.cancel')}</button>
+                        <button type="submit" className="py-2 px-6 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 shadow-sm hover:shadow-md">{t('leave.submitRequest')}</button>
                     </div>
                 </form>
             </div>

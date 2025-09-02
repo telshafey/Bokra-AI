@@ -1,5 +1,4 @@
 
-
 import React, { createContext, useContext, useState } from 'react';
 import { 
     AttendancePolicy, 
@@ -44,7 +43,6 @@ export const PoliciesProvider: React.FC<PoliciesProviderProps> = ({ children }) 
         setAttendancePolicies(prev => prev.map(p => policyIds.includes(p.id) ? { ...p, status: 'Archived' } : p));
     };
     const updateAttendancePolicyStatus = (policyId: string, newStatus: 'Active' | 'Rejected') => {
-// FIX: Use newStatus parameter instead of undefined status variable.
          setAttendancePolicies(prev => prev.map(p => p.id === policyId ? { ...p, status: newStatus } : p));
     };
 
@@ -63,7 +61,6 @@ export const PoliciesProvider: React.FC<PoliciesProviderProps> = ({ children }) 
         setOvertimePolicies(prev => prev.map(p => policyIds.includes(p.id) ? { ...p, status: 'Archived' } : p));
     };
      const updateOvertimePolicyStatus = (policyId: string, newStatus: 'Active' | 'Rejected') => {
-// FIX: Use newStatus parameter instead of undefined status variable.
          setOvertimePolicies(prev => prev.map(p => p.id === policyId ? { ...p, status: newStatus } : p));
     };
 
@@ -82,7 +79,6 @@ export const PoliciesProvider: React.FC<PoliciesProviderProps> = ({ children }) 
         setLeavePolicies(prev => prev.map(p => policyIds.includes(p.id) ? { ...p, status: 'Archived' } : p));
     };
      const updateLeavePolicyStatus = (policyId: string, newStatus: 'Active' | 'Rejected') => {
-// FIX: Use newStatus parameter instead of undefined status variable.
          setLeavePolicies(prev => prev.map(p => p.id === policyId ? { ...p, status: newStatus } : p));
     };
 

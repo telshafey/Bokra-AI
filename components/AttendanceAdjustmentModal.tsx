@@ -1,15 +1,17 @@
+
 import React, { useState } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { AttendanceAdjustmentRequest, AttendanceAdjustmentType } from '../types';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface AttendanceAdjustmentModalProps {
     isOpen: boolean;
     onClose: () => void;
-// FIX: Corrected the onSubmit prop type to match what the form actually provides.
-    onSubmit: (newRequest: Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => void;
+    onSubmit: (newRequest: Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'employeeId'>) => void;
 }
 
 const AttendanceAdjustmentModal: React.FC<AttendanceAdjustmentModalProps> = ({ isOpen, onClose, onSubmit }) => {
+    const { t } = useTranslation();
     const [adjustmentType, setAdjustmentType] = useState<AttendanceAdjustmentType>('LateArrival');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
     const [time, setTime] = useState('');
@@ -20,7 +22,7 @@ const AttendanceAdjustmentModal: React.FC<AttendanceAdjustmentModalProps> = ({ i
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if(!date || !time || !reason.trim()) {
-            alert("يرجى تعبئة جميع الحقول المطلوبة.");
+            alert(t('alerts.formErrors.requiredFields'));
             return;
         }
         
@@ -29,7 +31,7 @@ const AttendanceAdjustmentModal: React.FC<AttendanceAdjustmentModalProps> = ({ i
             date,
             time,
             reason,
-        } as Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate'>);
+        });
 
         // Reset form and close modal
         setAdjustmentType('LateArrival');
@@ -45,19 +47,19 @@ const AttendanceAdjustmentModal: React.FC<AttendanceAdjustmentModalProps> = ({ i
             onClick={onClose}
         >
             <div 
-                className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-lg transform transition-all"
+                className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-8 w-full max-w-lg transform transition-all"
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-slate-800">تقديم عذر حضور</h2>
-                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+                    <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{t('leave.excuseModalTitle')}</h2>
+                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
                         <XMarkIcon className="w-7 h-7" />
                     </button>
                 </div>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-2">نوع الطلب</label>
+                        <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">{t('leave.requestType')}</label>
                         <div className="flex items-center gap-4">
                             <label className="flex items-center gap-2 cursor-pointer">
                                 <input 
@@ -68,7 +70,7 @@ const AttendanceAdjustmentModal: React.FC<AttendanceAdjustmentModalProps> = ({ i
                                     onChange={() => setAdjustmentType('LateArrival')}
                                     className="form-radio h-4 w-4 text-sky-600"
                                 />
-                                <span className="text-sm font-medium text-slate-800">عذر تأخير صباحي</span>
+                                <span className="text-sm font-medium text-slate-800 dark:text-slate-200">{t('leave.lateArrivalExcuse')}</span>
                             </label>
                              <label className="flex items-center gap-2 cursor-pointer">
                                 <input 
@@ -79,40 +81,40 @@ const AttendanceAdjustmentModal: React.FC<AttendanceAdjustmentModalProps> = ({ i
                                     onChange={() => setAdjustmentType('EarlyDeparture')}
                                     className="form-radio h-4 w-4 text-sky-600"
                                 />
-                                <span className="text-sm font-medium text-slate-800">إذن انصراف مبكر</span>
+                                <span className="text-sm font-medium text-slate-800 dark:text-slate-200">{t('leave.earlyDeparturePermission')}</span>
                             </label>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <label htmlFor="date" className="block text-sm font-medium text-slate-700 mb-1">تاريخ الواقعة</label>
-                            <input type="date" id="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500" required />
+                            <label htmlFor="date" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('leave.eventDate')}</label>
+                            <input type="date" id="date" value={date} onChange={(e) => setDate(e.target.value)} className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-700 dark:text-white" required />
                         </div>
                         <div>
-                            <label htmlFor="time" className="block text-sm font-medium text-slate-700 mb-1">
-                                {adjustmentType === 'LateArrival' ? 'وقت الحضور الفعلي' : 'وقت الانصراف الفعلي'}
+                            <label htmlFor="time" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                                {adjustmentType === 'LateArrival' ? t('leave.actualTimeIn') : t('leave.actualTimeOut')}
                             </label>
-                            <input type="time" id="time" value={time} onChange={(e) => setTime(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500" required />
+                            <input type="time" id="time" value={time} onChange={(e) => setTime(e.target.value)} className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-700 dark:text-white" required />
                         </div>
                     </div>
 
                     <div>
-                        <label htmlFor="reason" className="block text-sm font-medium text-slate-700 mb-1">السبب</label>
+                        <label htmlFor="reason" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('leave.reason')}</label>
                         <textarea
                             id="reason"
                             rows={3}
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
-                            className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
-                            placeholder="اذكر سبب التأخير أو الانصراف المبكر..."
+                            className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-700 dark:text-white"
+                            placeholder={t('leave.excuseReasonPlaceholder')}
                             required
                         ></textarea>
                     </div>
 
                     <div className="flex justify-end gap-4 pt-4">
-                        <button type="button" onClick={onClose} className="py-2 px-6 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200">إلغاء</button>
-                        <button type="submit" className="py-2 px-6 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 shadow-sm hover:shadow-md">إرسال الطلب</button>
+                        <button type="button" onClick={onClose} className="py-2 px-6 bg-slate-100 dark:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg font-semibold hover:bg-slate-200 dark:hover:bg-slate-500">{t('general.cancel')}</button>
+                        <button type="submit" className="py-2 px-6 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 shadow-sm hover:shadow-md">{t('leave.submitRequest')}</button>
                     </div>
                 </form>
             </div>

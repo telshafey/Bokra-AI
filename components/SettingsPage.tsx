@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { BellIcon, LanguageIcon, SunIcon, MoonIcon, LockClosedIcon, UserCircleIcon, KeyIcon } from './icons/Icons';
 import ChangePasswordModal from './ChangePasswordModal';

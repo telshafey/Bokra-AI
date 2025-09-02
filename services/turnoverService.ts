@@ -1,6 +1,7 @@
 
 import { GoogleGenAI } from "@google/genai";
 import type { EmployeeProfile, TurnoverAnalysisResult } from '../types';
+import { Language } from "../components/contexts/LanguageContext";
 
 function getYearsOfService(hireDate: string): number {
     const start = new Date(hireDate);
@@ -9,7 +10,7 @@ function getYearsOfService(hireDate: string): number {
     return parseFloat((diffInMs / (1000 * 60 * 60 * 24 * 365.25)).toFixed(1));
 }
 
-export const getTurnoverPrediction = async (employee: EmployeeProfile): Promise<TurnoverAnalysisResult> => {
+export const getTurnoverPrediction = async (employee: EmployeeProfile, language: Language): Promise<TurnoverAnalysisResult> => {
     if (!process.env.API_KEY) {
         throw new Error("API_KEY is not set in environment variables.");
     }
@@ -30,7 +31,15 @@ export const getTurnoverPrediction = async (employee: EmployeeProfile): Promise<
         title: employee.title,
     };
 
-    const prompt = `
+    const prompt = language === 'ar' ? `
+        أنت خبير تحليل موارد بشرية. مهمتك هي توقع مخاطر تسرب الموظفين بناءً على البيانات المقدمة.
+        حلل بيانات الموظف المجهولة التالية وأرجع توقعاتك فقط ككائن JSON صالح بالهيكل التالي: { "riskLevel": "Low" | "Medium" | "High", "riskScore": number, "keyFactors": string[] }. لا تقم بتضمين أي نصوص أو شروحات أخرى أو تنسيق ماركداون مثل \`\`\`json.
+        
+        البيانات:
+        ${JSON.stringify(employeeData, null, 2)}
+        
+        اعتبر عوامل مثل الرضا المنخفض، والأداء المنخفض، والوقت الطويل دون ترقية، والراتب الأقل من متوسط السوق كمؤشرات لمخاطر عالية. الأداء المرتفع المقترن بالرضا المنخفض والراتب الأقل من السوق هو عامل خطر عالٍ جدًا. الخدمة الطويلة مع الترقيات المستمرة والتقييمات الجيدة هي مخاطر منخفضة.
+    ` : `
         You are an expert HR analyst. Your task is to predict the employee turnover risk based on the provided data.
         Analyze the following anonymous employee data and return your prediction ONLY as a valid JSON object with the following structure: { "riskLevel": "Low" | "Medium" | "High", "riskScore": number, "keyFactors": string[] }. Do not include any other text, explanations, or markdown formatting like \`\`\`json.
         
@@ -46,16 +55,17 @@ export const getTurnoverPrediction = async (employee: EmployeeProfile): Promise<
             contents: prompt,
         });
         
-        const jsonString = response.text.trim();
+        const jsonString = response.text.trim().replace(/^```json\s*|```\s*$/g, '');
         const result = JSON.parse(jsonString);
         return result as TurnoverAnalysisResult;
 
     } catch (error) {
         console.error("Error getting turnover prediction from Gemini:", error);
+        const errorMessage = language === 'ar' ? 'فشل استرداد التحليل من خدمة الذكاء الاصطناعي.' : 'Failed to retrieve analysis from AI service.';
         return {
             riskLevel: 'Unknown',
             riskScore: 0,
-            keyFactors: ['Failed to retrieve analysis from AI service.']
+            keyFactors: [errorMessage]
         };
     }
 };

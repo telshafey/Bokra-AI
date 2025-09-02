@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useMemo, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -42,6 +43,7 @@ import ManagerPerformancePage from './components/ManagerPerformancePage';
 import AssetsManagementPage from './components/AssetsManagementPage';
 import MyAssetsPage from './components/MyAssetsPage';
 import ContractsPage from './components/ContractsPage';
+import OrgChartPage from './components/OrgChartPage';
 import { useTranslation } from './components/contexts/LanguageContext';
 
 import { useAssetsContext } from './components/contexts/AssetsContext';
@@ -52,6 +54,7 @@ import { useRequestContext } from './components/contexts/RequestContext';
 
 
 import { INITIAL_USER_ID, getDerivedData, MOCK_ATTENDANCE_RECORDS as INITIAL_ATTENDANCE, NAV_GROUPS, BOTTOM_NAV_ITEMS, MOCK_PERFORMANCE_REVIEWS as INITIAL_PERFORMANCE_REVIEWS, MOCK_EMPLOYEE_DOCUMENTS, generatePayslips, MOCK_COURSES, MOCK_EMPLOYEE_COURSES, MOCK_NOTIFICATIONS, MOCK_MONTHLY_CHECK_INS, MOCK_SALARY_COMPONENTS, MOCK_COMPENSATION_PACKAGES, MOCK_SUPPORT_TICKETS, MOCK_JOB_OPENINGS, MOCK_CANDIDATES, MOCK_ONBOARDING_TEMPLATES, MOCK_ONBOARDING_PROCESSES, MOCK_OFFBOARDING_TEMPLATES, MOCK_OFFBOARDING_PROCESSES, MOCK_WORK_LOCATIONS, MOCK_ATTENDANCE_EVENTS, MOCK_EXTERNAL_TASKS, MOCK_GOALS, MOCK_EMPLOYEE_INFRACTIONS } from './constants';
+// FIX: Added missing type imports. These types will be defined and exported in `types.ts`.
 import { HRRequest, LeaveRequest, RequestStatus, PerformanceReview, EmployeeDocument, AttendanceRecord, AppModule, WorkLocation, AttendanceEvent, ExternalTask, CourseStatus, TicketStatus, Course, EmployeeCourse, Notification, MonthlyCheckIn, SalaryComponent, CompensationPackage, SupportTicket, AttendanceAdjustmentRequest, LeavePermitRequest, JobOpening, Candidate, CandidateStage, OnboardingProcess, OnboardingTemplate, OffboardingProcess, OffboardingTemplate, EmployeeProfile, AttentionItem } from './types';
 
 
@@ -800,6 +803,8 @@ const App: React.FC = () => {
                     onBulkAssignOvertimePolicy={bulkAssignOvertimePolicy}
                     onBulkAssignLeavePolicy={bulkAssignLeavePolicy}
                 />;
+            case 'sidebar.orgChart':
+                return <OrgChartPage />;
             case 'sidebar.branchManagement':
                 return <BranchManagementPage 
                     branches={branches}
@@ -971,6 +976,7 @@ const App: React.FC = () => {
                   {renderPage()}
               </main>
           </div>
+          {/* FIX: Pass the currentUser prop to the Chatbot component to resolve the type error. */}
           <Chatbot currentUser={currentUser}/>
       </div>
     );
