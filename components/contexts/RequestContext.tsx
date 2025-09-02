@@ -31,7 +31,7 @@ export const useRequestContext = () => {
 
 export const RequestProvider: React.FC<RequestProviderProps> = ({ children }) => {
     const { employees, updateProfile } = useUserContext();
-    const { attendancePolicies } = usePoliciesContext();
+    const { attendancePolicies, leavePolicies } = usePoliciesContext();
     
     const [requests, setRequests] = useState<HRRequest[]>(MOCK_ALL_REQUESTS);
     const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(MOCK_LEAVE_REQUESTS_INITIAL);
@@ -48,8 +48,11 @@ export const RequestProvider: React.FC<RequestProviderProps> = ({ children }) =>
                 const employeeToUpdate = employees.find(e => e.id === leaveReq.employeeId);
                 if (employeeToUpdate) {
                     const updatedBalances = employeeToUpdate.leaveBalances.map(balance => {
-                        if (balance.type === leaveReq.leaveType) {
+                        if (balance.type === leaveReq.leaveType && leaveReq.leaveType !== 'NewbornRegistration') {
                             return { ...balance, used: balance.used + leaveReq.duration };
+                        }
+                        if (balance.type === 'NewbornRegistration' && leaveReq.leaveType === 'NewbornRegistration') {
+                            return { ...balance, used: balance.used + 1 }; // Increment used count, not days
                         }
                         return balance;
                     });
@@ -68,6 +71,34 @@ export const RequestProvider: React.FC<RequestProviderProps> = ({ children }) =>
     };
 
     const handleNewLeaveRequest = (newRequestData: Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => {
+        const employee = employees.find(e => e.id === newRequestData.employeeId);
+        if (!employee) return;
+
+        const policy = leavePolicies.find(p => p.id === employee.leavePolicyId);
+
+        if (newRequestData.leaveType === 'Annual' && policy) {
+            const hireDate = new Date(employee.hireDate);
+            const today = new Date();
+            const monthsOfService = (today.getFullYear() - hireDate.getFullYear()) * 12 + (today.getMonth() - hireDate.getMonth());
+            
+            if (monthsOfService < policy.newEmployeeEligibilityMonths) {
+                alert(`لا يمكنك طلب إجازة سنوية قبل إتمام ${policy.newEmployeeEligibilityMonths} أشهر من تاريخ التعيين.`);
+                return;
+            }
+        }
+
+        if (newRequestData.leaveType === 'NewbornRegistration') {
+            const newbornBalance = employee.leaveBalances.find(b => b.type === 'NewbornRegistration');
+            if (!newbornBalance || newbornBalance.used >= newbornBalance.balance) {
+                 alert('لقد استنفدت رصيدك من إجازة تسجيل المولود.');
+                 return;
+            }
+            if (newRequestData.duration > 1) {
+                alert('إجازة تسجيل المولود هي يوم واحد فقط.');
+                return;
+            }
+        }
+
         const newId = Math.max(...requests.map(r => r.id), 0) + 1;
         const newLeaveRequest: LeaveRequest = {
             id: newId,

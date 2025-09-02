@@ -1,13 +1,12 @@
-
 import React from 'react';
 import type { Course, CourseStatus, CourseCategory, ManagerApprovalStatus, EmployeeCourse, ExternalCourseVenue } from '../types';
 import { BookOpenIcon, ClockIcon, InformationCircleIcon, LinkIcon, MapPinIcon } from './icons/Icons';
 
 const CATEGORY_STYLES: Record<CourseCategory, { text: string; bg: string; }> = {
-    'Technical': { text: 'text-sky-800', bg: 'bg-sky-100' },
-    'Soft Skills': { text: 'text-amber-800', bg: 'bg-amber-100' },
-    'Compliance': { text: 'text-red-800', bg: 'bg-red-100' },
-    'Leadership': { text: 'text-purple-800', bg: 'bg-purple-100' },
+    'Technical': { text: 'text-sky-800 dark:text-sky-300', bg: 'bg-sky-100 dark:bg-sky-900/60' },
+    'Soft Skills': { text: 'text-amber-800 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-amber-900/60' },
+    'Compliance': { text: 'text-red-800 dark:text-red-300', bg: 'bg-red-100 dark:bg-red-900/60' },
+    'Leadership': { text: 'text-purple-800 dark:text-purple-300', bg: 'bg-purple-100 dark:bg-purple-900/60' },
 };
 
 const STATUS_TRANSLATION: Record<CourseStatus, string> = {
@@ -17,10 +16,10 @@ const STATUS_TRANSLATION: Record<CourseStatus, string> = {
 };
 
 const APPROVAL_STATUS_STYLES: Record<ManagerApprovalStatus, { text: string; bg: string; }> = {
-    'Pending': { text: 'text-amber-800', bg: 'bg-amber-100' },
-    'Approved': { text: 'text-emerald-800', bg: 'bg-emerald-100' },
-    'Rejected': { text: 'text-red-800', bg: 'bg-red-100' },
-    'NotSubmitted': { text: 'text-slate-800', bg: 'bg-slate-100' },
+    'Pending': { text: 'text-amber-800 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-amber-900/60' },
+    'Approved': { text: 'text-emerald-800 dark:text-emerald-300', bg: 'bg-emerald-100 dark:bg-emerald-900/60' },
+    'Rejected': { text: 'text-red-800 dark:text-red-300', bg: 'bg-red-100 dark:bg-red-900/60' },
+    'NotSubmitted': { text: 'text-slate-800 dark:text-slate-300', bg: 'bg-slate-100 dark:bg-slate-700' },
 };
 
 const APPROVAL_STATUS_TRANSLATION: Record<ManagerApprovalStatus, string> = {
@@ -41,7 +40,7 @@ const ProgressBar: React.FC<{ progress: number }> = ({ progress }) => {
     let bgColor = progress === 100 ? 'bg-emerald-500' : 'bg-sky-500';
 
     return (
-        <div className="w-full bg-slate-200 rounded-full h-2">
+        <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
             <div 
                 className={`h-2 rounded-full transition-all duration-500 ${bgColor}`} 
                 style={{ width: `${progress}%` }}
@@ -67,7 +66,7 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onUpdateProgress = () =
 
     const ActionButton = () => {
         if (!isAssigned) {
-             return <button className="w-full bg-slate-300 text-slate-500 font-bold py-2 px-4 rounded-lg cursor-not-allowed" disabled>{isExternal ? 'دورة خارجية' : 'دورة داخلية'}</button>;
+             return <button className="w-full bg-slate-300 text-slate-500 font-bold py-2 px-4 rounded-lg cursor-not-allowed dark:bg-slate-700 dark:text-slate-400" disabled>{isExternal ? 'دورة خارجية' : 'دورة داخلية'}</button>;
         }
 
         if (status === 'Completed') {
@@ -84,23 +83,23 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onUpdateProgress = () =
 
 
     return (
-        <div className={`rounded-xl shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col group/card ${isExternal ? 'bg-emerald-50 border border-emerald-200' : 'bg-white'}`}>
+        <div className={`rounded-xl shadow-md transition-all duration-300 hover:shadow-lg hover:-translate-y-1 flex flex-col group/card ${isExternal ? 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-900/50' : 'bg-white dark:bg-slate-800'}`}>
             <div className="p-5 flex-1 relative">
                 <div className="flex justify-between items-start mb-3">
                     <span className={`px-2 py-1 text-xs font-bold rounded-full ${categoryStyle.bg} ${categoryStyle.text}`}>
                         {course.category}
                     </span>
-                     <span className={`px-2 py-1 text-xs font-semibold rounded-full ${isExternal ? 'bg-emerald-200 text-emerald-800' : 'bg-slate-200 text-slate-700'}`}>
+                     <span className={`px-2 py-1 text-xs font-semibold rounded-full ${isExternal ? 'bg-emerald-200 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300' : 'bg-slate-200 text-slate-700 dark:bg-slate-700 dark:text-slate-300'}`}>
                         {isExternal ? 'دورة خارجية' : 'دورة داخلية'}
                     </span>
                 </div>
-                <h3 className="text-lg font-bold text-slate-800 mb-2 h-14">{course.title}</h3>
+                <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2 h-14">{course.title}</h3>
                 
                 {isExternal && course.provider && (
-                    <div className="text-sm font-semibold text-slate-700 mb-2 flex items-center gap-2">
+                    <div className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2 flex items-center gap-2">
                         <span>مقدمة من: {course.provider}</span>
                         {course.url && (
-                             <a href={course.url} target="_blank" rel="noopener noreferrer" title="زيارة رابط الدورة" className="text-sky-600 hover:text-sky-800">
+                             <a href={course.url} target="_blank" rel="noopener noreferrer" title="زيارة رابط الدورة" className="text-sky-600 dark:text-sky-400 hover:text-sky-800 dark:hover:text-sky-300">
                                 <LinkIcon className="w-4 h-4"/>
                             </a>
                         )}
@@ -108,13 +107,13 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onUpdateProgress = () =
                 )}
                 
                 {isExternal && course.venue && (
-                     <div className="text-xs text-slate-600 mb-2 flex items-center gap-1.5">
+                     <div className="text-xs text-slate-600 dark:text-slate-400 mb-2 flex items-center gap-1.5">
                         <MapPinIcon className="w-4 h-4" />
                         <span>{VENUE_TRANSLATION[course.venue]} {course.locationDetails && `(${course.locationDetails})`}</span>
                     </div>
                 )}
 
-                <p className="text-xs text-slate-500 line-clamp-2 h-8">{course.description}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 h-8">{course.description}</p>
                  
                 {isAssigned && isExternal && (
                     <div className="mt-3">
@@ -138,8 +137,8 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onUpdateProgress = () =
                 </div>
             </div>
 
-            <div className="border-t border-slate-100 p-4 space-y-3">
-                 <div className="flex items-center justify-between text-xs text-slate-500">
+            <div className="border-t border-slate-100 dark:border-slate-700 p-4 space-y-3">
+                 <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
                     <div className="flex items-center gap-1.5">
                         <ClockIcon className="w-4 h-4" />
                         <span>{course.durationHours > 0 ? `${course.durationHours} ساعات` : 'غير محدد'}</span>
@@ -155,8 +154,8 @@ const CourseCard: React.FC<CourseCardProps> = ({ course, onUpdateProgress = () =
                  {isAssigned && (
                     <div>
                         <div className="flex justify-between items-center mb-1">
-                            <span className="text-xs font-semibold text-slate-600">{STATUS_TRANSLATION[status]}</span>
-                            <span className="text-xs font-bold text-sky-700">{progress}%</span>
+                            <span className="text-xs font-semibold text-slate-600 dark:text-slate-300">{STATUS_TRANSLATION[status]}</span>
+                            <span className="text-xs font-bold text-sky-700 dark:text-sky-400">{progress}%</span>
                         </div>
                         <ProgressBar progress={progress} />
                     </div>

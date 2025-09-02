@@ -1,7 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import type { TeamMemberDetails, EmployeeProfile, Branch, PerformanceReview, HRRequest, RequestType, RequestStatus, EmployeeInfraction, AttendancePolicy, LeavePolicy, JobTitle, Course, EmployeeCourse, MonthlyCheckIn, OvertimePolicy, NewUserPayload, AppModule, ExternalTask, TeamMemberStats, SalaryComponent, CompensationPackage, DocumentType, EmployeeDocument, AttendanceEvent } from '../types';
 import { UserCircleIcon, CalendarIcon, BriefcaseIcon, AcademicCapIcon, CheckCircleIcon, PresentationChartLineIcon, PencilSquareIcon, ClipboardDocumentListIcon, PlusCircleIcon, DocumentCheckIcon, ExclamationTriangleIcon, BookOpenIcon, CheckBadgeIcon, XCircleIcon, DocumentTextIcon, ClockIcon, BanknotesIcon, ArrowUpTrayIcon, ArrowDownTrayIcon, PencilIcon, TrashIcon, MapPinIcon } from './icons/Icons';
-import { LEAVE_TYPE_TRANSLATION } from '../constants';
 
 type DetailTab = 'general' | 'history' | 'attendance_type' | 'grace_minutes' | 'work_calendar' | 'leave_profile' | 'salary' | 'documents' | 'petty_cash' | 'assets';
 
@@ -9,7 +8,7 @@ const NavItem: React.FC<{ label: string, icon: React.FC<React.SVGProps<SVGSVGEle
     <button
         onClick={onClick}
         className={`w-full flex items-center gap-3 p-3 rounded-lg text-sm font-semibold transition-colors ${
-            isActive ? 'bg-slate-200 text-slate-800' : 'text-slate-600 hover:bg-slate-100'
+            isActive ? 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-100' : 'text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-700'
         }`}
     >
         <Icon className="w-5 h-5"/>
@@ -18,24 +17,24 @@ const NavItem: React.FC<{ label: string, icon: React.FC<React.SVGProps<SVGSVGEle
 );
 
 const StatInfoCard: React.FC<{ title: string, value: string | number, subtext: string, icon: React.FC<React.SVGProps<SVGSVGElement>>, color: string }> = ({ title, value, subtext, icon: Icon, color }) => (
-    <div className="bg-white p-3 rounded-lg shadow-sm border flex items-center gap-3">
+    <div className="bg-white dark:bg-slate-800 p-3 rounded-lg shadow-sm border dark:border-slate-700 flex items-center gap-3">
         <Icon className={`w-6 h-6 ${color}`}/>
         <div>
-            <p className="text-xs text-slate-500">{title}</p>
-            <p className="font-bold text-slate-800">{value} <span className="text-xs font-normal">{subtext}</span></p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">{title}</p>
+            <p className="font-bold text-slate-800 dark:text-slate-200">{value} <span className="text-xs font-normal">{subtext}</span></p>
         </div>
     </div>
 );
 
+// FIX: Removed non-existent 'Certificate' property to align with RequestType.
 const REQUEST_TYPE_INFO: Record<RequestType, { translation: string; icon: React.FC<React.SVGProps<SVGSVGElement>>; color: string }> = {
     Leave: { translation: 'طلب إجازة', icon: BriefcaseIcon, color: 'text-sky-500' },
-    Certificate: { translation: 'طلب شهادة', icon: DocumentTextIcon, color: 'text-emerald-500' },
     DataUpdate: { translation: 'تحديث بيانات', icon: UserCircleIcon, color: 'text-amber-500' },
     AttendanceAdjustment: { translation: 'تعديل حضور', icon: ClockIcon, color: 'text-purple-500' },
     LeavePermit: { translation: 'إذن انصراف', icon: ClockIcon, color: 'text-indigo-500' },
 };
 
-const STATUS_BADGE: Record<RequestStatus, string> = { Approved: 'bg-emerald-100 text-emerald-800', Pending: 'bg-amber-100 text-amber-800', Rejected: 'bg-red-100 text-red-800' };
+const STATUS_BADGE: Record<RequestStatus, string> = { Approved: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300', Pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300', Rejected: 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300' };
 const STATUS_TRANSLATION: Record<RequestStatus, string> = { Approved: 'موافق عليه', Pending: 'قيد الانتظار', Rejected: 'مرفوض' };
 
 
@@ -116,16 +115,16 @@ const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ memberDetai
                 return (
                     <div className="p-4">
                         <div className="flex justify-between items-center mb-4">
-                             <h3 className="font-bold text-lg text-slate-700">الطلبات</h3>
+                             <h3 className="font-bold text-lg text-slate-700 dark:text-slate-200">الطلبات</h3>
                              <div className="flex items-center gap-2">
-                                 <select className="p-2 border rounded-lg text-sm bg-white"><option>Approved</option></select>
-                                 <input type="date" className="p-2 border rounded-lg text-sm bg-white" />
-                                 <input type="date" className="p-2 border rounded-lg text-sm bg-white" />
+                                 <select className="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white"><option>Approved</option></select>
+                                 <input type="date" className="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white" />
+                                 <input type="date" className="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white" />
                              </div>
                         </div>
                          <div className="overflow-x-auto">
-                            <table className="w-full text-sm text-right text-slate-500">
-                                <thead className="text-xs text-slate-700 uppercase bg-slate-100">
+                            <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
+                                <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-100 dark:bg-slate-700">
                                     <tr>
                                         <th className="px-6 py-3">النوع</th>
                                         <th className="px-6 py-3">تاريخ الطلب</th>
@@ -137,8 +136,8 @@ const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ memberDetai
                                     {allRequests.map(req => {
                                         const typeInfo = REQUEST_TYPE_INFO[req.type];
                                         return (
-                                            <tr key={req.id} className="bg-white border-b hover:bg-slate-50">
-                                                <td className="px-6 py-4 font-semibold text-slate-800">{typeInfo.translation}</td>
+                                            <tr key={req.id} className="bg-white dark:bg-slate-800 border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700">
+                                                <td className="px-6 py-4 font-semibold text-slate-800 dark:text-slate-200">{typeInfo.translation}</td>
                                                 <td className="px-6 py-4">{new Date(req.submissionDate).toLocaleDateString('ar-EG-u-nu-latn')}</td>
                                                 <td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_BADGE[req.status]}`}>{STATUS_TRANSLATION[req.status]}</span></td>
                                                 <td className="px-6 py-4">{'reason' in req ? req.reason : ''}</td>
@@ -154,16 +153,16 @@ const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ memberDetai
                 const selectedPackage = compensationPackages.find(p => p.id === editedPackageId);
                 return (
                     <div className="p-6 space-y-6">
-                        <div className="p-4 bg-white rounded-lg shadow-sm border">
-                            <h3 className="font-bold text-slate-700 mb-4">الراتب الأساسي والحزمة</h3>
+                        <div className="p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm border dark:border-slate-700">
+                            <h3 className="font-bold text-slate-700 dark:text-slate-200 mb-4">الراتب الأساسي والحزمة</h3>
                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-600 mb-1">الراتب الأساسي (EGP)</label>
-                                    <input type="number" value={editedBaseSalary} onChange={(e) => setEditedBaseSalary(Number(e.target.value))} className="w-full p-2 border rounded-lg" />
+                                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">الراتب الأساسي (EGP)</label>
+                                    <input type="number" value={editedBaseSalary} onChange={(e) => setEditedBaseSalary(Number(e.target.value))} className="w-full p-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white" />
                                 </div>
                                 <div>
-                                    <label className="block text-sm font-medium text-slate-600 mb-1">حزمة التعويضات</label>
-                                     <select value={editedPackageId} onChange={(e) => setEditedPackageId(e.target.value)} className="w-full p-2 border rounded-lg bg-slate-50">
+                                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">حزمة التعويضات</label>
+                                     <select value={editedPackageId} onChange={(e) => setEditedPackageId(e.target.value)} className="w-full p-2 border rounded-lg bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
                                         <option value="">-- بدون حزمة --</option>
                                         {compensationPackages.map(pkg => <option key={pkg.id} value={pkg.id}>{pkg.name}</option>)}
                                     </select>
@@ -174,8 +173,8 @@ const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ memberDetai
                              </div>
                         </div>
                          {selectedPackage && (
-                            <div className="p-4 bg-white rounded-lg shadow-sm border">
-                                <h3 className="font-bold text-slate-700 mb-2">تفاصيل الحزمة: {selectedPackage.name}</h3>
+                            <div className="p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm border dark:border-slate-700">
+                                <h3 className="font-bold text-slate-700 dark:text-slate-200 mb-2">تفاصيل الحزمة: {selectedPackage.name}</h3>
                                 <div className="space-y-2">
                                     {selectedPackage.components.map(comp => {
                                         const details = salaryComponents.find(sc => sc.id === comp.componentId);
@@ -196,37 +195,37 @@ const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ memberDetai
                  const employeeDocs = memberDetails.documents;
                  return (
                     <div className="p-6 space-y-6">
-                        <div className="p-4 bg-white rounded-lg shadow-sm border">
-                            <h3 className="font-bold text-slate-700 mb-4">مستندات الموظف</h3>
+                        <div className="p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm border dark:border-slate-700">
+                            <h3 className="font-bold text-slate-700 dark:text-slate-200 mb-4">مستندات الموظف</h3>
                              <table className="w-full text-sm text-right">
-                                <thead className="text-xs text-slate-500 bg-slate-100">
+                                <thead className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700">
                                     <tr><th className="p-2">الاسم</th><th className="p-2">النوع</th><th className="p-2">تاريخ الرفع</th><th className="p-2">الإجراء</th></tr>
                                 </thead>
                                 <tbody>
                                     {employeeDocs.map(doc => (
-                                        <tr key={doc.id} className="border-b">
-                                            <td className="p-2 font-semibold">{doc.name}</td>
-                                            <td className="p-2">{doc.type}</td>
-                                            <td className="p-2">{doc.uploadDate}</td>
-                                            <td className="p-2"><button className="text-sky-600"><ArrowDownTrayIcon className="w-5 h-5"/></button></td>
+                                        <tr key={doc.id} className="border-b dark:border-slate-700">
+                                            <td className="p-2 font-semibold dark:text-slate-200">{doc.name}</td>
+                                            <td className="p-2 dark:text-slate-300">{doc.type}</td>
+                                            <td className="p-2 dark:text-slate-300">{doc.uploadDate}</td>
+                                            <td className="p-2"><button className="text-sky-600 dark:text-sky-400"><ArrowDownTrayIcon className="w-5 h-5"/></button></td>
                                         </tr>
                                     ))}
-                                    {employeeDocs.length === 0 && <tr><td colSpan={4} className="text-center p-4 text-slate-500">لا توجد مستندات.</td></tr>}
+                                    {employeeDocs.length === 0 && <tr><td colSpan={4} className="text-center p-4 text-slate-500 dark:text-slate-400">لا توجد مستندات.</td></tr>}
                                 </tbody>
                             </table>
                         </div>
-                        <div className="p-4 bg-white rounded-lg shadow-sm border">
-                             <h3 className="font-bold text-slate-700 mb-4">إضافة مستند جديد</h3>
+                        <div className="p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm border dark:border-slate-700">
+                             <h3 className="font-bold text-slate-700 dark:text-slate-200 mb-4">إضافة مستند جديد</h3>
                              <form onSubmit={handleSaveNewDocument} className="space-y-3">
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    <input type="text" placeholder="اسم المستند" value={newDocName} onChange={e => setNewDocName(e.target.value)} className="w-full p-2 border rounded-lg" required />
-                                    <select value={newDocType} onChange={e => setNewDocType(e.target.value as DocumentType)} className="w-full p-2 border rounded-lg bg-slate-50">
+                                    <input type="text" placeholder="اسم المستند" value={newDocName} onChange={e => setNewDocName(e.target.value)} className="w-full p-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white" required />
+                                    <select value={newDocType} onChange={e => setNewDocType(e.target.value as DocumentType)} className="w-full p-2 border rounded-lg bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
                                         <option value="عقد عمل">عقد عمل</option>
                                         <option value="مسوغات تعيين">مسوغات تعيين</option>
                                     </select>
                                 </div>
                                 <div>
-                                     <label className="cursor-pointer bg-slate-50 border-2 border-dashed rounded-lg p-3 flex flex-col items-center justify-center text-slate-500 hover:border-sky-500">
+                                     <label className="cursor-pointer bg-slate-50 dark:bg-slate-700 border-2 border-dashed rounded-lg p-3 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 hover:border-sky-500">
                                         <ArrowUpTrayIcon className="w-6 h-6 mb-1"/>
                                         <span className="text-xs">{newDocFile ? newDocFile.name : 'اختر ملف'}</span>
                                         <input type="file" className="hidden" onChange={(e) => setNewDocFile(e.target.files ? e.target.files[0] : null)} required/>
@@ -238,7 +237,7 @@ const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ memberDetai
                     </div>
                  );
             default:
-                return <div className="p-6 text-center text-slate-500">محتوى "{activeTab}" غير متاح بعد.</div>;
+                return <div className="p-6 text-center text-slate-500 dark:text-slate-400">محتوى "{activeTab}" غير متاح بعد.</div>;
         }
     };
 
@@ -256,22 +255,22 @@ const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ memberDetai
     ];
 
     return (
-        <div className="bg-white h-full rounded-xl shadow-md flex flex-col overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 h-full rounded-xl shadow-md flex flex-col overflow-hidden">
             {/* Header */}
-            <div className="p-4 bg-slate-50 border-b">
+            <div className="p-4 bg-slate-100 dark:bg-slate-700 border-b dark:border-slate-600">
                  <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-4">
                         <img src={profile.avatarUrl} alt={profile.name} className="w-16 h-16 rounded-full" />
                         <div>
-                            <h2 className="text-2xl font-bold text-slate-800">{profile.name}</h2>
-                            <p className="text-md text-slate-500">{profile.title} • {profile.department}</p>
+                            <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{profile.name}</h2>
+                            <p className="text-md text-slate-500 dark:text-slate-400">{profile.title} • {profile.department}</p>
                         </div>
                     </div>
                      <div className="flex items-center gap-2">
-                        <button className="bg-slate-800 text-white font-bold py-2 px-4 rounded-lg hover:bg-slate-900">+ New request</button>
-                        <button className="p-2 rounded-lg text-slate-500 hover:bg-slate-200"><PencilIcon className="w-5 h-5" /></button>
-                        <button className="p-2 rounded-lg text-slate-500 hover:bg-slate-200"><TrashIcon className="w-5 h-5" /></button>
-                        <button className="p-2 rounded-lg text-slate-500 hover:bg-slate-200"><DocumentTextIcon className="w-5 h-5" /></button>
+                        <button className="bg-slate-800 text-white font-bold py-2 px-4 rounded-lg hover:bg-slate-900 dark:bg-slate-200 dark:text-slate-800 dark:hover:bg-white">+ New request</button>
+                        <button className="p-2 rounded-lg text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700"><PencilIcon className="w-5 h-5" /></button>
+                        <button className="p-2 rounded-lg text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700"><TrashIcon className="w-5 h-5" /></button>
+                        <button className="p-2 rounded-lg text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700"><DocumentTextIcon className="w-5 h-5" /></button>
                     </div>
                 </div>
 
@@ -280,14 +279,14 @@ const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ memberDetai
                          const checkInTime = new Date(checkIn.timestamp);
                          const checkOutTime = checkOut ? new Date(checkOut.timestamp) : null;
                         return (
-                            <div key={checkIn.id} className="p-3 bg-white border rounded-lg">
-                                <p className="text-xs font-bold text-slate-600 mb-1">{index === 0 ? '1st Sign in / Sign out' : '2nd Sign in / Sign out'}</p>
+                            <div key={checkIn.id} className="p-3 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg">
+                                <p className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">{index === 0 ? '1st Sign in / Sign out' : '2nd Sign in / Sign out'}</p>
                                 <div className="flex items-center justify-between">
-                                    <span className="font-mono font-semibold text-slate-800">{checkInTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second:'2-digit' })}</span>
+                                    <span className="font-mono font-semibold text-slate-800 dark:text-slate-200">{checkInTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second:'2-digit' })}</span>
                                     <span className="text-slate-400">→</span>
-                                     <span className="font-mono font-semibold text-slate-800">{checkOutTime ? checkOutTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second:'2-digit' }) : '--:--:--'}</span>
+                                     <span className="font-mono font-semibold text-slate-800 dark:text-slate-200">{checkOutTime ? checkOutTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second:'2-digit' }) : '--:--:--'}</span>
                                 </div>
-                                <div className="flex items-center gap-1 text-xs text-slate-500 mt-1">
+                                <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 mt-1">
                                     <MapPinIcon className="w-3 h-3"/>
                                     <span>{checkIn.isWithinGeofence ? 'Office' : 'Remote'}</span>
                                 </div>
@@ -309,7 +308,7 @@ const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ memberDetai
 
             {/* Body */}
             <div className="flex-1 flex min-h-0">
-                <aside className="w-56 border-l p-2 bg-slate-50">
+                <aside className="w-56 border-l dark:border-slate-600 p-2 bg-slate-50 dark:bg-slate-700">
                     <nav className="space-y-1">
                         {navItems.map(item => (
                             <NavItem
@@ -322,7 +321,7 @@ const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ memberDetai
                         ))}
                     </nav>
                 </aside>
-                <main className="flex-1 overflow-y-auto bg-slate-100">
+                <main className="flex-1 overflow-y-auto bg-white dark:bg-slate-800">
                     {renderContent()}
                 </main>
             </div>

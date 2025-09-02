@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+
+
+import React, { useState, useEffect } from 'react';
 import { XMarkIcon, ArrowUpTrayIcon } from './icons/Icons';
 import type { LeaveRequest, LeaveType } from '../types';
 
@@ -16,12 +18,25 @@ const RequestLeaveModal: React.FC<RequestLeaveModalProps> = ({ isOpen, onClose, 
     const [reason, setReason] = useState('');
     const [attachment, setAttachment] = useState<File | null>(null);
 
+    const isExamLeave = leaveType === 'Exam';
+
+    useEffect(() => {
+        if (leaveType === 'NewbornRegistration' && startDate) {
+            setEndDate(startDate);
+        }
+    }, [leaveType, startDate]);
+
     if (!isOpen) return null;
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if(!startDate || !endDate) {
             alert("يرجى تحديد تاريخ البدء والانتهاء");
+            return;
+        }
+
+        if (isExamLeave && !attachment) {
+            alert("يرجى إرفاق ملف إثبات لإجازة الامتحانات.");
             return;
         }
 
@@ -40,6 +55,7 @@ const RequestLeaveModal: React.FC<RequestLeaveModalProps> = ({ isOpen, onClose, 
             endDate,
             reason,
             duration,
+            attachmentUrl: attachment?.name
         } as Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate'>);
 
         // Reset form and close modal
@@ -79,6 +95,8 @@ const RequestLeaveModal: React.FC<RequestLeaveModalProps> = ({ isOpen, onClose, 
                             <option value="Annual">سنوية</option>
                             <option value="Sick">مرضية</option>
                             <option value="Casual">عارضة</option>
+                            <option value="NewbornRegistration">تسجيل مولود</option>
+                            <option value="Exam">إجازة امتحانات</option>
                             <option value="Unpaid">بدون أجر</option>
                         </select>
                     </div>
@@ -90,7 +108,7 @@ const RequestLeaveModal: React.FC<RequestLeaveModalProps> = ({ isOpen, onClose, 
                         </div>
                         <div>
                             <label htmlFor="endDate" className="block text-sm font-medium text-slate-700 mb-1">تاريخ الانتهاء</label>
-                            <input type="date" id="endDate" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500" />
+                            <input type="date" id="endDate" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500" disabled={leaveType === 'NewbornRegistration'} />
                         </div>
                     </div>
 
@@ -107,7 +125,9 @@ const RequestLeaveModal: React.FC<RequestLeaveModalProps> = ({ isOpen, onClose, 
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">إرفاق ملف (اختياري)</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">
+                            إرفاق ملف {isExamLeave ? <span className="text-red-500 font-bold">*</span> : '(اختياري)'}
+                        </label>
                         <label htmlFor="attachment" className="cursor-pointer bg-slate-50 border-2 border-dashed border-slate-300 rounded-lg p-4 flex flex-col items-center justify-center text-slate-500 hover:border-sky-500 hover:text-sky-600">
                            <ArrowUpTrayIcon className="w-8 h-8 mb-1"/>
                            <span className="text-sm">{attachment ? attachment.name : 'انقر للتحميل أو اسحب الملف هنا'}</span>

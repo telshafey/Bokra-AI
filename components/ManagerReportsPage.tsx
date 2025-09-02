@@ -1,4 +1,5 @@
 
+
 import React, { useState, useMemo } from 'react';
 import LeaveDistributionChart from './LeaveDistributionChart';
 import TeamAttendanceBarChart from './TeamAttendanceBarChart';
@@ -10,7 +11,7 @@ import { ChartPieIcon, DocumentTextIcon, UserGroupIcon, ClockIcon, ArrowsUpDownI
 import DateRangePicker from './DateRangePicker';
 import Card from './Card';
 import ActionBar from './ActionBar';
-import { LEAVE_TYPE_TRANSLATION } from '../constants';
+import { useTranslation } from './contexts/LanguageContext';
 
 type ReportTab = 'attendance' | 'absences' | 'leaves' | 'tasks';
 type SortableKeys<T> = keyof T;
@@ -41,6 +42,7 @@ const ManagerReportsPage: React.FC<ManagerReportsPageProps> = ({ reportsData, te
   const [dateRange, setDateRange] = useState({ start: '', end: '' });
   const [activeTab, setActiveTab] = useState<ReportTab>('attendance');
   const [sortConfig, setSortConfig] = useState<{ key: string, direction: 'asc' | 'desc' } | null>(null);
+  const { t } = useTranslation();
 
   const teamMemberIds = useMemo(() => new Set(teamMembers.map(m => m.id)), [teamMembers]);
   const employeeMap = useMemo(() => new Map(teamMembers.map(e => [e.id, e.name])), [teamMembers]);
@@ -181,7 +183,7 @@ const ManagerReportsPage: React.FC<ManagerReportsPageProps> = ({ reportsData, te
                         {(sortedData as LeaveRequest[]).map(r => (
                             <tr key={r.id} className="bg-white border-b">
                                 <td className="px-6 py-4 font-medium">{employeeMap.get(r.employeeId) || r.employeeId}</td>
-                                <td className="px-6 py-4">{LEAVE_TYPE_TRANSLATION[r.leaveType]}</td>
+                                <td className="px-6 py-4">{t(`leaveTypes.${r.leaveType}`)}</td>
                                 <td className="px-6 py-4">{r.startDate}</td>
                                 <td className="px-6 py-4">{r.endDate}</td>
                                 <td className="px-6 py-4">{r.duration} أيام</td>

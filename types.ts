@@ -1,26 +1,24 @@
-
-
 import type React from 'react';
 
 export type AppModule = 'performance' | 'learning' | 'recruitment' | 'onboarding' | 'offboarding' | 'support' | 'compensation' | 'job_titles' | 'documents' | 'assets';
 
 export interface NavItem {
-  name: string;
+  nameKey: string; // Key for translation
   icon: React.FC<React.SVGProps<SVGSVGElement>>;
   path: string;
   requiresEmployee?: boolean; // Controls visibility for actual employees vs system accounts
-  pageTitle?: string;
+  pageTitleKey?: string; // Key for translation
   roles?: UserRole[]; // Defines specific roles that can see this item
   module?: AppModule;
 }
 
 export interface NavGroup {
-  groupName: string;
+  groupNameKey: string; // Key for translation
   items: NavItem[];
 }
 
 export interface Employee {
-  name: string;
+  name:string;
   title: string;
   avatarUrl: string;
 }
@@ -179,6 +177,7 @@ export interface EmployeeProfile extends Employee {
     managerId?: string; // Manager ID for hierarchy
     hireDate: string;
     employmentStatus: EmploymentStatus; 
+    deactivationDate?: string;
     checkInStatus: CheckInStatus;
     leaveBalances: LeaveBalance[];
     baseSalary?: number; // Added for payslip generation
@@ -207,6 +206,7 @@ export interface EmployeeProfile extends Employee {
         maritalStatus: 'أعزب' | 'متزوج' | '-';
         gender: 'Male' | 'Female';
         religion: 'Muslim' | 'Christian' | '-';
+        isSpecialNeeds?: boolean;
     };
     address: string;
 }
@@ -268,7 +268,7 @@ export interface Payslip {
     deductions: PayslipItem[];
 }
 
-export type LeaveType = 'Annual' | 'Sick' | 'Casual' | 'Unpaid';
+export type LeaveType = 'Annual' | 'Sick' | 'Casual' | 'Unpaid' | 'NewbornRegistration' | 'Exam';
 export type RequestStatus = 'Approved' | 'Pending' | 'Rejected';
 
 export interface LeaveBalance {
@@ -279,7 +279,7 @@ export interface LeaveBalance {
 }
 
 // --- Unified & Discriminated Request Types ---
-export type RequestType = 'Leave' | 'Certificate' | 'DataUpdate' | 'AttendanceAdjustment' | 'LeavePermit';
+export type RequestType = 'Leave' | 'DataUpdate' | 'AttendanceAdjustment' | 'LeavePermit';
 
 interface BaseRequest {
     id: number;
@@ -295,6 +295,7 @@ export interface LeaveRequest extends BaseRequest {
     endDate: string;
     duration: number;
     reason: string;
+    attachmentUrl?: string;
 }
 
 export interface AttendanceAdjustmentRequest extends BaseRequest {
@@ -314,17 +315,12 @@ export interface LeavePermitRequest extends BaseRequest {
     reason: string;
 }
 
-export interface CertificateRequest extends BaseRequest {
-    type: 'Certificate';
-    details: string;
-}
-
 export interface DataUpdateRequest extends BaseRequest {
     type: 'DataUpdate';
     details: string;
 }
 
-export type HRRequest = LeaveRequest | AttendanceAdjustmentRequest | LeavePermitRequest | CertificateRequest | DataUpdateRequest;
+export type HRRequest = LeaveRequest | AttendanceAdjustmentRequest | LeavePermitRequest | DataUpdateRequest;
 
 export type AttendanceAdjustmentType = 'LateArrival' | 'EarlyDeparture';
 
@@ -426,7 +422,7 @@ export interface PerformanceReview {
 }
 
 // --- New Employee Document System ---
-export type DocumentType = 'عقد عمل' | 'مسوغات تعيين';
+export type DocumentType = 'عقد عمل' | 'مسوغات تعيين' | 'استمارة ١ (تأمينات)' | 'استمارة ٢ (تأمينات)' | 'استمارة ٦ (تأمينات)';
 
 export interface EmployeeDocument {
     id: string;
@@ -504,6 +500,11 @@ export interface OvertimePolicy {
     overtimeRateHoliday: number; // e.g., 2 for 200%
 }
 
+export interface AnnualLeaveTier {
+    id: string;
+    afterYears: number;
+    days: number;
+}
 
 export interface LeavePolicy {
     id: string;
@@ -511,10 +512,17 @@ export interface LeavePolicy {
     scope: 'company' | 'branch';
     branchId?: string;
     status: 'Active' | 'PendingApproval' | 'Archived' | 'Rejected';
-    annualLeaveBalance: number;
-    sickLeaveBalance: number;
+    newEmployeeBalance: number;
+    newEmployeeEligibilityMonths: number;
+    annualLeaveTiers: AnnualLeaveTier[];
+    specialAnnualLeave: {
+        over50YearsOld: number;
+        specialNeeds: number;
+    };
+    maternityLeaveMonths: number;
     casualLeaveBalance: number;
 }
+
 
 // Legacy type for reference, will be phased out.
 export interface EmployeeInfraction {
@@ -730,7 +738,7 @@ export interface RecentActivityItem {
     icon: React.FC<React.SVGProps<SVGSVGElement>>;
     text: string;
     timestamp: string;
-    page: string; // The page name to navigate to
+    pageKey: string; // The page key to navigate to
 }
 
 export interface AttentionItem {

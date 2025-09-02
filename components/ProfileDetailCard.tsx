@@ -19,7 +19,7 @@ interface InfoItemProps {
 const InfoItem: React.FC<InfoItemProps> = ({ icon: Icon, label, value, isEditing = false, fieldName = '', fieldType='text', options=[], onChange = () => {} }) => {
     const renderValue = () => {
         if (!isEditing) {
-            return <p className="font-semibold text-slate-800 break-words">{value || '-'}</p>;
+            return <p className="font-semibold text-slate-800 dark:text-slate-200 break-words">{value || '-'}</p>;
         }
 
         switch(fieldType) {
@@ -28,23 +28,23 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon: Icon, label, value, isEditing
                     <select
                         value={value}
                         onChange={(e) => onChange(fieldName, e.target.value)}
-                        className="w-full p-1 border border-slate-300 rounded-md bg-slate-50 focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold"
+                        className="w-full p-1 border border-slate-300 rounded-md bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold"
                     >
                         {options.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                     </select>
                 );
             case 'date':
-                 return <input type="date" value={value} onChange={(e) => onChange(fieldName, e.target.value)} className="w-full p-1 border border-slate-300 rounded-md bg-slate-50 focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold" />;
+                 return <input type="date" value={value} onChange={(e) => onChange(fieldName, e.target.value)} className="w-full p-1 border border-slate-300 rounded-md bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold" />;
             default: // text
-                 return <input type="text" value={value} onChange={(e) => onChange(fieldName, e.target.value)} className="w-full p-1 border border-slate-300 rounded-md bg-slate-50 focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold" />;
+                 return <input type="text" value={value} onChange={(e) => onChange(fieldName, e.target.value)} className="w-full p-1 border border-slate-300 rounded-md bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold" />;
         }
     };
     
     return (
         <div className="flex items-start gap-4 py-3">
-            <Icon className="w-6 h-6 text-slate-500 mt-1 flex-shrink-0" />
+            <Icon className="w-6 h-6 text-slate-500 dark:text-slate-400 mt-1 flex-shrink-0" />
             <div className="flex-1">
-                <p className="text-sm text-slate-500">{label}</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">{label}</p>
                 {renderValue()}
             </div>
         </div>
@@ -57,9 +57,9 @@ interface InfoCardProps {
 }
 
 const InfoCard: React.FC<InfoCardProps> = ({ title, children }) => (
-    <div className="bg-white p-6 rounded-xl shadow-md transition-shadow hover:shadow-lg">
-        <h3 className="text-xl font-bold text-slate-700 mb-4 border-b pb-3">{title}</h3>
-        <div className="divide-y divide-slate-100">
+    <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md transition-shadow hover:shadow-lg">
+        <h3 className="text-xl font-bold text-slate-700 dark:text-slate-200 mb-4 border-b dark:border-slate-700 pb-3">{title}</h3>
+        <div className="divide-y divide-slate-100 dark:divide-slate-700">
             {children}
         </div>
     </div>
@@ -129,20 +129,20 @@ const ProfileDetailCard: React.FC<ProfileDetailCardProps> = ({
                     <InfoItem icon={CalendarIcon} label="تاريخ التعيين" value={new Date(profile.hireDate).toLocaleDateString('ar-EG-u-nu-latn', { year: 'numeric', month: 'long', day: 'numeric' })} />
                     <InfoItem icon={DocumentDuplicateIcon} label="الحالة الوظيفية" value={profile.employmentStatus} />
                      <div className="flex items-start gap-4 py-3">
-                        <ShieldExclamationIcon className="w-6 h-6 text-slate-500 mt-1 flex-shrink-0" />
+                        <ShieldExclamationIcon className="w-6 h-6 text-slate-500 dark:text-slate-400 mt-1 flex-shrink-0" />
                         <div className="flex-1">
-                            <p className="text-sm text-slate-500">سياسة الحضور والمخالفات</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">سياسة الحضور والمخالفات</p>
                             {isEditing ? (
                                     <select
                                     value={profile.attendancePolicyId || ''}
                                     onChange={(e) => onProfileChange('attendancePolicyId', e.target.value)}
-                                    className="w-full p-1 border border-slate-300 rounded-md bg-slate-50 focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold"
+                                    className="w-full p-1 border border-slate-300 rounded-md bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold"
                                 >
                                     {attendancePolicyOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                 </select>
                             ) : (
                                 <div className="flex items-center gap-2">
-                                    <p className="font-semibold text-slate-800 break-words">{profile.attendancePolicyName || '-'}</p>
+                                    <p className="font-semibold text-slate-800 dark:text-slate-200 break-words">{profile.attendancePolicyName || '-'}</p>
                                     {hasInfractions && (
                                         <div className="relative group">
                                             <ExclamationTriangleIcon className="w-5 h-5 text-amber-500" />
@@ -156,36 +156,36 @@ const ProfileDetailCard: React.FC<ProfileDetailCardProps> = ({
                         </div>
                     </div>
                     <div className="flex items-start gap-4 py-3">
-                        <ClockIcon className="w-6 h-6 text-slate-500 mt-1 flex-shrink-0" />
+                        <ClockIcon className="w-6 h-6 text-slate-500 dark:text-slate-400 mt-1 flex-shrink-0" />
                         <div className="flex-1">
-                            <p className="text-sm text-slate-500">سياسة الوقت الإضافي</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">سياسة الوقت الإضافي</p>
                             {isEditing ? (
                                     <select
                                     value={profile.overtimePolicyId || ''}
                                     onChange={(e) => onProfileChange('overtimePolicyId', e.target.value)}
-                                    className="w-full p-1 border border-slate-300 rounded-md bg-slate-50 focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold"
+                                    className="w-full p-1 border border-slate-300 rounded-md bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold"
                                 >
                                     {overtimePolicyOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                 </select>
                             ) : (
-                                <p className="font-semibold text-slate-800 break-words">{profile.overtimePolicyName || '-'}</p>
+                                <p className="font-semibold text-slate-800 dark:text-slate-200 break-words">{profile.overtimePolicyName || '-'}</p>
                             )}
                         </div>
                     </div>
                      <div className="flex items-start gap-4 py-3">
-                        <BriefcaseIcon className="w-6 h-6 text-slate-500 mt-1 flex-shrink-0" />
+                        <BriefcaseIcon className="w-6 h-6 text-slate-500 dark:text-slate-400 mt-1 flex-shrink-0" />
                         <div className="flex-1">
-                            <p className="text-sm text-slate-500">سياسة الإجازات</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">سياسة الإجازات</p>
                             {isEditing ? (
                                     <select
                                     value={profile.leavePolicyId || ''}
                                     onChange={(e) => onProfileChange('leavePolicyId', e.target.value)}
-                                    className="w-full p-1 border border-slate-300 rounded-md bg-slate-50 focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold"
+                                    className="w-full p-1 border border-slate-300 rounded-md bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold"
                                 >
                                     {leavePolicyOptions.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                 </select>
                             ) : (
-                                <p className="font-semibold text-slate-800 break-words">{profile.leavePolicyName || '-'}</p>
+                                <p className="font-semibold text-slate-800 dark:text-slate-200 break-words">{profile.leavePolicyName || '-'}</p>
                             )}
                         </div>
                     </div>

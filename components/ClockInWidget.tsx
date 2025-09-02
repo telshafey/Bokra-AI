@@ -11,7 +11,7 @@ const LiveClock: React.FC = () => {
     }, []);
 
     return (
-        <p className="text-5xl font-bold text-slate-800 tracking-wider">
+        <p className="text-5xl font-bold text-slate-800 dark:text-slate-100 tracking-wider">
             {time.toLocaleTimeString('ar-EG-u-nu-latn', { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
         </p>
     );
@@ -58,11 +58,11 @@ const ClockInWidget: React.FC<ClockInWidgetProps> = ({ status, onPunch }) => {
     };
 
     return (
-        <div className="bg-white p-6 rounded-xl shadow-md transition-shadow hover:shadow-lg text-center flex flex-col items-center justify-center">
+        <div className="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md transition-shadow hover:shadow-lg text-center flex flex-col items-center justify-center">
             <ClockIcon className="w-12 h-12 text-sky-500 mb-2"/>
-            <h2 className="text-xl font-bold mb-2 text-slate-700">تسجيل الدوام</h2>
+            <h2 className="text-xl font-bold mb-2 text-slate-700 dark:text-slate-200">تسجيل الدوام</h2>
             <LiveClock />
-            <p className="text-sm text-slate-500 mb-6">
+            <p className="text-sm text-slate-500 dark:text-slate-400 mb-6">
                 {new Date().toLocaleDateString('ar-EG-u-nu-latn', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
             </p>
 

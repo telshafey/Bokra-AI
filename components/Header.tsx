@@ -1,8 +1,11 @@
 
+
 import React, { useState } from 'react';
-import { BellIcon } from './icons/Icons';
+import { BellIcon, SunIcon, MoonIcon, LanguageIcon } from './icons/Icons';
 import { EmployeeProfile, Notification } from '../types';
 import NotificationPanel from './NotificationPanel';
+import { useTranslation, Language } from './contexts/LanguageContext';
+
 
 interface HeaderProps {
     pageTitle: string;
@@ -15,6 +18,10 @@ interface HeaderProps {
     onMarkAsRead: (notificationId: string) => void;
     onMarkAllAsRead: () => void;
     onClearAll: () => void;
+    theme: 'light' | 'dark';
+    setTheme: (theme: 'light' | 'dark') => void;
+    language: Language;
+    setLanguage: (lang: Language) => void;
 }
 
 const Header: React.FC<HeaderProps> = ({ 
@@ -27,19 +34,33 @@ const Header: React.FC<HeaderProps> = ({
     unreadCount,
     onMarkAsRead,
     onMarkAllAsRead,
-    onClearAll 
+    onClearAll,
+    theme,
+    setTheme,
+    language,
+    setLanguage
 }) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
+  const { t } = useTranslation();
 
   const getWelcomeMessage = () => {
     if (['Super Admin', 'Admin'].includes(currentUser.role)) {
-      return 'مرحباً، إليك نظرة شاملة على المنظومة.';
+      return t('header.welcomeAdmin');
     }
     if (['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'].includes(currentUser.role)) {
-      return `مرحباً ${currentUser.name}، إليك نظرة عامة على فريقك.`;
+      return t('header.welcomeManager', { name: currentUser.name });
     }
-    return `مرحباً بعودتك، ${currentUser.name}!`;
+    return t('header.welcome', { name: currentUser.name });
   };
+
+  const handleThemeToggle = () => {
+    setTheme(theme === 'light' ? 'dark' : 'light');
+  };
+  
+  const handleLanguageToggle = () => {
+    setLanguage(language === 'ar' ? 'en' : 'ar');
+  };
+
 
   return (
     <header className="bg-white dark:bg-slate-800 shadow-sm p-4">
@@ -52,7 +73,7 @@ const Header: React.FC<HeaderProps> = ({
         </div>
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
-              <label htmlFor="user-switcher" className="text-sm font-semibold text-slate-600 dark:text-slate-300">تسجيل الدخول كـ:</label>
+              <label htmlFor="user-switcher" className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t('header.loginAs')}</label>
               <select
                   id="user-switcher"
                   value={currentUserId}
@@ -64,6 +85,23 @@ const Header: React.FC<HeaderProps> = ({
                   ))}
               </select>
           </div>
+
+          <button
+            onClick={handleLanguageToggle}
+            className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+            aria-label="Toggle language"
+          >
+            <LanguageIcon className="h-6 w-6" />
+          </button>
+
+
+          <button
+            onClick={handleThemeToggle}
+            className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+            aria-label="Toggle theme"
+          >
+            {theme === 'light' ? <MoonIcon className="h-6 w-6" /> : <SunIcon className="h-6 w-6" />}
+          </button>
 
           <div className="relative">
             <button onClick={() => setIsPanelOpen(prev => !prev)} className="relative text-slate-500 hover:text-sky-600 dark:text-slate-400 dark:hover:text-sky-400 transition-colors">

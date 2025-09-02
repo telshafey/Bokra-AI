@@ -1,8 +1,9 @@
 
 import React, { useState, useMemo } from 'react';
 import { OffboardingProcess, OffboardingTemplate, EmployeeProfile, OffboardingTask, OffboardingTaskCategory } from '../types';
-import { UserMinusIcon } from './icons/Icons';
+import { UserMinusIcon, BanknotesIcon } from './icons/Icons';
 import StartOffboardingModal from './StartOffboardingModal';
+import CompensationCalculatorModal from './CompensationCalculatorModal';
 
 interface OffboardingPageProps {
     offboardingProcesses: OffboardingProcess[];
@@ -20,7 +21,8 @@ const ProgressBar: React.FC<{ value: number }> = ({ value }) => (
 
 const OffboardingPage: React.FC<OffboardingPageProps> = ({ offboardingProcesses, offboardingTemplates, employees, onStartOffboarding, onUpdateTask }) => {
     const [selectedProcessId, setSelectedProcessId] = useState<string | null>(offboardingProcesses[0]?.id || null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isStartModalOpen, setIsStartModalOpen] = useState(false);
+    const [isCalculatorModalOpen, setIsCalculatorModalOpen] = useState(false);
     
     const employeeMap = useMemo(() => new Map(employees.map(e => [e.id, e])), [employees]);
 
@@ -58,18 +60,27 @@ const OffboardingPage: React.FC<OffboardingPageProps> = ({ offboardingProcesses,
 
     return (
         <div className="flex flex-col gap-6 h-[calc(100vh-120px)]">
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center flex-wrap gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-800">إدارة إنهاء الخدمة</h1>
                     <p className="text-slate-500">متابعة خطط مغادرة الموظفين.</p>
                 </div>
-                <button
-                    onClick={() => setIsModalOpen(true)}
-                    className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md"
-                >
-                    <UserMinusIcon className="w-6 h-6" />
-                    <span>بدء إنهاء خدمة لموظف</span>
-                </button>
+                <div className="flex items-center gap-2">
+                    <button
+                        onClick={() => setIsCalculatorModalOpen(true)}
+                        className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md"
+                    >
+                        <BanknotesIcon className="w-6 h-6" />
+                        <span>حاسبة تعويضات نهاية الخدمة</span>
+                    </button>
+                    <button
+                        onClick={() => setIsStartModalOpen(true)}
+                        className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-lg shadow-md"
+                    >
+                        <UserMinusIcon className="w-6 h-6" />
+                        <span>بدء إنهاء خدمة لموظف</span>
+                    </button>
+                </div>
             </div>
 
             <div className="flex gap-6 flex-1 min-h-0">
@@ -155,12 +166,16 @@ const OffboardingPage: React.FC<OffboardingPageProps> = ({ offboardingProcesses,
             </div>
             
             <StartOffboardingModal
-                isOpen={isModalOpen}
-                onClose={() => setIsModalOpen(false)}
+                isOpen={isStartModalOpen}
+                onClose={() => setIsStartModalOpen(false)}
                 onStart={onStartOffboarding}
                 employees={employees}
                 templates={offboardingTemplates}
                 activeProcessEmployeeIds={offboardingProcesses.map(p => p.employeeId)}
+            />
+            <CompensationCalculatorModal
+                isOpen={isCalculatorModalOpen}
+                onClose={() => setIsCalculatorModalOpen(false)}
             />
         </div>
     );

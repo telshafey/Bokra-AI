@@ -1,6 +1,5 @@
 
 
-
 import React, { useState, useMemo, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -38,11 +37,12 @@ import ModuleManagementPage from './components/ModuleManagementPage';
 import MyTasksPage from './components/MyTasksPage';
 import ExternalTasksPage from './components/ExternalTasksPage';
 import MyRequestsPage from './components/MyRequestsPage';
-import ContractsPage from './components/ContractsPage';
 import TurnoverReportPage from './components/TurnoverReportPage';
 import ManagerPerformancePage from './components/ManagerPerformancePage';
 import AssetsManagementPage from './components/AssetsManagementPage';
 import MyAssetsPage from './components/MyAssetsPage';
+import ContractsPage from './components/ContractsPage';
+import { useTranslation } from './components/contexts/LanguageContext';
 
 import { useAssetsContext } from './components/contexts/AssetsContext';
 import { usePoliciesContext } from './components/contexts/PoliciesContext';
@@ -52,13 +52,13 @@ import { useRequestContext } from './components/contexts/RequestContext';
 
 
 import { INITIAL_USER_ID, getDerivedData, MOCK_ATTENDANCE_RECORDS as INITIAL_ATTENDANCE, NAV_GROUPS, BOTTOM_NAV_ITEMS, MOCK_PERFORMANCE_REVIEWS as INITIAL_PERFORMANCE_REVIEWS, MOCK_EMPLOYEE_DOCUMENTS, generatePayslips, MOCK_COURSES, MOCK_EMPLOYEE_COURSES, MOCK_NOTIFICATIONS, MOCK_MONTHLY_CHECK_INS, MOCK_SALARY_COMPONENTS, MOCK_COMPENSATION_PACKAGES, MOCK_SUPPORT_TICKETS, MOCK_JOB_OPENINGS, MOCK_CANDIDATES, MOCK_ONBOARDING_TEMPLATES, MOCK_ONBOARDING_PROCESSES, MOCK_OFFBOARDING_TEMPLATES, MOCK_OFFBOARDING_PROCESSES, MOCK_WORK_LOCATIONS, MOCK_ATTENDANCE_EVENTS, MOCK_EXTERNAL_TASKS, MOCK_GOALS, MOCK_EMPLOYEE_INFRACTIONS } from './constants';
-// FIX: Import EmployeeProfile type to resolve TypeScript error.
-import { HRRequest, LeaveRequest, RequestStatus, PerformanceReview, EmployeeDocument, AttendanceRecord, AppModule, WorkLocation, AttendanceEvent, ExternalTask, CourseStatus, TicketStatus, Course, EmployeeCourse, Notification, MonthlyCheckIn, SalaryComponent, CompensationPackage, SupportTicket, AttendanceAdjustmentRequest, LeavePermitRequest, JobOpening, Candidate, CandidateStage, OnboardingProcess, OnboardingTemplate, OffboardingProcess, OffboardingTemplate, EmployeeProfile } from './types';
+import { HRRequest, LeaveRequest, RequestStatus, PerformanceReview, EmployeeDocument, AttendanceRecord, AppModule, WorkLocation, AttendanceEvent, ExternalTask, CourseStatus, TicketStatus, Course, EmployeeCourse, Notification, MonthlyCheckIn, SalaryComponent, CompensationPackage, SupportTicket, AttendanceAdjustmentRequest, LeavePermitRequest, JobOpening, Candidate, CandidateStage, OnboardingProcess, OnboardingTemplate, OffboardingProcess, OffboardingTemplate, EmployeeProfile, AttentionItem } from './types';
 
 
 const App: React.FC = () => {
-  const [activePage, setActivePage] = useState('لوحة التحكم الشخصية');
-  const [theme, setTheme] = useState<'light' | 'dark'>('light');
+  const { language, setLanguage, t } = useTranslation();
+  const [activePage, setActivePage] = useState('sidebar.personalDashboard'); // Use key
+  const [theme, setTheme] = useState<'light' | 'dark'>('dark');
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
 
   // Module Management
@@ -130,7 +130,7 @@ const App: React.FC = () => {
     saveJobTitle,
     deleteJobTitle,
 } = useCompanyStructureContext();
-  const { requests, attendanceAdjustmentRequests, leavePermitRequests } = useRequestContext();
+  const { requests, attendanceAdjustmentRequests, leavePermitRequests, leaveRequests } = useRequestContext();
 
 
   const toggleSidebar = () => {
@@ -146,20 +146,18 @@ const App: React.FC = () => {
     }
   }, [theme]);
 
+  // Language management
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.documentElement.dir = language === 'ar' ? 'rtl' : 'ltr';
+  }, [language]);
+
+
   const allNavItems = useMemo(() => NAV_GROUPS.flatMap(group => group.items), []);
 
 
   // Derived Data based on currentUserId
-  const { 
-    currentUserProfile: currentUser, 
-    teamMembersProfiles: teamMembers,
-    mockTeamMemberDetails: teamDetails,
-    employeeDashboardData,
-    teamDashboardData,
-    teamReportsData,
-    teamGoals,
-    managerPerformanceData,
-  } = useMemo(() => getDerivedData(
+  const derivedData = useMemo(() => getDerivedData(
       currentUserId, employees, branches, MOCK_EMPLOYEE_INFRACTIONS, attendancePolicies, 
       overtimePolicies, leavePolicies, jobTitles, courses, employeeCourses, monthlyCheckIns, 
       supportTickets, notifications, requests, attendanceRecords, 
@@ -170,7 +168,52 @@ const App: React.FC = () => {
       supportTickets, notifications, requests, attendanceRecords, 
       employeeDocuments, performanceReviews, externalTasks, attendanceEvents, assets
   ]);
+
+  const { currentUserProfile: currentUser, teamMembersProfiles: teamMembers, employeeDashboardData } = derivedData;
   
+    // This is a helper function to translate request details.
+    const getTranslatedRequestDetailsText = (request: HRRequest): string => {
+        switch (request.type) {
+            case 'Leave':
+                return t('attention.leaveRequest', { leaveType: t(`leaveTypes.${request.leaveType}`) });
+            case 'AttendanceAdjustment':
+                const adjType = request.adjustmentType === 'LateArrival' ? t('attention.lateArrival') : t('attention.earlyDeparture');
+                return t('attention.attendanceAdjustment', { adjustmentType: adjType });
+            case 'LeavePermit':
+                return t('attention.leavePermit', { startTime: request.startTime, endTime: request.endTime });
+            case 'DataUpdate':
+                return request.details;
+            default:
+                return t('attention.unspecifiedRequest');
+        }
+    };
+
+    // This block translates dynamic data after it's been derived.
+    const { teamDashboardData, teamReportsData, teamGoals, managerPerformanceData, mockTeamMemberDetails: teamDetails } = useMemo(() => {
+        const translatedAttentionItems = derivedData.teamDashboardData.attentionItems.map((item): AttentionItem => ({
+            ...item,
+            text: getTranslatedRequestDetailsText(item.request),
+        }));
+
+        const translatedNotifications = derivedData.employeeDashboardData.recentActivities.map(activity => ({
+          ...activity,
+          text: t(activity.text, {name: 'كريم عادل'})
+        }));
+
+        return {
+            ...derivedData,
+            teamDashboardData: {
+                ...derivedData.teamDashboardData,
+                attentionItems: translatedAttentionItems,
+            },
+             employeeDashboardData: {
+                ...derivedData.employeeDashboardData,
+                recentActivities: translatedNotifications,
+            },
+        };
+    }, [derivedData, t]);
+
+
   const currentUserOnboardingProcess = useMemo(() => onboardingProcesses.find(p => p.employeeId === currentUserId), [onboardingProcesses, currentUserId]);
   const currentUserOffboardingProcess = useMemo(() => offboardingProcesses.find(p => p.employeeId === currentUserId), [offboardingProcesses, currentUserId]);
 
@@ -178,29 +221,29 @@ const App: React.FC = () => {
   const generatedPayslips = useMemo(() => generatePayslips(
     currentUserId, employees, attendanceRecords, attendancePolicies, 
     overtimePolicies, salaryComponents, compensationPackages, 
-    attendanceAdjustmentRequests, leavePermitRequests, externalTasks
+    attendanceAdjustmentRequests, leavePermitRequests, externalTasks, leaveRequests
   ), [
     currentUserId, employees, attendanceRecords, attendancePolicies, 
     overtimePolicies, salaryComponents, compensationPackages, 
-    attendanceAdjustmentRequests, leavePermitRequests, externalTasks
+    attendanceAdjustmentRequests, leavePermitRequests, externalTasks, leaveRequests
   ]);
   
   // Set default page on user change
   useEffect(() => {
-    let homePage = 'لوحة التحكم الشخصية'; // Default for Employee role
+    let homePageKey = 'sidebar.personalDashboard'; // Default for Employee role
     
     if (currentUserOnboardingProcess && activeModules.has('onboarding')) {
-        homePage = 'خطتي للتعيين';
+        homePageKey = 'sidebar.myOnboarding';
     } else if (currentUserOffboardingProcess && activeModules.has('offboarding')) {
-        homePage = 'خطتي لإنهاء الخدمة';
+        homePageKey = 'sidebar.myOffboarding';
     } else if (['Super Admin', 'Admin', 'Branch Admin'].includes(currentUser.role)) {
-        homePage = 'إدارة الموظفين';
+        homePageKey = 'sidebar.employeeManagement';
     } else if (['General Manager', 'HR Manager', 'Team Lead'].includes(currentUser.role)) {
-        homePage = 'لوحة تحكم الفريق';
+        homePageKey = 'sidebar.teamDashboard';
     }
 
     const allNavItemsAndBottom = [...allNavItems, ...BOTTOM_NAV_ITEMS];
-    const currentNavItem = allNavItemsAndBottom.find(item => item.name === activePage);
+    const currentNavItem = allNavItemsAndBottom.find(item => item.nameKey === activePage);
     
     let canSeeCurrentPage = true;
 
@@ -213,16 +256,16 @@ const App: React.FC = () => {
         
         canSeeCurrentPage = roleCheck && employeeCheck && moduleCheck;
 
-        if (currentNavItem?.name === 'خطتي للتعيين') {
+        if (currentNavItem?.nameKey === 'sidebar.myOnboarding') {
             canSeeCurrentPage = !!currentUserOnboardingProcess && activeModules.has('onboarding');
         }
-        if (currentNavItem?.name === 'خطتي لإنهاء الخدمة') {
+        if (currentNavItem?.nameKey === 'sidebar.myOffboarding') {
             canSeeCurrentPage = !!currentUserOffboardingProcess && activeModules.has('offboarding');
         }
     }
 
     if (!canSeeCurrentPage) {
-        setActivePage(homePage);
+        setActivePage(homePageKey);
     }
   }, [currentUserId, currentUser, activePage, currentUserOnboardingProcess, currentUserOffboardingProcess, allNavItems, activeModules]);
 
@@ -396,7 +439,7 @@ const App: React.FC = () => {
     const handleDeleteOnboardingTemplate = (templateId: string) => {
         const isInUse = onboardingProcesses.some(p => p.templateId === templateId);
         if (isInUse) {
-            alert("لا يمكن حذف هذا القالب لأنه قيد الاستخدام حاليًا من قبل موظف واحد على الأقل.");
+            alert(t('alerts.templateInUse'));
             return;
         }
         setOnboardingTemplates(prev => prev.filter(t => t.id !== templateId));
@@ -451,7 +494,7 @@ const App: React.FC = () => {
     const handleDeleteOffboardingTemplate = (templateId: string) => {
         const isInUse = offboardingProcesses.some(p => p.templateId === templateId);
         if (isInUse) {
-            alert("لا يمكن حذف هذا القالب لأنه قيد الاستخدام حاليًا من قبل موظف واحد على الأقل.");
+            alert(t('alerts.templateInUse'));
             return;
         }
         setOffboardingTemplates(prev => prev.filter(t => t.id !== templateId));
@@ -487,7 +530,7 @@ const App: React.FC = () => {
     const handleAttendancePunch = (coords: { latitude: number; longitude: number }) => {
         const policy = attendancePolicies.find(p => p.id === currentUser.attendancePolicyId);
         if (!policy) {
-            alert("لم يتم تعيين سياسة حضور لك. لا يمكنك تسجيل الحضور.");
+            alert(t('alerts.noAttendancePolicy'));
             return;
         }
 
@@ -510,7 +553,7 @@ const App: React.FC = () => {
             );
 
             if (todaysTasks.length === 0) {
-                alert("لا يمكنك تسجيل الحضور من خارج مواقع العمل المحددة بدون وجود مهمة خارجية مسندة لك لهذا اليوم.");
+                alert(t('alerts.punchOutsideGeofence'));
                 return;
             }
 
@@ -645,7 +688,6 @@ const App: React.FC = () => {
         }
     };
 
-    // FIX: Add handlers for branch and policy management to pass as props.
     const handleAddBranch = (name: string, managerId: string) => {
         const newBranch = addBranch(name);
         if (managerId) {
@@ -672,10 +714,10 @@ const App: React.FC = () => {
         const teamMemberIds = teamMembers.map(m => m.id);
         
         switch (activePage) {
-            case 'لوحة التحكم الشخصية':
+            case 'sidebar.personalDashboard':
                 return <Dashboard currentUser={currentUser} dashboardData={employeeDashboardData} onClockIn={handleAttendancePunch} setActivePage={setActivePage} activeModules={activeModules} />;
-            case 'حضوري وانصرافي':
-            case 'سجل الحضور':
+            case 'sidebar.myAttendance':
+            case 'sidebar.attendanceLog':
                  return <AttendancePage 
                     records={attendanceRecords.filter(r => teamMemberIds.includes(r.employeeId) || r.employeeId === currentUserId)}
                     attendanceEvents={attendanceEvents.filter(e => teamMemberIds.includes(e.employeeId) || e.employeeId === currentUserId)}
@@ -683,11 +725,11 @@ const App: React.FC = () => {
                     currentUser={currentUser}
                     externalTasks={externalTasks.filter(t => t.employeeId === currentUserId)}
                  />;
-            case 'كشف الراتب':
+            case 'sidebar.payslip':
                 return <PayslipPage payslips={generatedPayslips} />;
-            case 'الإجازات':
+            case 'sidebar.leave':
                 return <LeavePage currentUser={currentUser} />;
-            case 'ملفي الشخصي':
+            case 'sidebar.profile':
                 return <ProfilePage 
                     currentUser={currentUser} 
                     branches={branches}
@@ -697,9 +739,9 @@ const App: React.FC = () => {
                     jobTitles={jobTitles}
                     onUpdateProfile={updateProfile}
                 />;
-            case 'لوحة تحكم الفريق':
+            case 'sidebar.teamDashboard':
                 return <TeamDashboard currentUser={currentUser} teamMembers={teamMembers} dashboardData={teamDashboardData} setActivePage={setActivePage} />;
-            case 'التقارير':
+            case 'sidebar.reports':
                 return <ManagerReportsPage 
                     reportsData={teamReportsData} 
                     teamMembers={teamMembers} 
@@ -708,15 +750,14 @@ const App: React.FC = () => {
                     requests={requests}
                     externalTasks={externalTasks}
                 />;
-            case 'إدارة الأداء':
+            case 'sidebar.performanceManagement':
                 return <ManagerPerformancePage data={managerPerformanceData} />;
-            case 'تحليل مخاطر التسرب':
+            case 'sidebar.turnoverAnalysis':
                  return <TurnoverReportPage teamMembers={teamMembers} />;
-            case 'تحليلات الفريق':
+            case 'sidebar.teamAnalytics':
                 return <TeamAnalyticsPage 
                     teamDetails={teamDetails} 
                     currentUser={currentUser} 
-                    // FIX: Renamed prop to match the handler function name.
                     onCourseApprovalAction={handleCourseApprovalAction} 
                     onSaveMonthlyCheckIn={handleSaveMonthlyCheckIn} 
                     performanceReviews={performanceReviews} 
@@ -732,16 +773,15 @@ const App: React.FC = () => {
                     leavePolicies={leavePolicies}
                     jobTitles={jobTitles}
                 />;
-            case 'الأداء':
+            case 'sidebar.performance':
                 return <PerformancePage reviews={performanceReviews.filter(r => r.employeeId === currentUserId)} monthlyCheckIns={monthlyCheckIns.filter(mci => mci.employeeId === currentUserId)} />;
-            case 'أوراقي':
+            case 'sidebar.myDocuments':
                 return <MyDocumentsPage documents={employeeDocuments.filter(d => d.employeeId === currentUserId)} onSaveDocument={handleSaveDocument} />;
-            case 'عهدتي':
+            case 'sidebar.myAssets':
                 return <MyAssetsPage currentUserId={currentUserId} />;
-            case 'الإعدادات':
+            case 'sidebar.settings':
                 return <SettingsPage theme={theme} setTheme={setTheme} currentUser={currentUser} setActivePage={setActivePage} />;
-            case 'إدارة الموظفين':
-                // FIX: Pass all required props to SystemAdminPage.
+            case 'sidebar.employeeManagement':
                 return <SystemAdminPage 
                     allUsers={employees}
                     branches={branches}
@@ -760,8 +800,7 @@ const App: React.FC = () => {
                     onBulkAssignOvertimePolicy={bulkAssignOvertimePolicy}
                     onBulkAssignLeavePolicy={bulkAssignLeavePolicy}
                 />;
-            case 'إدارة الفروع':
-                // FIX: Pass all required props to BranchManagementPage.
+            case 'sidebar.branchManagement':
                 return <BranchManagementPage 
                     branches={branches}
                     employees={employees}
@@ -769,14 +808,13 @@ const App: React.FC = () => {
                     onUpdateBranch={handleUpdateBranch}
                     onArchiveBranch={archiveBranch}
                 />;
-            case 'التطوير والتدريب':
+            case 'sidebar.learning':
                 return <LearningPage currentUser={currentUser} allCourses={courses} employeeCourses={employeeCourses.filter(ec => ec.employeeId === currentUserId)} onRegisterExternalCourse={handleRegisterExternalCourse} onSubmitCourseUpdate={handleSubmitCourseUpdate} />;
-            case 'إدارة التدريب':
+            case 'sidebar.learningManagement':
                 return <LearningManagementPage allCourses={courses} onSaveCourse={handleSaveCourse} />;
-            case 'إدارة العهد':
+            case 'sidebar.assetsManagement':
                 return <AssetsManagementPage employees={employees} />;
-            case 'سياسات الحضور':
-                // FIX: Pass all required props to AttendancePolicyPage.
+            case 'sidebar.attendancePolicies':
                 return <AttendancePolicyPage 
                     attendancePolicies={attendancePolicies}
                     employees={employees}
@@ -791,8 +829,7 @@ const App: React.FC = () => {
                     onUpdateWorkLocation={handleUpdateWorkLocation}
                     onUpdatePolicyStatus={handleUpdatePolicyStatus}
                 />;
-            case 'سياسات الوقت الإضافي':
-                // FIX: Pass all required props to OvertimePolicyPage.
+            case 'sidebar.overtimePolicies':
                 return <OvertimePolicyPage 
                     overtimePolicies={overtimePolicies}
                     employees={employees}
@@ -804,8 +841,7 @@ const App: React.FC = () => {
                     branches={branches}
                     onUpdatePolicyStatus={handleUpdatePolicyStatus}
                 />;
-            case 'سياسات الإجازات':
-                // FIX: Pass all required props to LeavePolicyPage.
+            case 'sidebar.leavePolicies':
                 return <LeavePolicyPage 
                     leavePolicies={leavePolicies}
                     employees={employees}
@@ -817,83 +853,126 @@ const App: React.FC = () => {
                     branches={branches}
                     onUpdatePolicyStatus={handleUpdatePolicyStatus}
                 />;
-            case 'الهيكل الوظيفي':
-                // FIX: Pass all required props to JobTitlesPage.
-                return <JobTitlesPage 
-                    jobTitles={jobTitles}
-                    employees={employees}
-                    onSaveJobTitle={saveJobTitle}
-                    onDeleteJobTitle={deleteJobTitle}
+            case 'sidebar.jobTitles':
+                return <JobTitlesPage jobTitles={jobTitles} employees={employees} onSaveJobTitle={saveJobTitle} onDeleteJobTitle={deleteJobTitle} />;
+            case 'sidebar.compensation':
+                 return <CompensationPage 
+                    salaryComponents={salaryComponents} 
+                    compensationPackages={compensationPackages} 
+                    onSaveSalaryComponent={handleSaveSalaryComponent}
+                    onSaveCompensationPackage={handleSaveCompensationPackage}
+                 />;
+            case 'sidebar.contracts':
+                return <ContractsPage />;
+            case 'sidebar.support':
+                return <SupportTicketsPage 
+                    currentUser={currentUser} 
+                    allUsers={employees} 
+                    allTickets={supportTickets} 
+                    onCreateTicket={handleCreateTicket} 
+                    onAddMessage={handleAddMessage} 
+                    onUpdateTicketStatus={handleUpdateTicketStatus} 
                 />;
-            case 'التعويضات والمزايا':
-                return <CompensationPage salaryComponents={salaryComponents} compensationPackages={compensationPackages} onSaveSalaryComponent={handleSaveSalaryComponent} onSaveCompensationPackage={handleSaveCompensationPackage} />;
-            case 'تذاكر الدعم':
-                return <SupportTicketsPage currentUser={currentUser} allUsers={employees} allTickets={supportTickets} onCreateTicket={handleCreateTicket} onAddMessage={handleAddMessage} onUpdateTicketStatus={handleUpdateTicketStatus} />;
-            case 'التوظيف':
+            case 'sidebar.recruitment':
                 return <RecruitmentPage jobOpenings={jobOpenings} candidates={candidates} onUpdateCandidateStage={handleUpdateCandidateStage} />;
-            case 'التعيينات الجديدة':
-                return <OnboardingPage onboardingProcesses={onboardingProcesses} onboardingTemplates={onboardingTemplates} employees={employees} onStartOnboarding={handleStartOnboarding} onUpdateTask={handleUpdateOnboardingTask} />;
-            case 'إنهاء الخدمة':
-                return <OffboardingPage offboardingProcesses={offboardingProcesses} offboardingTemplates={offboardingTemplates} employees={employees} onStartOffboarding={handleStartOffboarding} onUpdateTask={handleUpdateOffboardingTask} />;
-            case 'إدارة المستندات':
-                return <DocumentManagementPage allDocuments={employeeDocuments} employees={employees} onSaveDocument={handleSaveDocument} onBulkDeleteDocuments={handleBulkDeleteDocuments} />;
-            case 'قوالب التعيين':
-                return <OnboardingTemplatesPage onboardingTemplates={onboardingTemplates} onboardingProcesses={onboardingProcesses} onSaveTemplate={handleSaveOnboardingTemplate} onDeleteTemplate={handleDeleteOnboardingTemplate} />;
-            case 'قوالب إنهاء الخدمة':
-                return <OffboardingTemplatesPage offboardingTemplates={offboardingTemplates} offboardingProcesses={offboardingProcesses} onSaveTemplate={handleSaveOffboardingTemplate} onDeleteTemplate={handleDeleteOffboardingTemplate} />;
-            case 'خطتي للتعيين':
-                return currentUserOnboardingProcess ? <MyOnboardingPage process={currentUserOnboardingProcess} onUpdateTask={handleUpdateOnboardingTask} /> : <div>لا توجد خطة تعيين لك.</div>;
-            case 'خطتي لإنهاء الخدمة':
-                return currentUserOffboardingProcess ? <MyOffboardingPage process={currentUserOffboardingProcess} onUpdateTask={handleUpdateOffboardingTask} /> : <div>لا توجد خطة إنهاء خدمة لك.</div>;
-            case 'إدارة الوحدات':
-                return <ModuleManagementPage activeModules={activeModules} onToggleModule={handleToggleModule} />;
-            case 'طلباتي':
-                return <MyRequestsPage requests={requests.filter(r => r.employeeId === currentUserId)} />;
-            case 'مهامي الخارجية':
-                return <MyTasksPage externalTasks={externalTasks.filter(t => t.employeeId === currentUserId)} onNewRequest={() => {}} />;
-            case 'إدارة المهام الخارجية':
-                return <ExternalTasksPage teamMembers={teamMembers} externalTasks={externalTasks.filter(t => teamMemberIds.includes(t.employeeId))} onSaveTask={() => {}} onRequestAction={() => {}} />;
+            case 'sidebar.onboarding':
+                return <OnboardingPage 
+                    onboardingProcesses={onboardingProcesses}
+                    onboardingTemplates={onboardingTemplates}
+                    employees={employees}
+                    onStartOnboarding={handleStartOnboarding}
+                    onUpdateTask={handleUpdateOnboardingTask}
+                />;
+            case 'sidebar.offboarding':
+                 return <OffboardingPage 
+                    offboardingProcesses={offboardingProcesses}
+                    offboardingTemplates={offboardingTemplates}
+                    employees={employees}
+                    onStartOffboarding={handleStartOffboarding}
+                    onUpdateTask={handleUpdateOffboardingTask}
+                />;
+             case 'sidebar.documentManagement':
+                return <DocumentManagementPage 
+                    allDocuments={employeeDocuments} 
+                    employees={employees} 
+                    onSaveDocument={handleSaveDocument}
+                    onBulkDeleteDocuments={handleBulkDeleteDocuments}
+                />;
+            case 'sidebar.onboardingTemplates':
+                return <OnboardingTemplatesPage 
+                    onboardingTemplates={onboardingTemplates}
+                    onboardingProcesses={onboardingProcesses}
+                    onSaveTemplate={handleSaveOnboardingTemplate}
+                    onDeleteTemplate={handleDeleteOnboardingTemplate}
+                />;
+             case 'sidebar.offboardingTemplates':
+                return <OffboardingTemplatesPage 
+                    offboardingTemplates={offboardingTemplates}
+                    offboardingProcesses={offboardingProcesses}
+                    onSaveTemplate={handleSaveOffboardingTemplate}
+                    onDeleteTemplate={handleDeleteOffboardingTemplate}
+                />;
+            case 'sidebar.myOnboarding':
+                return currentUserOnboardingProcess ? <MyOnboardingPage process={currentUserOnboardingProcess} onUpdateTask={handleUpdateOnboardingTask} /> : <div>{t('app.myOnboardingFallback')}</div>;
+            case 'sidebar.myOffboarding':
+                return currentUserOffboardingProcess ? <MyOffboardingPage process={currentUserOffboardingProcess} onUpdateTask={handleUpdateOffboardingTask} /> : <div>{t('app.myOffboardingFallback')}</div>;
+             case 'sidebar.moduleManagement':
+                 return <ModuleManagementPage activeModules={activeModules} onToggleModule={handleToggleModule} />;
+            case 'sidebar.myTasks':
+                 const myExternalTasks = externalTasks.filter(t => t.employeeId === currentUserId);
+                 return <MyTasksPage externalTasks={myExternalTasks} onNewRequest={() => {}} />;
+            case 'sidebar.externalTasksManagement':
+                 const teamExternalTasks = externalTasks.filter(t => teamMemberIds.includes(t.employeeId));
+                 return <ExternalTasksPage teamMembers={teamMembers} externalTasks={teamExternalTasks} onSaveTask={() => {}} onRequestAction={() => {}} />;
+            case 'sidebar.myRequests':
+                 const myRequests = requests.filter(r => r.employeeId === currentUserId);
+                 return <MyRequestsPage requests={myRequests} currentUser={currentUser} />;
             default:
-                return <div>الصفحة المطلوبة غير موجودة.</div>;
+                return <div className="p-8 text-center text-slate-500">{t('general.notFound')}</div>;
         }
     };
 
-    const navItem = allNavItems.find(item => item.name === activePage) || BOTTOM_NAV_ITEMS.find(item => item.name === activePage);
-    const pageTitle = navItem?.pageTitle || activePage;
+    const navItem = [...allNavItems, ...BOTTOM_NAV_ITEMS].find(item => item.nameKey === activePage);
+    const pageTitle = navItem ? t(navItem.pageTitleKey || navItem.nameKey) : 'Bokra HR';
+
 
     return (
-        <div dir="rtl" className={`flex h-screen bg-slate-100 font-cairo ${theme === 'dark' ? 'dark' : ''}`}>
-            <Sidebar 
-                activePage={activePage} 
-                setActivePage={setActivePage} 
-                companyName={companyName}
-                onCompanyNameChange={setCompanyName}
+      <div className={`flex h-screen bg-slate-100 dark:bg-slate-900 font-sans ${theme === 'dark' ? 'dark' : ''}`}>
+          <Sidebar 
+            activePage={activePage} 
+            setActivePage={setActivePage} 
+            companyName={companyName} 
+            onCompanyNameChange={setCompanyName} 
+            currentUser={currentUser}
+            hasOnboardingProcess={!!currentUserOnboardingProcess}
+            hasOffboardingProcess={!!currentUserOffboardingProcess}
+            activeModules={activeModules}
+            isSidebarCollapsed={isSidebarCollapsed}
+            toggleSidebar={toggleSidebar}
+          />
+          <div className="flex-1 flex flex-col overflow-hidden">
+             <Header 
+                pageTitle={pageTitle}
                 currentUser={currentUser}
-                hasOnboardingProcess={!!currentUserOnboardingProcess}
-                hasOffboardingProcess={!!currentUserOffboardingProcess}
-                activeModules={activeModules}
-                isSidebarCollapsed={isSidebarCollapsed}
-                toggleSidebar={toggleSidebar}
-            />
-            <div className="flex-1 flex flex-col overflow-hidden">
-                <Header 
-                    pageTitle={pageTitle}
-                    currentUser={currentUser}
-                    allEmployees={employees}
-                    currentUserId={currentUserId}
-                    setCurrentUserId={setCurrentUserId}
-                    notifications={notifications.filter(n => n.recipientId === currentUserId)}
-                    unreadCount={notifications.filter(n => n.recipientId === currentUserId && !n.isRead).length}
-                    onMarkAsRead={handleMarkAsRead}
-                    onMarkAllAsRead={handleMarkAllAsRead}
-                    onClearAll={handleClearAllNotifications}
-                />
-                <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-100 dark:bg-slate-900 p-6">
-                    {renderPage()}
-                </main>
-                <Chatbot />
-            </div>
-        </div>
+                allEmployees={employees}
+                currentUserId={currentUserId}
+                setCurrentUserId={setCurrentUserId}
+                notifications={notifications.filter(n => n.recipientId === currentUserId)}
+                unreadCount={notifications.filter(n => n.recipientId === currentUserId && !n.isRead).length}
+                onMarkAsRead={handleMarkAsRead}
+                onMarkAllAsRead={handleMarkAllAsRead}
+                onClearAll={handleClearAllNotifications}
+                theme={theme}
+                setTheme={setTheme}
+                language={language}
+                setLanguage={setLanguage}
+             />
+              <main className="flex-1 overflow-x-hidden overflow-y-auto bg-slate-100 dark:bg-slate-900 p-6">
+                  {renderPage()}
+              </main>
+          </div>
+          <Chatbot currentUser={currentUser}/>
+      </div>
     );
 };
 

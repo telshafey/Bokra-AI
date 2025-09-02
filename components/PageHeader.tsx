@@ -9,8 +9,8 @@ interface PageHeaderProps {
 const PageHeader: React.FC<PageHeaderProps> = ({ title, subtitle, actionButton }) => (
     <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
-            <h1 className="text-2xl md:text-3xl font-bold text-slate-800">{title}</h1>
-            <p className="text-sm md:text-base text-slate-500 mt-1">{subtitle}</p>
+            <h1 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-slate-100">{title}</h1>
+            <p className="text-sm md:text-base text-slate-500 dark:text-slate-400 mt-1">{subtitle}</p>
         </div>
         {actionButton && <div className="flex-shrink-0">{actionButton}</div>}
     </div>

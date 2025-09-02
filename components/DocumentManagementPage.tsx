@@ -135,6 +135,9 @@ const DocumentManagementPage: React.FC<DocumentManagementPageProps> = ({ allDocu
                             <option value="all">الكل</option>
                             <option value="عقد عمل">عقد عمل</option>
                             <option value="مسوغات تعيين">مسوغات تعيين</option>
+                            <option value="استمارة ١ (تأمينات)">استمارة ١ (تأمينات)</option>
+                            <option value="استمارة ٢ (تأمينات)">استمارة ٢ (تأمينات)</option>
+                            <option value="استمارة ٦ (تأمينات)">استمارة ٦ (تأمينات)</option>
                         </select>
                     </div>
                      <div>

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { ManagerPerformanceData, MonthlyCheckInRating, TeamMemberPerformanceData } from '../types';
 import PageHeader from './PageHeader';
@@ -13,7 +12,7 @@ const ProgressBar: React.FC<{ progress: number }> = ({ progress }) => {
     else if (progress === 100) bgColor = 'bg-emerald-500';
 
     return (
-        <div className="w-full bg-slate-200 rounded-full h-2.5">
+        <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5">
             <div 
                 className={`h-2.5 rounded-full transition-all duration-500 ${bgColor}`} 
                 style={{ width: `${progress}%` }}
@@ -23,9 +22,9 @@ const ProgressBar: React.FC<{ progress: number }> = ({ progress }) => {
 };
 
 const RATING_STYLES: Record<MonthlyCheckInRating, { text: string; bg: string; }> = {
-    'Exceeds Expectations': { text: 'text-emerald-800', bg: 'bg-emerald-100' },
-    'Meets Expectations': { text: 'text-sky-800', bg: 'bg-sky-100' },
-    'Needs Improvement': { text: 'text-amber-800', bg: 'bg-amber-100' },
+    'Exceeds Expectations': { text: 'text-emerald-800 dark:text-emerald-300', bg: 'bg-emerald-100 dark:bg-emerald-900/60' },
+    'Meets Expectations': { text: 'text-sky-800 dark:text-sky-300', bg: 'bg-sky-100 dark:bg-sky-900/60' },
+    'Needs Improvement': { text: 'text-amber-800 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-amber-900/60' },
 };
 
 const RATING_TRANSLATION: Record<MonthlyCheckInRating, string> = {
@@ -35,9 +34,9 @@ const RATING_TRANSLATION: Record<MonthlyCheckInRating, string> = {
 };
 
 const REVIEW_STATUS_STYLES: Record<TeamMemberPerformanceData['reviewStatus'], { text: string; bg: string; }> = {
-    'Completed': { text: 'text-emerald-800', bg: 'bg-emerald-100' },
-    'In Progress': { text: 'text-sky-800', bg: 'bg-sky-100' },
-    'Not Started': { text: 'text-slate-800', bg: 'bg-slate-100' },
+    'Completed': { text: 'text-emerald-800 dark:text-emerald-300', bg: 'bg-emerald-100 dark:bg-emerald-900/60' },
+    'In Progress': { text: 'text-sky-800 dark:text-sky-300', bg: 'bg-sky-100 dark:bg-sky-900/60' },
+    'Not Started': { text: 'text-slate-800 dark:text-slate-300', bg: 'bg-slate-100 dark:bg-slate-700' },
 };
 
 interface ManagerPerformancePageProps {
@@ -62,8 +61,8 @@ const ManagerPerformancePage: React.FC<ManagerPerformancePageProps> = ({ data })
 
             <Card paddingClass="p-0">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-right text-slate-500">
-                        <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+                    <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
+                        <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-50 dark:bg-slate-700">
                             <tr>
                                 <th className="px-6 py-3">الموظف</th>
                                 <th className="px-6 py-3">تقدم الأهداف</th>
@@ -74,13 +73,13 @@ const ManagerPerformancePage: React.FC<ManagerPerformancePageProps> = ({ data })
                         </thead>
                         <tbody>
                             {teamPerformance.map(item => (
-                                <tr key={item.member.id} className="bg-white border-b hover:bg-slate-50">
-                                    <td className="px-6 py-4 font-medium text-slate-900">
+                                <tr key={item.member.id} className="bg-white dark:bg-slate-800 border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                                    <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-200">
                                         <div className="flex items-center gap-3">
                                             <img src={item.member.avatarUrl} alt={item.member.name} className="w-10 h-10 rounded-full"/>
                                             <div>
                                                 <p>{item.member.name}</p>
-                                                <p className="text-xs text-slate-500">{item.member.title}</p>
+                                                <p className="text-xs text-slate-500 dark:text-slate-400">{item.member.title}</p>
                                             </div>
                                         </div>
                                     </td>
@@ -106,7 +105,7 @@ const ManagerPerformancePage: React.FC<ManagerPerformancePageProps> = ({ data })
                                         </span>
                                     </td>
                                     <td className="px-6 py-4">
-                                        <button className="font-medium text-sky-600 hover:underline">
+                                        <button className="font-medium text-sky-600 dark:text-sky-400 hover:underline">
                                             {item.reviewStatus === 'Completed' ? 'عرض التقييم' : 'بدء التقييم'}
                                         </button>
                                     </td>

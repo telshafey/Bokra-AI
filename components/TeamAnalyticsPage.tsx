@@ -59,13 +59,13 @@ const TeamAnalyticsPage: React.FC<TeamAnalyticsPageProps> = ({
   return (
     <div className="flex flex-col gap-6 h-[calc(100vh-120px)]">
       {canViewAllBranches && (
-        <div className="bg-white p-3 rounded-xl shadow-md flex items-center gap-4">
-          <label htmlFor="branch-filter" className="font-semibold text-slate-700 text-sm">فلترة حسب الفرع:</label>
+        <div className="bg-white dark:bg-slate-800 p-3 rounded-xl shadow-md flex items-center gap-4">
+          <label htmlFor="branch-filter" className="font-semibold text-slate-700 dark:text-slate-200 text-sm">فلترة حسب الفرع:</label>
           <select 
             id="branch-filter"
             value={branchFilter}
             onChange={(e) => setBranchFilter(e.target.value)}
-            className="p-2 border border-slate-300 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
+            className="p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
           >
             <option value="all">كل الفروع</option>
             {branches.map(branch => (
@@ -96,8 +96,8 @@ const TeamAnalyticsPage: React.FC<TeamAnalyticsPageProps> = ({
               onSaveDocument={onSaveDocument}
             />
           ) : (
-            <div className="bg-white h-full rounded-xl shadow-md flex items-center justify-center">
-              <p className="text-slate-500 text-center">
+            <div className="bg-white dark:bg-slate-800 h-full rounded-xl shadow-md flex items-center justify-center">
+              <p className="text-slate-500 dark:text-slate-400 text-center">
                 {filteredTeamDetails.length === 0 ? "لا يوجد موظفون في هذا الفرع." : "الرجاء اختيار عضو من القائمة لعرض التفاصيل."}
               </p>
             </div>

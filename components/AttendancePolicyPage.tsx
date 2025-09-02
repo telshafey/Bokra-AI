@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import type { AttendancePolicy, EmployeeProfile, Branch, WorkLocation } from '../types';
 import { PlusCircleIcon, PencilIcon, ArchiveBoxIcon, UserGroupIcon, ArrowsUpDownIcon, ChevronUpIcon, ChevronDownIcon } from './icons/Icons';
@@ -26,10 +25,11 @@ interface AttendancePolicyPageProps {
     onUpdateWorkLocation: (location: WorkLocation) => void;
 }
 
-const STATUS_STYLES: Record<'Active' | 'PendingApproval' | 'Archived', { text: string; bg: string; }> = {
-    Active: { text: 'text-emerald-800', bg: 'bg-emerald-100' },
-    PendingApproval: { text: 'text-amber-800', bg: 'bg-amber-100' },
-    Archived: { text: 'text-slate-800', bg: 'bg-slate-200' },
+const STATUS_STYLES: Record<AttendancePolicy['status'], { text: string; bg: string; }> = {
+    Active: { text: 'text-emerald-800 dark:text-emerald-300', bg: 'bg-emerald-100 dark:bg-emerald-900/60' },
+    PendingApproval: { text: 'text-amber-800 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-amber-900/60' },
+    Archived: { text: 'text-slate-800 dark:text-slate-300', bg: 'bg-slate-200 dark:bg-slate-700' },
+    Rejected: { text: 'text-red-800 dark:text-red-300', bg: 'bg-red-100 dark:bg-red-900/60' },
 };
 
 const AttendancePolicyPage: React.FC<AttendancePolicyPageProps> = ({
@@ -143,7 +143,7 @@ const AttendancePolicyPage: React.FC<AttendancePolicyPageProps> = ({
     };
     
     const locationCardAction = (
-        <button onClick={() => { setEditingLocation(null); setIsLocationModalOpen(true); }} className="p-2 rounded-full text-sky-600 hover:bg-sky-100">
+        <button onClick={() => { setEditingLocation(null); setIsLocationModalOpen(true); }} className="p-2 rounded-full text-sky-600 hover:bg-sky-100 dark:text-sky-400 dark:hover:bg-slate-700">
             <PlusCircleIcon className="w-6 h-6"/>
         </button>
     );
@@ -166,16 +166,16 @@ const AttendancePolicyPage: React.FC<AttendancePolicyPageProps> = ({
                     </ActionBar>
                     
                     {selectedPolicyIds.size > 0 && (
-                        <div className="bg-sky-100 p-3 rounded-lg flex justify-between items-center">
-                            <span className="text-sky-800 font-semibold">{selectedPolicyIds.size} سياسات محددة</span>
+                        <div className="bg-sky-100 dark:bg-sky-900/50 p-3 rounded-lg flex justify-between items-center">
+                            <span className="text-sky-800 dark:text-sky-300 font-semibold">{selectedPolicyIds.size} سياسات محددة</span>
                             <button onClick={handleBulkArchive} className="bg-amber-500 text-white font-semibold px-3 py-1 rounded-md text-sm hover:bg-amber-600">أرشفة المحدد</button>
                         </div>
                     )}
                     
                     <Card paddingClass="p-0">
                         <div className="overflow-x-auto">
-                            <table className="w-full text-sm text-right text-slate-500">
-                                <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+                            <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
+                                <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-50 dark:bg-slate-700">
                                     <tr>
                                         <th className="p-4"><input type="checkbox" onChange={handleToggleSelectAll} checked={selectedPolicyIds.size === visiblePolicies.length && visiblePolicies.length > 0} /></th>
                                         <th className="px-6 py-3"><button onClick={() => handleSort('name')} className="flex items-center gap-1">الاسم {getSortIcon('name')}</button></th>
@@ -187,16 +187,16 @@ const AttendancePolicyPage: React.FC<AttendancePolicyPageProps> = ({
                                 </thead>
                                 <tbody>
                                     {visiblePolicies.map(policy => (
-                                        <tr key={policy.id} className="border-b">
+                                        <tr key={policy.id} className="border-b dark:border-slate-700">
                                             <td className="p-4"><input type="checkbox" checked={selectedPolicyIds.has(policy.id)} onChange={() => handleToggleSelect(policy.id)} /></td>
-                                            <td className="px-6 py-4 font-semibold">{policy.name}</td>
+                                            <td className="px-6 py-4 font-semibold dark:text-slate-200">{policy.name}</td>
                                             <td className="px-6 py-4">{policy.scope === 'company' ? 'عام للشركة' : `خاص بـ ${branches.find(b => b.id === policy.branchId)?.name || 'فرع'}`}</td>
                                             <td className="px-6 py-4">{employees.filter(e => e.attendancePolicyId === policy.id).length}</td>
                                             <td className="px-6 py-4"><span className={`px-2 py-1 text-xs font-semibold rounded-full ${STATUS_STYLES[policy.status].bg} ${STATUS_STYLES[policy.status].text}`}>{policy.status === 'Active' ? 'نشط' : (policy.status === 'Archived' ? 'مؤرشفة' : 'بانتظار الموافقة')}</span></td>
                                             <td className="px-6 py-4 flex items-center gap-1">
-                                                <button onClick={() => setAssigningPolicy(policy)} disabled={policy.status !== 'Active'} className="p-2 text-slate-500 hover:text-emerald-600 rounded-full disabled:text-slate-300" title="تعيين"><UserGroupIcon className="w-5 h-5"/></button>
-                                                <button onClick={() => handleOpenEditModal(policy)} className="p-2 text-slate-500 hover:text-sky-600 rounded-full" title="تعديل"><PencilIcon className="w-5 h-5"/></button>
-                                                <button onClick={() => handleArchive(policy.id)} className="p-2 text-slate-500 hover:text-amber-600 rounded-full" title="أرشفة"><ArchiveBoxIcon className="w-5 h-5"/></button>
+                                                <button onClick={() => setAssigningPolicy(policy)} disabled={policy.status !== 'Active'} className="p-2 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-full disabled:text-slate-300 dark:disabled:text-slate-600" title="تعيين"><UserGroupIcon className="w-5 h-5"/></button>
+                                                <button onClick={() => handleOpenEditModal(policy)} className="p-2 text-slate-500 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 rounded-full" title="تعديل"><PencilIcon className="w-5 h-5"/></button>
+                                                <button onClick={() => handleArchive(policy.id)} className="p-2 text-slate-500 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 rounded-full" title="أرشفة"><ArchiveBoxIcon className="w-5 h-5"/></button>
                                             </td>
                                         </tr>
                                     ))}
@@ -210,12 +210,12 @@ const AttendancePolicyPage: React.FC<AttendancePolicyPageProps> = ({
                         <div className="absolute top-4 left-4">{locationCardAction}</div>
                         <div className="space-y-3 max-h-[60vh] overflow-y-auto">
                             {workLocations.map(loc => (
-                                <div key={loc.id} className="p-3 bg-slate-50 rounded-lg flex justify-between items-center">
+                                <div key={loc.id} className="p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg flex justify-between items-center">
                                     <div>
-                                        <p className="font-semibold text-slate-800">{loc.name}</p>
-                                        <p className="text-xs text-slate-500">النطاق: {loc.radiusMeters} متر</p>
+                                        <p className="font-semibold text-slate-800 dark:text-slate-200">{loc.name}</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400">النطاق: {loc.radiusMeters} متر</p>
                                     </div>
-                                    <button onClick={() => { setEditingLocation(loc); setIsLocationModalOpen(true); }} className="p-1 text-slate-400 hover:text-sky-600">
+                                    <button onClick={() => { setEditingLocation(loc); setIsLocationModalOpen(true); }} className="p-1 text-slate-400 dark:text-slate-500 hover:text-sky-600 dark:hover:text-sky-400">
                                         <PencilIcon className="w-4 h-4" />
                                     </button>
                                 </div>

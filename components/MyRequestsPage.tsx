@@ -1,16 +1,22 @@
 import React, { useState, useMemo } from 'react';
-import type { HRRequest, RequestStatus, RequestType } from '../types';
-import { BriefcaseIcon, DocumentTextIcon, IdentificationIcon, ClockIcon, ArrowsUpDownIcon, ChevronUpIcon, ChevronDownIcon } from './icons/Icons';
+import type { HRRequest, RequestStatus, RequestType, EmployeeProfile, LeavePermitRequest } from '../types';
+import { BriefcaseIcon, DocumentTextIcon, IdentificationIcon, ClockIcon, ArrowsUpDownIcon, ChevronUpIcon, ChevronDownIcon, PlusCircleIcon } from './icons/Icons';
 import Card from './Card';
 import ActionBar from './ActionBar';
+import RequestLeaveModal from './RequestLeaveModal';
+import AttendanceAdjustmentModal from './AttendanceAdjustmentModal';
+import LeavePermitModal from './LeavePermitModal';
+import { useRequestContext } from './contexts/RequestContext';
+import { usePoliciesContext } from './contexts/PoliciesContext';
+
 
 type FilterStatus = 'All' | RequestStatus;
 type SortableKeys = 'type' | 'submissionDate' | 'status';
 
 const STATUS_BADGE: Record<RequestStatus, string> = {
-    Approved: 'bg-emerald-100 text-emerald-800',
-    Pending: 'bg-amber-100 text-amber-800',
-    Rejected: 'bg-red-100 text-red-800',
+    Approved: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300',
+    Pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300',
+    Rejected: 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300',
 };
 
 const STATUS_TRANSLATION: Record<RequestStatus, string> = {
@@ -20,11 +26,10 @@ const STATUS_TRANSLATION: Record<RequestStatus, string> = {
 };
 
 const REQUEST_TYPE_INFO: Record<RequestType, { translation: string; icon: React.FC<React.SVGProps<SVGSVGElement>>; color: string }> = {
-    Leave: { translation: 'طلب إجازة', icon: BriefcaseIcon, color: 'text-sky-500' },
-    Certificate: { translation: 'طلب شهادة', icon: DocumentTextIcon, color: 'text-emerald-500' },
-    DataUpdate: { translation: 'تحديث بيانات', icon: IdentificationIcon, color: 'text-amber-500' },
-    AttendanceAdjustment: { translation: 'طلب تعديل حضور', icon: ClockIcon, color: 'text-purple-500' },
-    LeavePermit: { translation: 'طلب إذن انصراف', icon: ClockIcon, color: 'text-indigo-500' },
+    Leave: { translation: 'طلب إجازة', icon: BriefcaseIcon, color: 'text-sky-500 dark:text-sky-400' },
+    DataUpdate: { translation: 'تحديث بيانات', icon: IdentificationIcon, color: 'text-amber-500 dark:text-amber-400' },
+    AttendanceAdjustment: { translation: 'طلب تعديل حضور', icon: ClockIcon, color: 'text-purple-500 dark:text-purple-400' },
+    LeavePermit: { translation: 'طلب إذن انصراف', icon: ClockIcon, color: 'text-indigo-500 dark:text-indigo-400' },
 };
 
 const FilterButton: React.FC<{ label: string; isActive: boolean; onClick: () => void; count: number }> = ({ label, isActive, onClick, count }) => (
@@ -33,11 +38,11 @@ const FilterButton: React.FC<{ label: string; isActive: boolean; onClick: () => 
         className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors flex items-center gap-2 ${
             isActive 
                 ? 'bg-sky-600 text-white shadow' 
-                : 'bg-white text-slate-600 hover:bg-slate-100'
+                : 'bg-white text-slate-600 hover:bg-slate-100 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600'
         }`}
     >
         {label}
-        <span className={`text-xs px-2 py-0.5 rounded-full ${isActive ? 'bg-white text-sky-700' : 'bg-slate-200 text-slate-600'}`}>
+        <span className={`text-xs px-2 py-0.5 rounded-full ${isActive ? 'bg-white text-sky-700' : 'bg-slate-200 text-slate-600 dark:bg-slate-600 dark:text-slate-200'}`}>
             {count}
         </span>
     </button>
@@ -51,7 +56,6 @@ const RequestDetails: React.FC<{ request: HRRequest }> = ({ request }) => {
             return <span>{request.adjustmentType === 'LateArrival' ? 'عذر تأخير' : 'انصراف مبكر'} بتاريخ {request.date} - {request.reason}</span>;
         case 'LeavePermit':
             return <span>بتاريخ {request.date} من {request.startTime} إلى {request.endTime} - {request.reason}</span>;
-        case 'Certificate':
         case 'DataUpdate':
             return <span>{request.details}</span>;
         default:
@@ -61,11 +65,19 @@ const RequestDetails: React.FC<{ request: HRRequest }> = ({ request }) => {
 
 interface MyRequestsPageProps {
     requests: HRRequest[];
+    currentUser: EmployeeProfile;
 }
 
-const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests }) => {
+const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests, currentUser }) => {
     const [activeFilter, setActiveFilter] = useState<FilterStatus>('All');
     const [sortConfig, setSortConfig] = useState<{ key: SortableKeys, direction: 'asc' | 'desc' } | null>({ key: 'submissionDate', direction: 'desc' });
+    const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+    const [isAdjustmentModalOpen, setIsAdjustmentModalOpen] = useState(false);
+    const [isPermitModalOpen, setIsPermitModalOpen] = useState(false);
+    
+    const { handleNewLeaveRequest, handleNewAttendanceAdjustmentRequest, handleNewLeavePermitRequest } = useRequestContext();
+    const { attendancePolicies } = usePoliciesContext();
+    const userAttendancePolicy = attendancePolicies.find(p => p.id === currentUser.attendancePolicyId);
 
     const sortedAndFilteredRequests = useMemo(() => {
         let filtered = requests;
@@ -120,10 +132,18 @@ const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests }) => {
     return (
         <div className="space-y-6">
             <ActionBar>
-                <div>
-                    <p className="text-sm text-slate-500">عرض وتتبع جميع طلباتك المقدمة لقسم الموارد البشرية.</p>
+                <div className="flex items-center gap-2 flex-wrap">
+                    <button onClick={() => setIsLeaveModalOpen(true)} className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-sm shadow-sm">
+                        <PlusCircleIcon className="w-5 h-5"/><span>طلب إجازة</span>
+                    </button>
+                    <button onClick={() => setIsPermitModalOpen(true)} className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-sm shadow-sm">
+                        <ClockIcon className="w-5 h-5"/><span>طلب إذن انصراف</span>
+                    </button>
+                    <button onClick={() => setIsAdjustmentModalOpen(true)} className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-sm shadow-sm">
+                        <PlusCircleIcon className="w-5 h-5"/><span>تقديم عذر حضور</span>
+                    </button>
                 </div>
-                 <div className="flex items-center gap-2 p-1 bg-slate-100 rounded-full">
+                 <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-full">
                     <FilterButton label="الكل" isActive={activeFilter === 'All'} onClick={() => setActiveFilter('All')} count={requestCounts.All} />
                     <FilterButton label="قيد الانتظار" isActive={activeFilter === 'Pending'} onClick={() => setActiveFilter('Pending')} count={requestCounts.Pending} />
                     <FilterButton label="موافق عليه" isActive={activeFilter === 'Approved'} onClick={() => setActiveFilter('Approved')} count={requestCounts.Approved} />
@@ -134,8 +154,8 @@ const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests }) => {
             {/* Requests Table */}
             <Card paddingClass="p-0">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-right text-slate-500">
-                        <thead className="text-xs text-slate-700 uppercase bg-slate-100">
+                    <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
+                        <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-100 dark:bg-slate-700">
                             <tr>
                                 <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('type')} className="flex items-center gap-1">نوع الطلب {getSortIcon('type')}</button></th>
                                 <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('submissionDate')} className="flex items-center gap-1">تاريخ التقديم {getSortIcon('submissionDate')}</button></th>
@@ -148,8 +168,8 @@ const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests }) => {
                                 const typeInfo = REQUEST_TYPE_INFO[request.type];
                                 const Icon = typeInfo.icon;
                                 return (
-                                    <tr key={request.id} className="border-b hover:bg-slate-50 odd:bg-white even:bg-slate-50">
-                                        <td className="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">
+                                    <tr key={request.id} className="border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 odd:bg-white dark:odd:bg-slate-800 even:bg-slate-50 dark:even:bg-slate-800/50">
+                                        <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-200 whitespace-nowrap">
                                             <div className="flex items-center gap-3">
                                                 <Icon className={`w-6 h-6 ${typeInfo.color}`} />
                                                 <span>{typeInfo.translation}</span>
@@ -172,13 +192,31 @@ const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests }) => {
                         </tbody>
                     </table>
                      {sortedAndFilteredRequests.length === 0 && (
-                        <div className="text-center py-12 text-slate-500">
+                        <div className="text-center py-12 text-slate-500 dark:text-slate-400">
                             <p className="font-semibold text-lg">لا توجد طلبات تطابق هذا الفلتر.</p>
                             <p className="text-sm">حاول تحديد فلتر مختلف لعرض طلباتك.</p>
                         </div>
                     )}
                 </div>
             </Card>
+
+             <RequestLeaveModal
+                isOpen={isLeaveModalOpen}
+                onClose={() => setIsLeaveModalOpen(false)}
+                onSubmit={(data) => handleNewLeaveRequest({...data, employeeId: currentUser.id})}
+            />
+            <AttendanceAdjustmentModal
+                isOpen={isAdjustmentModalOpen}
+                onClose={() => setIsAdjustmentModalOpen(false)}
+                onSubmit={(data) => handleNewAttendanceAdjustmentRequest({...data, employeeId: currentUser.id})}
+            />
+            <LeavePermitModal
+                isOpen={isPermitModalOpen}
+                onClose={() => setIsPermitModalOpen(false)}
+                onSubmit={(data) => handleNewLeavePermitRequest({...data, employeeId: currentUser.id})}
+                attendancePolicy={userAttendancePolicy}
+                permitRequests={requests.filter(r => r.type === 'LeavePermit') as LeavePermitRequest[]}
+            />
         </div>
     );
 };

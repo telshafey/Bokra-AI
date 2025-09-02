@@ -1,5 +1,5 @@
 
-import { GoogleGenAI, Type } from "@google/genai";
+import { GoogleGenAI } from "@google/genai";
 import type { EmployeeProfile, TurnoverAnalysisResult } from '../types';
 
 function getYearsOfService(hireDate: string): number {
@@ -32,7 +32,7 @@ export const getTurnoverPrediction = async (employee: EmployeeProfile): Promise<
 
     const prompt = `
         You are an expert HR analyst. Your task is to predict the employee turnover risk based on the provided data.
-        Analyze the following anonymous employee data and return your prediction in the specified JSON format.
+        Analyze the following anonymous employee data and return your prediction ONLY as a valid JSON object with the following structure: { "riskLevel": "Low" | "Medium" | "High", "riskScore": number, "keyFactors": string[] }. Do not include any other text, explanations, or markdown formatting like \`\`\`json.
         
         Data:
         ${JSON.stringify(employeeData, null, 2)}
@@ -44,32 +44,9 @@ export const getTurnoverPrediction = async (employee: EmployeeProfile): Promise<
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
             contents: prompt,
-            config: {
-                responseMimeType: "application/json",
-                responseSchema: {
-                    type: Type.OBJECT,
-                    properties: {
-                        riskLevel: { 
-                            type: Type.STRING,
-                            enum: ['Low', 'Medium', 'High'],
-                            description: "The predicted turnover risk level."
-                        },
-                        riskScore: {
-                            type: Type.NUMBER,
-                            description: "A numerical score from 0 to 100 representing the risk."
-                        },
-                        keyFactors: {
-                            type: Type.ARRAY,
-                            items: { type: Type.STRING },
-                            description: "A list of the top 3-4 key factors influencing the prediction."
-                        }
-                    },
-                    required: ["riskLevel", "riskScore", "keyFactors"]
-                }
-            }
         });
         
-        const jsonString = response.text;
+        const jsonString = response.text.trim();
         const result = JSON.parse(jsonString);
         return result as TurnoverAnalysisResult;
 

@@ -7,6 +7,7 @@ import { PoliciesProvider } from './components/contexts/PoliciesContext';
 import { CompanyStructureProvider } from './components/contexts/CompanyStructureContext';
 import { UserProvider } from './components/contexts/UserContext';
 import { RequestProvider } from './components/contexts/RequestContext';
+import { LanguageProvider } from './components/contexts/LanguageContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -16,16 +17,18 @@ if (!rootElement) {
 const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
-    <PoliciesProvider>
-      <AssetsProvider>
-        <CompanyStructureProvider>
-          <UserProvider>
-            <RequestProvider>
-              <App />
-            </RequestProvider>
-          </UserProvider>
-        </CompanyStructureProvider>
-      </AssetsProvider>
-    </PoliciesProvider>
+    <LanguageProvider>
+      <PoliciesProvider>
+        <AssetsProvider>
+          <CompanyStructureProvider>
+            <UserProvider>
+              <RequestProvider>
+                <App />
+              </RequestProvider>
+            </UserProvider>
+          </CompanyStructureProvider>
+        </AssetsProvider>
+      </PoliciesProvider>
+    </LanguageProvider>
   </React.StrictMode>
 );

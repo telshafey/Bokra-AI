@@ -7,6 +7,7 @@ import LearningProgressWidget from './LearningProgressWidget';
 import SupportTicketWidget from './SupportTicketWidget';
 import StatCard from './StatCard';
 import { BriefcaseIcon, DocumentTextIcon, ClockIcon } from './icons/Icons';
+import { useTranslation } from './contexts/LanguageContext';
 
 
 interface DashboardProps {
@@ -18,12 +19,13 @@ interface DashboardProps {
 }
 
 const Dashboard: React.FC<DashboardProps> = ({ currentUser, dashboardData, onClockIn, setActivePage, activeModules }) => {
+  const { t } = useTranslation();
   const { stats } = dashboardData;
 
   const statCards = stats ? [
-    { title: "رصيد الإجازات السنوية", value: `${stats.remainingAnnualLeave} يوم`, icon: BriefcaseIcon, color: "bg-sky-500" },
-    { title: "الطلبات قيد الانتظار", value: `${stats.pendingRequestsCount}`, icon: DocumentTextIcon, color: "bg-amber-500" },
-    { title: "إضافي هذا الشهر", value: `${stats.overtimeHoursThisMonth} ساعة`, icon: ClockIcon, color: "bg-emerald-500" },
+    { title: t('dashboard.remainingAnnualLeave'), value: `${stats.remainingAnnualLeave} ${t('general.day')}`, icon: BriefcaseIcon, color: "bg-sky-500" },
+    { title: t('dashboard.pendingRequests'), value: `${stats.pendingRequestsCount}`, icon: DocumentTextIcon, color: "bg-amber-500" },
+    { title: t('dashboard.overtimeThisMonth'), value: `${stats.overtimeHoursThisMonth} ${t('general.hour')}`, icon: ClockIcon, color: "bg-emerald-500" },
   ] : [];
 
 

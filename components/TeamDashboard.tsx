@@ -26,9 +26,9 @@ const TeamDashboard: React.FC<TeamDashboardProps> = ({ currentUser, teamMembers,
         setIsApprovalModalOpen(true);
     } else {
         // Default navigation for other types
-        let page = 'تحليلات الفريق';
-        if (item.type === 'ticket') page = 'تذاكر الدعم';
-        setActivePage(page);
+        let pageKey = 'sidebar.teamAnalytics';
+        if (item.type === 'ticket') pageKey = 'sidebar.support';
+        setActivePage(pageKey);
     }
   };
 

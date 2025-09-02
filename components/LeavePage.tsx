@@ -1,12 +1,11 @@
-
 import React, { useState } from 'react';
-import { LEAVE_TYPE_TRANSLATION } from '../constants';
 import type { LeaveBalance, LeaveRequest, RequestStatus, LeaveType, EmployeeProfile } from '../types';
-import { CalendarIcon, BriefcaseIcon, ClockIcon, XCircleIcon, PlusCircleIcon } from './icons/Icons';
+import { CalendarIcon, BriefcaseIcon, ClockIcon, XCircleIcon, PlusCircleIcon, UserPlusIcon, AcademicCapIcon, ArrowDownTrayIcon } from './icons/Icons';
 import RequestLeaveModal from './RequestLeaveModal';
 import Card from './Card';
 import ActionBar from './ActionBar';
 import { useRequestContext } from './contexts/RequestContext';
+import { useTranslation } from './contexts/LanguageContext';
 
 
 const LEAVE_TYPE_ICONS: Record<LeaveType, React.FC<React.SVGProps<SVGSVGElement>>> = {
@@ -14,6 +13,8 @@ const LEAVE_TYPE_ICONS: Record<LeaveType, React.FC<React.SVGProps<SVGSVGElement>
     'Sick': BriefcaseIcon,
     'Casual': ClockIcon,
     'Unpaid': XCircleIcon,
+    'NewbornRegistration': UserPlusIcon,
+    'Exam': AcademicCapIcon,
 }
 
 const LEAVE_TYPE_COLORS: Record<LeaveType, string> = {
@@ -21,12 +22,14 @@ const LEAVE_TYPE_COLORS: Record<LeaveType, string> = {
     'Sick': 'bg-emerald-500',
     'Casual': 'bg-amber-500',
     'Unpaid': 'bg-slate-500',
+    'NewbornRegistration': 'bg-indigo-500',
+    'Exam': 'bg-purple-500',
 }
 
 const STATUS_BADGE: Record<RequestStatus, string> = {
-    Approved: 'bg-emerald-100 text-emerald-800',
-    Pending: 'bg-amber-100 text-amber-800',
-    Rejected: 'bg-red-100 text-red-800',
+    Approved: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300',
+    Pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300',
+    Rejected: 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300',
 };
 
 const STATUS_TRANSLATION: Record<RequestStatus, string> = {
@@ -38,16 +41,17 @@ const STATUS_TRANSLATION: Record<RequestStatus, string> = {
 const BalanceCard: React.FC<{ balance: LeaveBalance }> = ({ balance }) => {
     const Icon = LEAVE_TYPE_ICONS[balance.type];
     const color = LEAVE_TYPE_COLORS[balance.type];
+    const unit = balance.type === 'NewbornRegistration' ? 'مرات' : 'يوم';
 
     return (
-        <div className="bg-white p-5 rounded-xl shadow-md flex items-center gap-4 transition-all duration-300 hover:shadow-lg hover:scale-105">
+        <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-md flex items-center gap-4 transition-all duration-300 hover:shadow-lg hover:scale-105">
             <div className={`p-3 rounded-full ${color}`}>
                 <Icon className="h-7 w-7 text-white" />
             </div>
             <div>
-                <p className="text-slate-500 text-sm">{balance.typeName}</p>
-                <p className="text-xl font-bold text-slate-800">
-                    {balance.balance - balance.used} <span className="text-sm font-normal">/ {balance.balance} يوم</span>
+                <p className="text-slate-500 dark:text-slate-400 text-sm">{balance.typeName}</p>
+                <p className="text-xl font-bold text-slate-800 dark:text-slate-100">
+                    {balance.balance - balance.used} <span className="text-sm font-normal">/ {balance.balance} {unit}</span>
                 </p>
             </div>
         </div>
@@ -61,6 +65,7 @@ interface LeavePageProps {
 const LeavePage: React.FC<LeavePageProps> = ({ currentUser }) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { leaveRequests, handleNewLeaveRequest } = useRequestContext();
+    const { t } = useTranslation();
     
     const userLeaveRequests = leaveRequests.filter(r => r.employeeId === currentUser.id);
 
@@ -82,8 +87,8 @@ const LeavePage: React.FC<LeavePageProps> = ({ currentUser }) => {
 
             <Card title="سجل الإجازات" paddingClass="p-0">
                 <div className="overflow-x-auto max-h-[60vh] overflow-y-auto">
-                    <table className="w-full text-sm text-right text-slate-500">
-                        <thead className="text-xs text-slate-700 uppercase bg-slate-50 sticky top-0">
+                    <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
+                        <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-50 dark:bg-slate-700 sticky top-0">
                             <tr>
                                 <th scope="col" className="px-6 py-3">نوع الإجازة</th>
                                 <th scope="col" className="px-6 py-3">تاريخ البدء</th>
@@ -91,13 +96,14 @@ const LeavePage: React.FC<LeavePageProps> = ({ currentUser }) => {
                                 <th scope="col" className="px-6 py-3">المدة</th>
                                 <th scope="col" className="px-6 py-3">الحالة</th>
                                 <th scope="col" className="px-6 py-3">السبب</th>
+                                <th scope="col" className="px-6 py-3">المرفقات</th>
                             </tr>
                         </thead>
                         <tbody>
                             {userLeaveRequests.map((request) => (
-                                <tr key={request.id} className="border-b hover:bg-slate-50 odd:bg-white even:bg-slate-50">
-                                    <td className="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">
-                                        {LEAVE_TYPE_TRANSLATION[request.leaveType]}
+                                <tr key={request.id} className="border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 odd:bg-white dark:odd:bg-slate-800 even:bg-slate-50 dark:even:bg-slate-800/50">
+                                    <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-200 whitespace-nowrap">
+                                        {t(`leaveTypes.${request.leaveType}`)}
                                     </td>
                                     <td className="px-6 py-4">{new Date(request.startDate).toLocaleDateString('ar-EG-u-nu-latn')}</td>
                                     <td className="px-6 py-4">{new Date(request.endDate).toLocaleDateString('ar-EG-u-nu-latn')}</td>
@@ -109,6 +115,15 @@ const LeavePage: React.FC<LeavePageProps> = ({ currentUser }) => {
                                     </td>
                                     <td className="px-6 py-4 max-w-xs truncate" title={request.reason}>
                                         {request.reason}
+                                    </td>
+                                     <td className="px-6 py-4">
+                                        {request.attachmentUrl ? (
+                                            <a href="#" className="text-sky-600 dark:text-sky-400 hover:underline" title={request.attachmentUrl}>
+                                                <ArrowDownTrayIcon className="w-5 h-5 mx-auto" />
+                                            </a>
+                                        ) : (
+                                            '-'
+                                        )}
                                     </td>
                                 </tr>
                             ))}

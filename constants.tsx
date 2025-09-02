@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { HomeIcon, CalendarIcon, DocumentTextIcon, UserCircleIcon, CogIcon, ArrowLeftOnRectangleIcon, BriefcaseIcon, BanknotesIcon, ChartPieIcon, AcademicCapIcon, UserGroupIcon, ClipboardDocumentListIcon, DocumentCheckIcon, BuildingOfficeIcon, PresentationChartLineIcon, CheckCircleIcon, ShieldCheckIcon, ShieldExclamationIcon, BookOpenIcon, UsersIcon, DocumentDuplicateIcon, ClockIcon, QuestionMarkCircleIcon, CheckBadgeIcon, ArchiveBoxIcon, ClipboardDocumentCheckIcon, UserPlusIcon, UserMinusIcon, ChevronDownIcon, ExclamationTriangleIcon, ArrowsUpDownIcon, ChevronUpIcon, ComputerDesktopIcon } from './components/icons/Icons';
 import type { NavItem, EmployeeProfile, AttendanceRecord, Payslip, PayslipItem, LeaveRequest, HRRequest, TeamMemberDetails, LeaveType, LeaveDistributionDataItem, TeamWeeklyAttendanceItem, Branch, Goal, PerformanceReview, Skill, DevelopmentSuggestion, AttendancePolicy, LeavePolicy, EmployeeInfraction, JobTitle, Course, EmployeeCourse, Notification, MonthlyCheckIn, SalaryComponent, CompensationPackage, SupportTicket, EmployeeDashboardData, TeamDashboardData, RecentActivityItem, AttentionItem, TeamLearningStat, OvertimePolicy, AttendanceAdjustmentRequest, LeavePermitRequest, TeamMember, JobOpening, Candidate, OnboardingTemplate, OnboardingProcess, OnboardingTaskCategory, OnboardingResponsible, OffboardingTemplate, OffboardingProcess, OffboardingTaskCategory, OffboardingResponsible, NavGroup, EmployeeDocument, WorkLocation, AttendanceEvent, ExternalTask, TeamReportsData, TeamMemberStats, RequestType, AttendanceStatus, ApprovalContext, OverlappingLeave, PerformanceCycle, TeamMemberPerformanceData, ManagerPerformanceData, Asset } from './types';
@@ -50,16 +51,16 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
     },
     {
         id: 'emp-gm', employeeId: 'BOK-0001', name: 'علي سالم', jobTitleId: 'jt-gm', title: '', role: 'General Manager', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=gm', department: 'الإدارة', hireDate: '2021-01-01', employmentStatus: 'دوام كامل', managerId: undefined, branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 40000,
-        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 30, used: 5 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 2 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 1 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 } ],
+        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 30, used: 5 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 2 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 1 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01012345678', workEmail: 'ali.salem@bokra.hr', personalEmail: 'ali.salem@email.com' },
-        personal: { dateOfBirth: '1980-05-15', nationality: 'مصري', nationalId: '28005150100123', maritalStatus: 'متزوج', gender: 'Male', religion: 'Muslim' }, address: '123 شارع النيل، القاهرة',
+        personal: { dateOfBirth: '1970-05-15', nationality: 'مصري', nationalId: '27005150100123', maritalStatus: 'متزوج', gender: 'Male', religion: 'Muslim' }, address: '123 شارع النيل، القاهرة',
         performanceScore: 4.8, satisfactionSurveyScore: 4.5, lastPromotionDate: '2023-01-01', salaryComparedToMarket: 'Above',
         leavePolicyId: 'leave-policy-management',
         compensationPackageId: 'pkg-manager',
     },
     {
         id: 'emp-001', employeeId: 'BOK-0002', name: 'فاطمة أحمد', jobTitleId: 'jt-hr-manager', title: '', role: 'HR Manager', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=fatima', department: 'الموارد البشرية', hireDate: '2022-03-10', employmentStatus: 'دوام كامل', managerId: 'emp-gm', branchId: 'branch-cai', checkInStatus: 'CheckedIn', baseSalary: 25000,
-        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 5 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 1 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 3 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 } ],
+        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 5 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 1 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 3 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01123456789', workEmail: 'fatima.ahmed@bokra.hr', personalEmail: 'fatima.ahmed@email.com' },
         personal: { dateOfBirth: '1988-11-20', nationality: 'مصرية', nationalId: '28811200100456', maritalStatus: 'متزوج', gender: 'Female', religion: 'Muslim' }, address: '456 شارع الجمهورية، القاهرة',
         performanceScore: 4.5, satisfactionSurveyScore: 4.2, lastPromotionDate: null, salaryComparedToMarket: 'Average',
@@ -70,7 +71,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
     },
     {
         id: 'emp-002', employeeId: 'BOK-0003', name: 'كريم عادل', jobTitleId: 'jt-dev-lead', title: '', role: 'Team Lead', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=karim', department: 'تكنولوجيا المعلومات', hireDate: '2021-08-15', employmentStatus: 'دوام كامل', managerId: 'emp-001', branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 20000,
-        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 10 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 0 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 } ],
+        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 10 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 0 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01234567890', workEmail: 'karim.adel@bokra.hr', personalEmail: 'karim.adel@email.com' },
         personal: { dateOfBirth: '1992-02-10', nationality: 'مصري', nationalId: '29202100100789', maritalStatus: 'أعزب', gender: 'Male', religion: 'Muslim' }, address: '789 شارع التحرير، القاهرة',
         performanceScore: 4.2, satisfactionSurveyScore: 3.8, lastPromotionDate: '2023-08-15', salaryComparedToMarket: 'Average',
@@ -80,9 +81,9 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
     },
     {
         id: 'emp-003', employeeId: 'BOK-0004', name: 'هدى زكي', jobTitleId: 'jt-sse', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=hoda', department: 'تكنولوجيا المعلومات', hireDate: '2022-11-01', employmentStatus: 'دوام كامل', managerId: 'emp-002', branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 12000,
-        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 2 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 3 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 1 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 } ],
+        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 45, used: 2 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 3 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 1 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01098765432', workEmail: 'hoda.zaki@bokra.hr', personalEmail: 'hoda.zaki@email.com' },
-        personal: { dateOfBirth: '1995-07-25', nationality: 'مصرية', nationalId: '29507250100123', maritalStatus: 'أعزب', gender: 'Female', religion: 'Muslim' }, address: '101 شارع عباس العقاد، القاهرة',
+        personal: { dateOfBirth: '1995-07-25', nationality: 'مصرية', nationalId: '29507250100123', maritalStatus: 'أعزب', gender: 'Female', religion: 'Muslim', isSpecialNeeds: true }, address: '101 شارع عباس العقاد، القاهرة',
         performanceScore: 3.5, satisfactionSurveyScore: 3.2, lastPromotionDate: null, salaryComparedToMarket: 'Below',
         attendancePolicyId: 'policy-standard-2025',
         overtimePolicyId: 'ot-policy-standard',
@@ -91,7 +92,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
     },
     {
         id: 'emp-004', employeeId: 'BOK-0005', name: 'طارق حسن', jobTitleId: 'jt-se', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=tarek', department: 'تكنولوجيا المعلومات', hireDate: '2023-06-20', employmentStatus: 'دوام كامل', managerId: 'emp-002', branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 9000,
-        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 0 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 4 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 } ],
+        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 0 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 4 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01187654321', workEmail: 'tarek.hassan@bokra.hr', personalEmail: 'tarek.hassan@email.com' },
         personal: { dateOfBirth: '1998-01-30', nationality: 'مصري', nationalId: '29801300100456', maritalStatus: 'أعزب', gender: 'Male', religion: 'Muslim' }, address: '202 شارع مكرم عبيد، القاهرة',
         performanceScore: 4.0, satisfactionSurveyScore: 4.5, lastPromotionDate: null, salaryComparedToMarket: 'Average',
@@ -102,7 +103,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
     },
      {
         id: 'emp-005', employeeId: 'BOK-0006', name: 'سارة كمال', jobTitleId: 'jt-se', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=sara', department: 'تكنولوجيا المعلومات', hireDate: '2025-09-01', employmentStatus: 'دوام كامل', managerId: 'emp-002', branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 9500,
-        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 0 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 0 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 } ],
+        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 15, used: 0 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 0 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01011223344', workEmail: 'sara.kamal@bokra.hr', personalEmail: 'sara.kamal@email.com' },
         personal: { dateOfBirth: '1999-03-15', nationality: 'مصرية', nationalId: '29903150100123', maritalStatus: 'أعزب', gender: 'Female', religion: 'Muslim' }, address: '303 شارع التسعين، القاهرة',
         performanceScore: 4.0, satisfactionSurveyScore: 4.0, lastPromotionDate: null, salaryComparedToMarket: 'Average',
@@ -113,7 +114,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
     },
     {
         id: 'emp-101', employeeId: 'BOK-1001', name: 'عمر فوزي', jobTitleId: 'jt-branch-manager-alex', title: '', role: 'Branch Admin', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=omar', department: 'الإدارة', hireDate: '2022-05-10', employmentStatus: 'دوام كامل', managerId: 'emp-gm', branchId: 'branch-alex', checkInStatus: 'CheckedOut', baseSalary: 22000,
-        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 7 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 2 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 } ],
+        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 7 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 2 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01276543210', workEmail: 'omar.fawzy@bokra.hr', personalEmail: 'omar.fawzy@email.com' },
         personal: { dateOfBirth: '1989-09-09', nationality: 'مصري', nationalId: '28909090200789', maritalStatus: 'متزوج', gender: 'Male', religion: 'Muslim' }, address: '12 شارع فؤاد، الإسكندرية',
         performanceScore: 4.6, satisfactionSurveyScore: 4.8, lastPromotionDate: null, salaryComparedToMarket: 'Average',
@@ -121,7 +122,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
     },
     {
         id: 'emp-102', employeeId: 'BOK-1002', name: 'منى سيد', jobTitleId: 'jt-sales-lead', title: '', role: 'Team Lead', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=mona', department: 'المبيعات', hireDate: '2023-01-05', employmentStatus: 'دوام كامل', managerId: 'emp-101', branchId: 'branch-alex', checkInStatus: 'CheckedOut', baseSalary: 18000,
-        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 4 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 1 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 0 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 } ],
+        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 4 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 1 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 0 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01065432109', workEmail: 'mona.sayed@bokra.hr', personalEmail: 'mona.sayed@email.com' },
         personal: { dateOfBirth: '1994-04-12', nationality: 'مصرية', nationalId: '29404120200123', maritalStatus: 'أعزب', gender: 'Female', religion: 'Muslim' }, address: '34 شارع صفية زغلول، الإسكندرية',
         performanceScore: 4.1, satisfactionSurveyScore: 4.0, lastPromotionDate: null, salaryComparedToMarket: 'Average',
@@ -130,12 +131,18 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
     },
     {
         id: 'emp-103', employeeId: 'BOK-1003', name: 'يوسف إبراهيم', jobTitleId: 'jt-sales-rep', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=youssef', department: 'المبيعات', hireDate: '2023-09-01', employmentStatus: 'دوام كامل', managerId: 'emp-102', branchId: 'branch-alex', checkInStatus: 'CheckedOut', baseSalary: 8500,
-        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 1 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 1 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 } ],
+        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 1 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 1 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01154321098', workEmail: 'youssef.ibrahim@bokra.hr', personalEmail: 'youssef.ibrahim@email.com' },
         personal: { dateOfBirth: '1999-12-01', nationality: 'مصري', nationalId: '29912010200456', maritalStatus: 'أعزب', gender: 'Male', religion: 'Muslim' }, address: '56 شارع أبو قير، الإسكندرية',
         performanceScore: 3.9, satisfactionSurveyScore: 4.3, lastPromotionDate: null, salaryComparedToMarket: 'Average',
         overtimePolicyId: 'ot-policy-high-rate',
         leavePolicyId: 'leave-policy-standard',
+    },
+    {
+        id: 'emp-inactive-1', employeeId: 'BOK-9001', name: 'موظف سابق', jobTitleId: 'jt-se', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=inactive', department: 'تكنولوجيا المعلومات', hireDate: '2021-01-01', employmentStatus: 'Inactive', deactivationDate: '2023-08-31T10:00:00.000Z', managerId: 'emp-002', branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 8000,
+        leaveBalances: [], contact: { phone: '-', workEmail: 'ex.employee@bokra.hr', personalEmail: '-' },
+        personal: { dateOfBirth: '-', nationality: 'مصري', nationalId: '-', maritalStatus: 'أعزب', gender: 'Male', religion: 'Muslim' }, address: '-',
+        performanceScore: 3.0, satisfactionSurveyScore: 3.0, lastPromotionDate: null, salaryComparedToMarket: 'Average',
     },
 ];
 
@@ -144,13 +151,6 @@ export const INITIAL_USER_ID = 'emp-003'; // Default to a regular employee view
 // =================================================================================
 // ===== MOCK DATA =====
 // =================================================================================
-
-export const LEAVE_TYPE_TRANSLATION: Record<LeaveType, string> = {
-    'Annual': 'سنوية',
-    'Sick': 'مرضية',
-    'Casual': 'عارضة',
-    'Unpaid': 'بدون أجر',
-};
 
 // FIX: Added missing 'type' and 'submissionDate' properties to match the LeaveRequest interface.
 export const MOCK_LEAVE_REQUESTS_INITIAL: LeaveRequest[] = [
@@ -175,7 +175,6 @@ export const MOCK_LEAVE_PERMIT_REQUESTS_INITIAL: LeavePermitRequest[] = [
 ];
 
 const nonLeaveRequests: HRRequest[] = [
-    { id: 5, employeeId: 'emp-003', type: 'Certificate', submissionDate: '2025-05-22', details: 'طلب شهادة راتب', status: 'Approved' },
     { id: 7, employeeId: 'emp-102', type: 'DataUpdate', submissionDate: '2025-05-18', details: 'تحديث عنوان السكن', status: 'Approved' },
 ];
 
@@ -233,8 +232,41 @@ export const MOCK_OVERTIME_POLICY: OvertimePolicy[] = [
 ];
 
 export const MOCK_LEAVE_POLICY: LeavePolicy[] = [
-    { id: 'leave-policy-standard', name: 'سياسة الإجازات القياسية للشركة', scope: 'company', status: 'Active', annualLeaveBalance: 21, sickLeaveBalance: 15, casualLeaveBalance: 7 },
-    { id: 'leave-policy-management', name: 'سياسة الإجازات للإدارة (خاص بالقاهرة)', scope: 'branch', branchId: 'branch-cai', status: 'Active', annualLeaveBalance: 30, sickLeaveBalance: 20, casualLeaveBalance: 7 }
+    {
+        id: 'leave-policy-standard',
+        name: 'سياسة الإجازات القياسية 2025',
+        scope: 'company',
+        status: 'Active',
+        newEmployeeBalance: 15,
+        newEmployeeEligibilityMonths: 6,
+        annualLeaveTiers: [
+            { id: 'tier-1', afterYears: 1, days: 21 },
+            { id: 'tier-2', afterYears: 10, days: 30 },
+        ],
+        specialAnnualLeave: {
+            over50YearsOld: 30,
+            specialNeeds: 45,
+        },
+        maternityLeaveMonths: 4,
+        casualLeaveBalance: 7,
+    },
+    {
+        id: 'leave-policy-management',
+        name: 'سياسة الإجازات للإدارة العليا',
+        scope: 'company',
+        status: 'Active',
+        newEmployeeBalance: 30,
+        newEmployeeEligibilityMonths: 0,
+        annualLeaveTiers: [
+             { id: 'tier-m-1', afterYears: 0, days: 30 },
+        ],
+        specialAnnualLeave: {
+            over50YearsOld: 30,
+            specialNeeds: 45,
+        },
+        maternityLeaveMonths: 4,
+        casualLeaveBalance: 7,
+    }
 ];
 
 export const MOCK_EMPLOYEE_INFRACTIONS: EmployeeInfraction[] = [
@@ -439,8 +471,9 @@ export const MOCK_ONBOARDING_TEMPLATES: OnboardingTemplate[] = [
         name: 'خطة تعيين عامة',
         description: 'قالب أساسي لجميع الموظفين الجدد.',
         tasks: [
-            { title: 'توقيع عقد العمل', category: 'الأوراق والمستندات', responsible: 'الموظف الجديد', dueOffsetDays: 0 },
+            { title: 'التأكد من توقيع وتوزيع 4 نسخ من العقد (للموظف، الشركة، مكتب التأمينات، مكتب العمل)', category: 'الأوراق والمستندات', responsible: 'الموارد البشرية', dueOffsetDays: 0 },
             { title: 'تقديم مسوغات التعيين', category: 'الأوراق والمستندات', responsible: 'الموظف الجديد', dueOffsetDays: 1 },
+            { title: 'تقديم استمارة ١ للتأمينات الاجتماعية', category: 'الأوراق والمستندات', responsible: 'الموارد البشرية', dueOffsetDays: 2 },
             { title: 'إنشاء بريد إلكتروني للشركة', category: 'إعدادات تقنية', responsible: 'تقنية المعلومات', dueOffsetDays: 0 },
             { title: 'التعريف بأعضاء الفريق', category: 'التعريف بالفريق', responsible: 'المدير المباشر', dueOffsetDays: 0 },
             { title: 'شرح سياسة الحضور والإجازات', category: 'سياسات الشركة', responsible: 'الموارد البشرية', dueOffsetDays: 1 },
@@ -452,8 +485,9 @@ export const MOCK_ONBOARDING_TEMPLATES: OnboardingTemplate[] = [
         name: 'خطة تعيين للمطورين',
         description: 'قالب مخصص للمطورين الجدد.',
         tasks: [
-            { title: 'توقيع عقد العمل واتفاقية السرية', category: 'الأوراق والمستندات', responsible: 'الموظف الجديد', dueOffsetDays: 0 },
+            { title: 'التأكد من توقيع وتوزيع 4 نسخ من العقد (للموظف، الشركة، مكتب التأمينات، مكتب العمل)', category: 'الأوراق والمستندات', responsible: 'الموارد البشرية', dueOffsetDays: 0 },
             { title: 'تقديم مسوغات التعيين', category: 'الأوراق والمستندات', responsible: 'الموظف الجديد', dueOffsetDays: 1 },
+            { title: 'تقديم استمارة ١ للتأمينات الاجتماعية', category: 'الأوراق والمستندات', responsible: 'الموارد البشرية', dueOffsetDays: 2 },
             { title: 'إعداد جهاز اللابتوب وتثبيت البرامج', category: 'إعدادات تقنية', responsible: 'تقنية المعلومات', dueOffsetDays: 0 },
             { title: 'منح صلاحيات الوصول إلى Github/Gitlab', category: 'إعدادات تقنية', responsible: 'المدير المباشر', dueOffsetDays: 1 },
             { title: 'جلسة تعريفية ببنية المشروع', category: 'التعريف بالفريق', responsible: 'المدير المباشر', dueOffsetDays: 2 },
@@ -485,7 +519,7 @@ export const MOCK_ONBOARDING_PROCESSES: OnboardingProcess[] = [
         templateId: 'template-general',
         startDate: '2022-11-01',
         tasks: [
-            { id: 't2-1', title: 'توقيع عقد العمل', category: 'الأوراق والمستندات', responsible: 'الموظف الجديد', dueOffsetDays: 0, isCompleted: true, dueDate: '2022-11-01' },
+            { id: 't2-1', title: 'التأكد من توقيع وتوزيع 4 نسخ من العقد (للموظف، الشركة، مكتب التأمينات، مكتب العمل)', category: 'الأوراق والمستندات', responsible: 'الموارد البشرية', dueOffsetDays: 0, isCompleted: true, dueDate: '2022-11-01' },
             { id: 't2-2', title: 'تقديم مسوغات التعيين', category: 'الأوراق والمستندات', responsible: 'الموظف الجديد', dueOffsetDays: 1, isCompleted: true, dueDate: '2022-11-02' },
             { id: 't2-3', title: 'إنشاء بريد إلكتروني للشركة', category: 'إعدادات تقنية', responsible: 'تقنية المعلومات', dueOffsetDays: 0, isCompleted: true, dueDate: '2022-11-01' },
             { id: 't2-4', title: 'التعريف بأعضاء الفريق', category: 'التعريف بالفريق', responsible: 'المدير المباشر', dueOffsetDays: 0, isCompleted: false, dueDate: '2022-11-01' },
@@ -504,6 +538,7 @@ export const MOCK_OFFBOARDING_TEMPLATES: OffboardingTemplate[] = [
             { title: 'إلغاء الوصول إلى الأنظمة والبريد الإلكتروني', category: 'تسليم العهدة', responsible: 'تقنية المعلومات', dueOffsetDays: 0 },
             { title: 'جلسة نقل المعرفة مع الفريق/البديل', category: 'نقل المعرفة', responsible: 'المدير المباشر', dueOffsetDays: 2 },
             { title: 'إجراء المقابلة الختامية (Exit Interview)', category: 'إجراءات الموارد البشرية', responsible: 'الموارد البشرية', dueOffsetDays: 1 },
+            { title: 'إعداد وتقديم استمارة ٦ للتأمينات الاجتماعية', category: 'إجراءات الموارد البشرية', responsible: 'الموارد البشرية', dueOffsetDays: 1 },
             { title: 'تسوية المستحقات المالية النهائية', category: 'التسوية المالية النهائية', responsible: 'الموارد البشرية', dueOffsetDays: 0 },
         ]
     }
@@ -634,74 +669,86 @@ export const MOCK_ASSETS: Asset[] = [
 // ===== NAVIGATION & STATIC CONTENT =====
 // =================================================================================
 
+// FIX: Add LEAVE_TYPE_TRANSLATION export to be used in other components.
+export const LEAVE_TYPE_TRANSLATION: Record<LeaveType, string> = {
+    Annual: 'سنوية',
+    Sick: 'مرضية',
+    Casual: 'عارضة',
+    Unpaid: 'بدون أجر',
+    NewbornRegistration: 'تسجيل مولود',
+    Exam: 'امتحانات',
+};
+
+// FIX: Replace `name`, `groupName`, and `pageTitle` with `nameKey`, `groupNameKey`, and `pageTitleKey` and use translation keys.
 export const NAV_GROUPS: NavGroup[] = [
   {
-    groupName: 'الخطة الشخصية',
+    groupNameKey: 'sidebar.personalPlan',
     items: [
-      { name: 'خطتي للتعيين', icon: CheckBadgeIcon, path: '/my-onboarding', requiresEmployee: true, pageTitle: 'خطة التعيين', module: 'onboarding' },
-      { name: 'خطتي لإنهاء الخدمة', icon: ArchiveBoxIcon, path: '/my-offboarding', requiresEmployee: true, pageTitle: 'خطة إنهاء الخدمة', module: 'offboarding' },
-      { name: 'ملفي الشخصي', icon: UserCircleIcon, path: '/profile', requiresEmployee: true, pageTitle: 'ملفي الشخصي' },
-      { name: 'طلباتي', icon: DocumentTextIcon, path: '/my-requests', requiresEmployee: true, pageTitle: 'طلباتي' },
-      { name: 'الأداء', icon: ChartPieIcon, path: '/performance', requiresEmployee: true, pageTitle: 'الأداء', module: 'performance' },
-      { name: 'التطوير والتدريب', icon: BookOpenIcon, path: '/learning', requiresEmployee: true, pageTitle: 'التطوير والتدريب', module: 'learning' },
-      { name: 'أوراقي', icon: DocumentDuplicateIcon, path: '/documents', requiresEmployee: true, pageTitle: 'أوراقي ومستنداتي', module: 'documents' },
-      { name: 'عهدتي', icon: ComputerDesktopIcon, path: '/my-assets', requiresEmployee: true, pageTitle: 'عهدتي', module: 'assets' },
-      { name: 'تذاكر الدعم', icon: QuestionMarkCircleIcon, path: '/support', pageTitle: 'تذاكر الدعم', module: 'support' },
+      { nameKey: 'sidebar.myOnboarding', icon: CheckBadgeIcon, path: '/my-onboarding', requiresEmployee: true, pageTitleKey: 'pageTitles.myOnboarding', module: 'onboarding' },
+      { nameKey: 'sidebar.myOffboarding', icon: ArchiveBoxIcon, path: '/my-offboarding', requiresEmployee: true, pageTitleKey: 'pageTitles.myOffboarding', module: 'offboarding' },
+      { nameKey: 'sidebar.profile', icon: UserCircleIcon, path: '/profile', requiresEmployee: true, pageTitleKey: 'pageTitles.profile' },
+      { nameKey: 'sidebar.myRequests', icon: DocumentTextIcon, path: '/my-requests', requiresEmployee: true, pageTitleKey: 'pageTitles.myRequests' },
+      { nameKey: 'sidebar.performance', icon: ChartPieIcon, path: '/performance', requiresEmployee: true, pageTitleKey: 'pageTitles.performance', module: 'performance' },
+      { nameKey: 'sidebar.learning', icon: BookOpenIcon, path: '/learning', requiresEmployee: true, pageTitleKey: 'pageTitles.learning', module: 'learning' },
+      { nameKey: 'sidebar.myDocuments', icon: DocumentDuplicateIcon, path: '/documents', requiresEmployee: true, pageTitleKey: 'pageTitles.myDocuments', module: 'documents' },
+      { nameKey: 'sidebar.myAssets', icon: ComputerDesktopIcon, path: '/my-assets', requiresEmployee: true, pageTitleKey: 'pageTitles.myAssets', module: 'assets' },
+      { nameKey: 'sidebar.support', icon: QuestionMarkCircleIcon, path: '/support', pageTitleKey: 'pageTitles.support', module: 'support' },
     ]
   },
   {
-    groupName: 'الخدمة الذاتية',
+    groupNameKey: 'sidebar.selfService',
     items: [
-      { name: 'لوحة التحكم الشخصية', icon: HomeIcon, path: '/', requiresEmployee: true, pageTitle: 'لوحة التحكم' },
-      { name: 'مهامي الخارجية', icon: ClipboardDocumentListIcon, path: '/my-tasks', requiresEmployee: true, pageTitle: 'مهامي الخارجية' },
-      { name: 'كشف الراتب', icon: BanknotesIcon, path: '/payslip', requiresEmployee: true, pageTitle: 'كشف الراتب' },
-      { name: 'حضوري وانصرافي', icon: CalendarIcon, path: '/my-attendance', requiresEmployee: true, pageTitle: 'حضوري وانصرافي' },
-      { name: 'الإجازات', icon: BriefcaseIcon, path: '/leave', requiresEmployee: true, pageTitle: 'الإجازات' },
+      { nameKey: 'sidebar.personalDashboard', icon: HomeIcon, path: '/', requiresEmployee: true, pageTitleKey: 'pageTitles.personalDashboard' },
+      { nameKey: 'sidebar.myTasks', icon: ClipboardDocumentListIcon, path: '/my-tasks', requiresEmployee: true, pageTitleKey: 'pageTitles.myTasks' },
+      { nameKey: 'sidebar.payslip', icon: BanknotesIcon, path: '/payslip', requiresEmployee: true, pageTitleKey: 'pageTitles.payslip' },
+      { nameKey: 'sidebar.myAttendance', icon: CalendarIcon, path: '/my-attendance', requiresEmployee: true, pageTitleKey: 'pageTitles.myAttendance' },
+      { nameKey: 'sidebar.leave', icon: BriefcaseIcon, path: '/leave', requiresEmployee: true, pageTitleKey: 'pageTitles.leave' },
     ]
   },
   {
-    groupName: 'أدوات المدير',
+    groupNameKey: 'sidebar.managerTools',
     items: [
-      { name: 'لوحة تحكم الفريق', icon: UserGroupIcon, path: '/team-dashboard', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitle: 'لوحة تحكم الفريق' },
-      { name: 'سجل الحضور', icon: CalendarIcon, path: '/attendance', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitle: 'سجل الحضور' },
-      { name: 'إدارة المهام الخارجية', icon: ClipboardDocumentCheckIcon, path: '/external-tasks', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitle: 'إدارة المهام الخارجية' },
-      { name: 'التقارير', icon: PresentationChartLineIcon, path: '/reports', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitle: 'التقارير' },
-      { name: 'إدارة الأداء', icon: PresentationChartLineIcon, path: '/manager-performance', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitle: 'إدارة الأداء', module: 'performance' },
-      { name: 'تحليل مخاطر التسرب', icon: ExclamationTriangleIcon, path: '/turnover-analysis', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitle: 'تحليل مخاطر التسرب', module: 'performance' },
-      { name: 'تحليلات الفريق', icon: ChartPieIcon, path: '/team-analytics', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitle: 'تحليلات الفريق' },
+      { nameKey: 'sidebar.teamDashboard', icon: UserGroupIcon, path: '/team-dashboard', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitleKey: 'pageTitles.teamDashboard' },
+      { nameKey: 'sidebar.attendanceLog', icon: CalendarIcon, path: '/attendance', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitleKey: 'pageTitles.attendanceLog' },
+      { nameKey: 'sidebar.externalTasksManagement', icon: ClipboardDocumentCheckIcon, path: '/external-tasks', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitleKey: 'pageTitles.externalTasksManagement' },
+      { nameKey: 'sidebar.reports', icon: PresentationChartLineIcon, path: '/reports', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitleKey: 'pageTitles.reports' },
+      { nameKey: 'sidebar.performanceManagement', icon: PresentationChartLineIcon, path: '/manager-performance', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitleKey: 'pageTitles.performanceManagement', module: 'performance' },
+      { nameKey: 'sidebar.turnoverAnalysis', icon: ExclamationTriangleIcon, path: '/turnover-analysis', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitleKey: 'pageTitles.turnoverAnalysis', module: 'performance' },
+      { nameKey: 'sidebar.teamAnalytics', icon: ChartPieIcon, path: '/team-analytics', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitleKey: 'pageTitles.teamAnalytics' },
     ]
   },
   {
-    groupName: 'إدارة المواهب',
+    groupNameKey: 'sidebar.talentManagement',
     items: [
-      { name: 'التوظيف', icon: ClipboardDocumentListIcon, path: '/recruitment', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitle: 'إدارة التوظيف', module: 'recruitment' },
-      { name: 'التعيينات الجديدة', icon: CheckBadgeIcon, path: '/onboarding', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitle: 'إدارة التعيينات الجديدة', module: 'onboarding' },
-      { name: 'إنهاء الخدمة', icon: ArchiveBoxIcon, path: '/offboarding', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitle: 'إدارة إنهاء الخدمة', module: 'offboarding' },
+      { nameKey: 'sidebar.recruitment', icon: ClipboardDocumentListIcon, path: '/recruitment', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitleKey: 'pageTitles.recruitment', module: 'recruitment' },
+      { nameKey: 'sidebar.onboarding', icon: CheckBadgeIcon, path: '/onboarding', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitleKey: 'pageTitles.onboarding', module: 'onboarding' },
+      { nameKey: 'sidebar.offboarding', icon: ArchiveBoxIcon, path: '/offboarding', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitleKey: 'pageTitles.offboarding', module: 'offboarding' },
     ]
   },
   {
-    groupName: 'إدارة المنظمة',
+    groupNameKey: 'sidebar.orgManagement',
     items: [
-      { name: 'إدارة الموظفين', icon: UsersIcon, path: '/system-admin', roles: ['Admin', 'Super Admin', 'Branch Admin'], pageTitle: 'إدارة الموظفين' },
-      { name: 'إدارة الوحدات', icon: CogIcon, path: '/module-management', roles: ['Super Admin'], pageTitle: 'إدارة الوحدات' },
-      { name: 'إدارة الفروع', icon: BuildingOfficeIcon, path: '/branch-management', roles: ['Super Admin'], pageTitle: 'إدارة الفروع' },
-      { name: 'إدارة التدريب', icon: AcademicCapIcon, path: '/learning-management', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitle: 'إدارة التدريب', module: 'learning' },
-      { name: 'إدارة المستندات', icon: DocumentCheckIcon, path: '/document-management', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitle: 'إدارة المستندات', module: 'documents' },
-      { name: 'إدارة العهد', icon: ComputerDesktopIcon, path: '/assets-management', roles: ['Admin', 'Super Admin'], pageTitle: 'إدارة العهد', module: 'assets' },
-      { name: 'قوالب التعيين', icon: ClipboardDocumentCheckIcon, path: '/onboarding-templates', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitle: 'إدارة قوالب التعيين', module: 'onboarding' },
-      { name: 'قوالب إنهاء الخدمة', icon: DocumentDuplicateIcon, path: '/offboarding-templates', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitle: 'إدارة قوالب إنهاء الخدمة', module: 'offboarding' },
-      { name: 'سياسات الحضور', icon: ClockIcon, path: '/attendance-policy', roles: ['HR Manager', 'Admin', 'Super Admin', 'Branch Admin'], pageTitle: 'سياسات الحضور' },
-      { name: 'سياسات الوقت الإضافي', icon: ClockIcon, path: '/overtime-policy', roles: ['HR Manager', 'Admin', 'Super Admin', 'Branch Admin'], pageTitle: 'سياسات الوقت الإضافي' },
-      { name: 'سياسات الإجازات', icon: BriefcaseIcon, path: '/leave-policy', roles: ['HR Manager', 'Admin', 'Super Admin', 'Branch Admin'], pageTitle: 'سياسات الإجازات' },
-      { name: 'الهيكل الوظيفي', icon: DocumentDuplicateIcon, path: '/job-titles', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitle: 'الهيكل الوظيفي', module: 'job_titles' },
-      { name: 'التعويضات والمزايا', icon: BanknotesIcon, path: '/compensation', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitle: 'التعويضات والمزايا', module: 'compensation' },
+      { nameKey: 'sidebar.employeeManagement', icon: UsersIcon, path: '/system-admin', roles: ['Admin', 'Super Admin', 'Branch Admin'], pageTitleKey: 'pageTitles.employeeManagement' },
+      { nameKey: 'sidebar.moduleManagement', icon: CogIcon, path: '/module-management', roles: ['Super Admin'], pageTitleKey: 'pageTitles.moduleManagement' },
+      { nameKey: 'sidebar.branchManagement', icon: BuildingOfficeIcon, path: '/branch-management', roles: ['Super Admin'], pageTitleKey: 'pageTitles.branchManagement' },
+      { nameKey: 'sidebar.learningManagement', icon: AcademicCapIcon, path: '/learning-management', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitleKey: 'pageTitles.learningManagement', module: 'learning' },
+      { nameKey: 'sidebar.documentManagement', icon: DocumentCheckIcon, path: '/document-management', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitleKey: 'pageTitles.documentManagement', module: 'documents' },
+      { nameKey: 'sidebar.assetsManagement', icon: ComputerDesktopIcon, path: '/assets-management', roles: ['Admin', 'Super Admin'], pageTitleKey: 'pageTitles.assetsManagement', module: 'assets' },
+      { nameKey: 'sidebar.onboardingTemplates', icon: ClipboardDocumentCheckIcon, path: '/onboarding-templates', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitleKey: 'pageTitles.onboardingTemplates', module: 'onboarding' },
+      { nameKey: 'sidebar.offboardingTemplates', icon: DocumentDuplicateIcon, path: '/offboarding-templates', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitleKey: 'pageTitles.offboardingTemplates', module: 'offboarding' },
+      { nameKey: 'sidebar.attendancePolicies', icon: ClockIcon, path: '/attendance-policy', roles: ['HR Manager', 'Admin', 'Super Admin', 'Branch Admin'], pageTitleKey: 'pageTitles.attendancePolicies' },
+      { nameKey: 'sidebar.overtimePolicies', icon: ClockIcon, path: '/overtime-policy', roles: ['HR Manager', 'Admin', 'Super Admin', 'Branch Admin'], pageTitleKey: 'pageTitles.overtimePolicies' },
+      { nameKey: 'sidebar.leavePolicies', icon: BriefcaseIcon, path: '/leave-policy', roles: ['HR Manager', 'Admin', 'Super Admin', 'Branch Admin'], pageTitleKey: 'pageTitles.leavePolicies' },
+      { nameKey: 'sidebar.jobTitles', icon: DocumentDuplicateIcon, path: '/job-titles', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitleKey: 'pageTitles.jobTitles', module: 'job_titles' },
+      { nameKey: 'sidebar.compensation', icon: BanknotesIcon, path: '/compensation', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitleKey: 'pageTitles.compensation', module: 'compensation' },
+      { nameKey: 'sidebar.contracts', icon: DocumentDuplicateIcon, path: '/contracts', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitleKey: 'pageTitles.contracts' },
     ]
   }
 ];
 
 export const BOTTOM_NAV_ITEMS: NavItem[] = [
-  { name: 'الإعدادات', icon: CogIcon, path: '/settings', pageTitle: 'الإعدادات' },
-  { name: 'تسجيل الخروج', icon: ArrowLeftOnRectangleIcon, path: '/logout', pageTitle: 'تسجيل الخروج' },
+  { nameKey: 'sidebar.settings', icon: CogIcon, path: '/settings', pageTitleKey: 'pageTitles.settings' },
+  { nameKey: 'sidebar.logout', icon: ArrowLeftOnRectangleIcon, path: '/logout', pageTitleKey: 'pageTitles.logout' },
 ];
 
 export const MOCK_LEAVE_DISTRIBUTION: LeaveDistributionDataItem[] = [
@@ -818,7 +865,8 @@ export const generatePayslips = (
     compensationPackages: CompensationPackage[],
     attendanceAdjustmentRequests: AttendanceAdjustmentRequest[],
     leavePermitRequests: LeavePermitRequest[],
-    externalTasks: ExternalTask[]
+    externalTasks: ExternalTask[],
+    leaveRequests: LeaveRequest[]
 ): Payslip[] => {
     const employee = employees.find(e => e.id === employeeId);
     if (!employee || !employee.baseSalary) return [];
@@ -843,7 +891,8 @@ export const generatePayslips = (
         const baseSalary = employee.baseSalary;
         const earnings: PayslipItem[] = [{ description: 'الراتب الأساسي', amount: baseSalary }];
         const deductions: PayslipItem[] = [];
-        const hourlyRate = baseSalary / 22 / 8; // Assuming 22 working days, 8 hours/day
+        const dailyRate = baseSalary / 22; // Assuming 22 working days
+        const hourlyRate = dailyRate / 8; // Assuming 8 hours/day
 
         // Add allowances and deductions from compensation package
         if (compPackage) {
@@ -984,6 +1033,22 @@ export const generatePayslips = (
 
         if (earlyLeaveDeductions > 0) {
             deductions.push({ description: 'خصم انصراف مبكر', amount: parseFloat(earlyLeaveDeductions.toFixed(2)) });
+        }
+
+        // Calculate sick leave deductions (25% deduction for each sick day)
+        const monthSickLeaves = leaveRequests.filter(r => 
+            r.employeeId === employeeId &&
+            r.leaveType === 'Sick' &&
+            r.status === 'Approved' &&
+            new Date(r.startDate).getMonth() === date.getMonth() &&
+            new Date(r.startDate).getFullYear() === year
+        );
+        
+        const sickDaysInMonth = monthSickLeaves.reduce((sum, req) => sum + req.duration, 0);
+
+        if (sickDaysInMonth > 0) {
+            const sickLeaveDeduction = sickDaysInMonth * dailyRate * 0.25; // 25% deduction
+            deductions.push({ description: `خصم إجازة مرضية (${sickDaysInMonth} أيام)`, amount: parseFloat(sickLeaveDeduction.toFixed(2)) });
         }
 
 
@@ -1134,18 +1199,19 @@ export const getDerivedData = (
           .filter(n => n.recipientId === currentUserId)
           .sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
           .slice(0, 4)
+// FIX: Changed `page` property to `pageKey` and used translation keys for values to match the `RecentActivityItem` type.
           .map(n => {
-              let page = 'لوحة التحكم الشخصية'; // Default
-              if (n.relatedEntity?.type === 'course') page = 'التطوير والتدريب';
-              else if (n.relatedEntity?.type === 'leave_request') page = 'الإجازات';
-              else if (n.relatedEntity?.type === 'attendance_adjustment') page = 'حضوري وانصرافي';
-              else if (n.message.includes('متابعة شهرية')) page = 'الأداء';
+              let pageKey = 'sidebar.personalDashboard'; // Default
+              if (n.relatedEntity?.type === 'course') pageKey = 'sidebar.learning';
+              else if (n.relatedEntity?.type === 'leave_request') pageKey = 'sidebar.leave';
+              else if (n.relatedEntity?.type === 'attendance_adjustment') pageKey = 'sidebar.myAttendance';
+              else if (n.message.includes('متابعة شهرية')) pageKey = 'sidebar.performance';
               return {
                   id: n.id,
                   icon: CheckCircleIcon, // Placeholder
                   text: n.message,
                   timestamp: timeSince(n.timestamp),
-                  page,
+                  pageKey,
               };
           }),
       stats: {
@@ -1154,22 +1220,6 @@ export const getDerivedData = (
         overtimeHoursThisMonth: parseFloat(overtimeHoursThisMonth.toFixed(1)),
       }
   };
-
-  const getRequestDetailsText = (request: HRRequest): string => {
-        switch (request.type) {
-            case 'Leave':
-                return `طلب إجازة ${LEAVE_TYPE_TRANSLATION[request.leaveType]}`;
-            case 'AttendanceAdjustment':
-                return `طلب ${request.adjustmentType === 'LateArrival' ? 'عذر تأخير' : 'انصراف مبكر'}`;
-            case 'LeavePermit':
-                return `طلب إذن انصراف من ${request.startTime} إلى ${request.endTime}`;
-            case 'Certificate':
-            case 'DataUpdate':
-                return request.details;
-            default:
-                return 'طلب غير محدد';
-        }
-    }
 
   // --- Team Dashboard Data ---
   const attentionItems: AttentionItem[] = [];
@@ -1226,7 +1276,6 @@ export const getDerivedData = (
                     itemType = 'leave_permit';
                     icon = ClockIcon;
                     break;
-                case 'Certificate':
                 case 'DataUpdate':
                     // Not handled as attention items for now
                     return;
@@ -1237,7 +1286,7 @@ export const getDerivedData = (
                     id: `req-${r.id}`,
                     type: itemType,
                     icon: icon,
-                    text: getRequestDetailsText(r),
+                    text: '', // Text will be generated and translated in App.tsx
                     employeeName: emp.name,
                     employeeAvatarUrl: emp.avatarUrl,
                     timestamp: r.submissionDate,
@@ -1344,8 +1393,8 @@ export const getDerivedData = (
     const leaveDistributionData: LeaveDistributionDataItem[] = Object.entries(leaveDistribution).map(([type, value]) => ({
         name: type as LeaveType,
         value,
-        typeName: LEAVE_TYPE_TRANSLATION[type as LeaveType],
-        fill: ({ Annual: '#0ea5e9', Sick: '#10b981', Casual: '#f59e0b', Unpaid: '#64748b' })[type as LeaveType]
+        typeName: type as LeaveType,
+        fill: ({ Annual: '#0ea5e9', Sick: '#10b981', Casual: '#f59e0b', Unpaid: '#64748b', NewbornRegistration: '#6366f1', Exam: '#8b5cf6' })[type as LeaveType]
     }));
     
     const todayDate = new Date();

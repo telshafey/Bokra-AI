@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import type { ExternalTask } from '../types';
 import { ClipboardDocumentListIcon, ClockIcon, CheckCircleIcon, PlusCircleIcon } from './icons/Icons';
@@ -10,12 +9,12 @@ interface MyTasksPageProps {
 }
 
 const STATUS_BADGE_CLASSES: Record<ExternalTask['status'], string> = {
-    PendingApproval: 'bg-amber-100 text-amber-800',
-    Approved: 'bg-slate-100 text-slate-800',
-    Rejected: 'bg-red-100 text-red-800',
-    InProgress: 'bg-sky-100 text-sky-800',
-    Completed: 'bg-emerald-100 text-emerald-800',
-    Cancelled: 'bg-red-100 text-red-800',
+    PendingApproval: 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300',
+    Approved: 'bg-slate-100 text-slate-800 dark:bg-slate-700 dark:text-slate-300',
+    Rejected: 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300',
+    InProgress: 'bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-300',
+    Completed: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300',
+    Cancelled: 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300',
 };
 
 const STATUS_TRANSLATION: Record<ExternalTask['status'], string> = {
@@ -29,19 +28,19 @@ const STATUS_TRANSLATION: Record<ExternalTask['status'], string> = {
 
 const TaskCard: React.FC<{ task: ExternalTask }> = ({ task }) => {
     return (
-        <div className="bg-white p-5 rounded-xl shadow-md border-l-4 border-sky-500">
+        <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-md border-l-4 border-sky-500">
             <div className="flex justify-between items-start">
                 <div>
-                    <h3 className="font-bold text-lg text-slate-800">{task.title}</h3>
-                    <p className="text-sm text-slate-500">{new Date(task.date).toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                    <h3 className="font-bold text-lg text-slate-800 dark:text-slate-100">{task.title}</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">{new Date(task.date).toLocaleDateString('ar-EG', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
                 </div>
                 <span className={`px-3 py-1 text-xs font-semibold rounded-full ${STATUS_BADGE_CLASSES[task.status]}`}>
                     {STATUS_TRANSLATION[task.status]}
                 </span>
             </div>
-            <p className="text-sm text-slate-600 my-3 pt-3 border-t">{task.description}</p>
+            <p className="text-sm text-slate-600 dark:text-slate-300 my-3 pt-3 border-t dark:border-slate-700">{task.description}</p>
             {task.checkInTimestamp && (
-                <div className="text-xs text-slate-500 space-y-1">
+                <div className="text-xs text-slate-500 dark:text-slate-400 space-y-1">
                     <p className="flex items-center gap-2"><ClockIcon className="w-4 h-4 text-emerald-500" /> تسجيل الحضور: {new Date(task.checkInTimestamp).toLocaleTimeString('ar-EG-u-nu-latn')}</p>
                     {task.checkOutTimestamp && (
                          <p className="flex items-center gap-2"><ClockIcon className="w-4 h-4 text-red-500" /> تسجيل الانصراف: {new Date(task.checkOutTimestamp).toLocaleTimeString('ar-EG-u-nu-latn')}</p>
@@ -67,8 +66,8 @@ const MyTasksPage: React.FC<MyTasksPageProps> = ({ externalTasks, onNewRequest }
         <div className="space-y-8">
             <div className="flex justify-between items-center">
                  <div>
-                    <h1 className="text-3xl font-bold text-slate-800">مهامي الخارجية</h1>
-                    <p className="text-slate-500 mt-1">عرض وطلب المهام الخارجية المسندة إليك.</p>
+                    <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100">مهامي الخارجية</h1>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1">عرض وطلب المهام الخارجية المسندة إليك.</p>
                 </div>
                 <button 
                     onClick={() => setIsRequestModalOpen(true)}
@@ -80,28 +79,28 @@ const MyTasksPage: React.FC<MyTasksPageProps> = ({ externalTasks, onNewRequest }
 
 
             <section>
-                <h2 className="text-2xl font-semibold text-slate-700 mb-4 flex items-center gap-2"><ClockIcon className="w-6 h-6"/> المهام القادمة والحالية</h2>
+                <h2 className="text-2xl font-semibold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2"><ClockIcon className="w-6 h-6"/> المهام القادمة والحالية</h2>
                 {pendingTasks.length > 0 ? (
                     <div className="space-y-4">
                         {pendingTasks.map(task => <TaskCard key={task.id} task={task} />)}
                     </div>
                 ) : (
-                    <div className="text-center py-12 bg-white rounded-xl shadow-sm">
+                    <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl shadow-sm">
                         <ClipboardDocumentListIcon className="w-12 h-12 mx-auto text-slate-400 mb-2"/>
-                        <p className="font-semibold text-slate-600">لا توجد مهام قادمة أو حالية.</p>
+                        <p className="font-semibold text-slate-600 dark:text-slate-300">لا توجد مهام قادمة أو حالية.</p>
                     </div>
                 )}
             </section>
             
             <section>
-                <h2 className="text-2xl font-semibold text-slate-700 mb-4 flex items-center gap-2"><CheckCircleIcon className="w-6 h-6"/> سجل المهام المكتملة</h2>
+                <h2 className="text-2xl font-semibold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2"><CheckCircleIcon className="w-6 h-6"/> سجل المهام المكتملة</h2>
                  {completedTasks.length > 0 ? (
                     <div className="space-y-4">
                         {completedTasks.map(task => <TaskCard key={task.id} task={task} />)}
                     </div>
                 ) : (
-                    <div className="text-center py-12 bg-white rounded-xl shadow-sm">
-                         <p className="font-semibold text-slate-600">لا يوجد سجل للمهام المكتملة بعد.</p>
+                    <div className="text-center py-12 bg-white dark:bg-slate-800 rounded-xl shadow-sm">
+                         <p className="font-semibold text-slate-600 dark:text-slate-300">لا يوجد سجل للمهام المكتملة بعد.</p>
                     </div>
                 )}
             </section>

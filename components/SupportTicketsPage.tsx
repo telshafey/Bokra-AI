@@ -6,10 +6,10 @@ import { PlusCircleIcon } from './icons/Icons';
 import { timeSince } from '../constants';
 
 const STATUS_BADGE_CLASSES: Record<TicketStatus, string> = {
-    New: 'bg-sky-100 text-sky-800',
-    'In Progress': 'bg-amber-100 text-amber-800',
-    Resolved: 'bg-emerald-100 text-emerald-800',
-    Closed: 'bg-slate-100 text-slate-700',
+    New: 'bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-300',
+    'In Progress': 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300',
+    Resolved: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300',
+    Closed: 'bg-slate-100 text-slate-700 dark:bg-slate-700 dark:text-slate-300',
 };
 
 const STATUS_TRANSLATION: Record<TicketStatus, string> = {
@@ -77,8 +77,8 @@ const SupportTicketsPage: React.FC<SupportTicketsPageProps> = ({ currentUser, al
         <div className="space-y-6">
             <div className="flex justify-between items-center">
                 <div>
-                    <h1 className="text-3xl font-bold text-slate-800">تذاكر الدعم</h1>
-                    <p className="text-slate-500 mt-1">{isAdminView ? "إدارة جميع تذاكر الدعم المقدمة من الموظفين." : "إنشاء وتتبع تذاكر الدعم الخاصة بك."}</p>
+                    <h1 className="text-3xl font-bold text-slate-800 dark:text-slate-100">تذاكر الدعم</h1>
+                    <p className="text-slate-500 dark:text-slate-400 mt-1">{isAdminView ? "إدارة جميع تذاكر الدعم المقدمة من الموظفين." : "إنشاء وتتبع تذاكر الدعم الخاصة بك."}</p>
                 </div>
                 {!isAdminView && (
                     <button 
@@ -91,30 +91,30 @@ const SupportTicketsPage: React.FC<SupportTicketsPageProps> = ({ currentUser, al
             </div>
 
             {isAdminView && ticketStats && (
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white p-4 rounded-xl shadow-sm">
-                    <div className="text-center p-2 rounded-lg bg-sky-50">
-                        <p className="text-sm text-sky-700 font-semibold">تذاكر جديدة</p>
-                        <p className="text-3xl font-bold text-sky-800">{ticketStats.new}</p>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 bg-white dark:bg-slate-800 p-4 rounded-xl shadow-sm">
+                    <div className="text-center p-2 rounded-lg bg-sky-50 dark:bg-sky-900/50">
+                        <p className="text-sm text-sky-700 dark:text-sky-300 font-semibold">تذاكر جديدة</p>
+                        <p className="text-3xl font-bold text-sky-800 dark:text-sky-200">{ticketStats.new}</p>
                     </div>
-                     <div className="text-center p-2 rounded-lg bg-amber-50">
-                        <p className="text-sm text-amber-700 font-semibold">قيد المعالجة</p>
-                        <p className="text-3xl font-bold text-amber-800">{ticketStats.inProgress}</p>
+                     <div className="text-center p-2 rounded-lg bg-amber-50 dark:bg-amber-900/50">
+                        <p className="text-sm text-amber-700 dark:text-amber-300 font-semibold">قيد المعالجة</p>
+                        <p className="text-3xl font-bold text-amber-800 dark:text-amber-200">{ticketStats.inProgress}</p>
                     </div>
-                     <div className="text-center p-2 rounded-lg bg-emerald-50">
-                        <p className="text-sm text-emerald-700 font-semibold">تم حلها</p>
-                        <p className="text-3xl font-bold text-emerald-800">{ticketStats.resolved}</p>
+                     <div className="text-center p-2 rounded-lg bg-emerald-50 dark:bg-emerald-900/50">
+                        <p className="text-sm text-emerald-700 dark:text-emerald-300 font-semibold">تم حلها</p>
+                        <p className="text-3xl font-bold text-emerald-800 dark:text-emerald-200">{ticketStats.resolved}</p>
                     </div>
                 </div>
             )}
 
-            <div className="bg-white rounded-xl shadow-md p-4">
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-md p-4">
                 {isAdminView && (
-                    <div className="pb-4 border-b flex items-center gap-2">
+                    <div className="pb-4 border-b dark:border-slate-700 flex items-center gap-2">
                         {(['All', 'New', 'In Progress', 'Resolved', 'Closed'] as const).map(status => (
                             <button
                                 key={status}
                                 onClick={() => setActiveFilter(status)}
-                                className={`px-3 py-1 text-sm font-semibold rounded-full ${activeFilter === status ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+                                className={`px-3 py-1 text-sm font-semibold rounded-full ${activeFilter === status ? 'bg-sky-600 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300 dark:hover:bg-slate-600'}`}>
                                 {status === 'All' ? 'الكل' : STATUS_TRANSLATION[status]}
                             </button>
                         ))}
@@ -126,7 +126,7 @@ const SupportTicketsPage: React.FC<SupportTicketsPageProps> = ({ currentUser, al
                         const assignedTo = userMap.get(ticket.assignedToId || '');
                         const lastMessage = ticket.messages[ticket.messages.length - 1];
                         return (
-                            <div key={ticket.id} onClick={() => setSelectedTicket(ticket)} className="bg-white p-3 rounded-lg shadow-sm border border-slate-200 hover:shadow-md hover:border-sky-500 cursor-pointer transition-all flex gap-3">
+                            <div key={ticket.id} onClick={() => setSelectedTicket(ticket)} className="bg-white dark:bg-slate-900/50 p-3 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 hover:shadow-md hover:border-sky-500 cursor-pointer transition-all flex gap-3">
                                 <div className={`w-1.5 rounded-full ${PRIORITY_STYLES[ticket.priority].bg}`}></div>
                                 <div className="flex-1">
                                     <div className="flex justify-between items-start">
@@ -134,21 +134,21 @@ const SupportTicketsPage: React.FC<SupportTicketsPageProps> = ({ currentUser, al
                                             {isAdminView && employee && (
                                                 <div className="flex items-center gap-2 mb-1">
                                                     <img src={employee.avatarUrl} alt={employee.name} className="w-5 h-5 rounded-full" />
-                                                    <span className="text-xs font-semibold text-slate-600">{employee.name}</span>
+                                                    <span className="text-xs font-semibold text-slate-600 dark:text-slate-400">{employee.name}</span>
                                                 </div>
                                             )}
-                                            <h3 className="font-bold text-slate-800">{ticket.title}</h3>
+                                            <h3 className="font-bold text-slate-800 dark:text-slate-200">{ticket.title}</h3>
                                         </div>
                                         <span className={`px-2 py-1 text-xs font-semibold rounded-full ${STATUS_BADGE_CLASSES[ticket.status]}`}>
                                             {STATUS_TRANSLATION[ticket.status]}
                                         </span>
                                     </div>
-                                    <p className="text-sm text-slate-500 my-2 truncate" title={lastMessage?.content}>
+                                    <p className="text-sm text-slate-500 dark:text-slate-400 my-2 truncate" title={lastMessage?.content}>
                                         {lastMessage ? `${userMap.get(lastMessage.authorId)?.name.split(' ')[0]}: ${lastMessage.content}` : ticket.description}
                                     </p>
-                                    <div className="flex justify-between items-center text-xs text-slate-500 border-t border-slate-100 pt-2 mt-2">
+                                    <div className="flex justify-between items-center text-xs text-slate-500 dark:text-slate-400 border-t border-slate-100 dark:border-slate-700 pt-2 mt-2">
                                         <span>
-                                            المسؤول: <span className="font-semibold text-slate-700">{assignedTo?.name || 'لم يحدد'}</span>
+                                            المسؤول: <span className="font-semibold text-slate-700 dark:text-slate-300">{assignedTo?.name || 'لم يحدد'}</span>
                                         </span>
                                         <span>
                                             آخر تحديث: {timeSince(ticket.updatedAt)}
@@ -158,7 +158,7 @@ const SupportTicketsPage: React.FC<SupportTicketsPageProps> = ({ currentUser, al
                             </div>
                         )
                     }) : (
-                        <div className="text-center py-12 text-slate-500">
+                        <div className="text-center py-12 text-slate-500 dark:text-slate-400">
                             <p>لا توجد تذاكر دعم لعرضها.</p>
                         </div>
                     )}

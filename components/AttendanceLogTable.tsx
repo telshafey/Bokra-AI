@@ -3,17 +3,17 @@ import { AttendanceRecord, AttendanceStatus, EmployeeInfraction, AttendancePolic
 import { ExclamationTriangleIcon, InformationCircleIcon, ShieldCheckIcon, ChevronDownIcon, CheckCircleIcon, XCircleIcon, ClipboardDocumentCheckIcon } from './icons/Icons';
 
 const STATUS_BADGE: Record<AttendanceStatus, string> = {
-    Present: 'bg-emerald-100 text-emerald-800',
-    Absent: 'bg-red-100 text-red-800',
-    Leave: 'bg-amber-100 text-amber-800',
-    Holiday: 'bg-sky-100 text-sky-800',
-    Weekend: 'bg-slate-200 text-slate-600',
+    Present: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300',
+    Absent: 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300',
+    Leave: 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300',
+    Holiday: 'bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-300',
+    Weekend: 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300',
 };
 
 const ADJUSTMENT_STATUS_STYLES: Record<RequestStatus, { text: string; iconColor: string; label: string }> = {
-    Pending: { text: 'text-amber-600', iconColor: 'text-amber-500', label: 'قيد المراجعة' },
-    Approved: { text: 'text-emerald-600', iconColor: 'text-emerald-500', label: 'تمت الموافقة' },
-    Rejected: { text: 'text-red-600', iconColor: 'text-red-500', label: 'مرفوض' },
+    Pending: { text: 'text-amber-600 dark:text-amber-400', iconColor: 'text-amber-500', label: 'قيد المراجعة' },
+    Approved: { text: 'text-emerald-600 dark:text-emerald-400', iconColor: 'text-emerald-500', label: 'تمت الموافقة' },
+    Rejected: { text: 'text-red-600 dark:text-red-400', iconColor: 'text-red-500', label: 'مرفوض' },
 };
 
 const STATUS_TRANSLATION: Record<AttendanceStatus, string> = {
@@ -57,8 +57,8 @@ const AttendanceLogTable: React.FC<AttendanceLogTableProps> = ({ records, events
 
     return (
         <div className="overflow-x-auto max-h-[60vh] overflow-y-auto">
-            <table className="w-full text-sm text-right text-slate-500">
-                <thead className="text-xs text-slate-700 uppercase bg-slate-100 sticky top-0 z-10">
+            <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
+                <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-100 dark:bg-slate-700 sticky top-0 z-10">
                     <tr>
                         <th scope="col" className="px-4 py-3 w-8"></th>
                         <th scope="col" className="px-4 py-3">التاريخ</th>
@@ -91,26 +91,26 @@ const AttendanceLogTable: React.FC<AttendanceLogTableProps> = ({ records, events
 
                         return (
                             <React.Fragment key={record.date}>
-                                <tr className="bg-white border-b hover:bg-slate-50">
+                                <tr className="bg-white dark:bg-slate-800 border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50">
                                     <td className="px-4 py-4">
                                         {dailyEvents.length > 0 && (
-                                            <button onClick={() => toggleRow(record.date)} className="p-1 rounded-full hover:bg-slate-200">
+                                            <button onClick={() => toggleRow(record.date)} className="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700">
                                                 <ChevronDownIcon className={`w-5 h-5 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                                             </button>
                                         )}
                                     </td>
-                                    <td className="px-4 py-4 font-medium text-slate-900 whitespace-nowrap">
+                                    <td className="px-4 py-4 font-medium text-slate-900 dark:text-slate-200 whitespace-nowrap">
                                         {new Date(record.date).toLocaleDateString('ar-EG', { day: 'numeric', month: 'long' })}
-                                        <span className="block text-xs text-slate-500">{record.day}</span>
+                                        <span className="block text-xs text-slate-500 dark:text-slate-400">{record.day}</span>
                                     </td>
                                     <td className="px-4 py-4">
                                         <span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_BADGE[record.status]}`}>
                                             {STATUS_TRANSLATION[record.status]}
                                         </span>
                                     </td>
-                                    <td className={`px-4 py-4 font-mono ${isLate ? 'text-red-600 font-bold' : ''}`}>{record.firstCheckIn || '-'}</td>
-                                    <td className="px-4 py-4 font-mono">{record.lastCheckOut || '-'}</td>
-                                    <td className="px-4 py-4 font-bold text-slate-800">{record.workedHours?.toFixed(1) || '-'}</td>
+                                    <td className={`px-4 py-4 font-mono ${isLate ? 'text-red-600 dark:text-red-400 font-bold' : 'dark:text-slate-300'}`}>{record.firstCheckIn || '-'}</td>
+                                    <td className="px-4 py-4 font-mono dark:text-slate-300">{record.lastCheckOut || '-'}</td>
+                                    <td className="px-4 py-4 font-bold text-slate-800 dark:text-slate-100">{record.workedHours?.toFixed(1) || '-'}</td>
                                     <td className="px-4 py-4">
                                         <div className="flex justify-center">
                                         {permit ? (
@@ -152,12 +152,12 @@ const AttendanceLogTable: React.FC<AttendanceLogTableProps> = ({ records, events
                                     </td>
                                 </tr>
                                 {isExpanded && (
-                                    <tr className="bg-slate-50">
+                                    <tr className="bg-slate-50 dark:bg-slate-900/50">
                                         <td colSpan={7} className="p-0">
                                             <div className="p-3">
                                                 <table className="w-full text-xs">
                                                     <thead>
-                                                        <tr className="text-slate-600">
+                                                        <tr className="text-slate-600 dark:text-slate-400">
                                                             <th className="py-1 px-2 text-right">الوقت</th>
                                                             <th className="py-1 px-2 text-right">النوع</th>
                                                             <th className="py-1 px-2 text-right">حالة الموقع</th>
@@ -167,18 +167,18 @@ const AttendanceLogTable: React.FC<AttendanceLogTableProps> = ({ records, events
                                                         {dailyEvents.map(event => {
                                                             const task = event.taskId ? tasksMap.get(event.taskId) : null;
                                                             return (
-                                                            <tr key={event.id} className="border-t">
+                                                            <tr key={event.id} className="border-t dark:border-slate-700">
                                                                 <td className="py-2 px-2 font-mono">{new Date(event.timestamp).toLocaleTimeString('ar-EG-u-nu-latn')}</td>
                                                                 <td className="py-2 px-2">{event.type === 'CheckIn' ? 'تسجيل حضور' : 'تسجيل انصراف'}</td>
                                                                 <td className="py-2 px-2">
                                                                     {task ? (
-                                                                         <div className="flex items-center gap-1 text-blue-600" title={`Lat: ${event.coords?.latitude}, Lon: ${event.coords?.longitude}`}>
+                                                                         <div className="flex items-center gap-1 text-blue-600 dark:text-blue-400" title={`Lat: ${event.coords?.latitude}, Lon: ${event.coords?.longitude}`}>
                                                                             <ClipboardDocumentCheckIcon className="w-4 h-4" />
                                                                             <span className="font-semibold">مهمة: {task.title}</span>
                                                                         </div>
                                                                     ) : event.isWithinGeofence ? 
-                                                                        <span title="داخل النطاق" className="flex items-center gap-1 text-emerald-600"><CheckCircleIcon className="w-4 h-4" /><span>داخل النطاق</span></span> : 
-                                                                        <span title="خارج النطاق" className="flex items-center gap-1 text-red-600"><XCircleIcon className="w-4 h-4" /><span>خارج النطاق</span></span>
+                                                                        <span title="داخل النطاق" className="flex items-center gap-1 text-emerald-600 dark:text-emerald-400"><CheckCircleIcon className="w-4 h-4" /><span>داخل النطاق</span></span> : 
+                                                                        <span title="خارج النطاق" className="flex items-center gap-1 text-red-600 dark:text-red-400"><XCircleIcon className="w-4 h-4" /><span>خارج النطاق</span></span>
                                                                     }
                                                                 </td>
                                                             </tr>

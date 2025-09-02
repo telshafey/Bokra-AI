@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState } from 'react';
 import { EmployeeProfile, UserContextType, UserProviderProps, NewUserPayload, UserRole } from '../../types';
 import { ALL_EMPLOYEES } from '../../constants';
@@ -21,15 +20,17 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     };
 
     const deactivateUser = (userId: string) => {
-        setEmployees(prev => prev.map(emp => emp.id === userId ? { ...emp, employmentStatus: 'Inactive' } : emp));
+        const deactivationDate = new Date().toISOString();
+        setEmployees(prev => prev.map(emp => emp.id === userId ? { ...emp, employmentStatus: 'Inactive', deactivationDate } : emp));
     };
     
     const bulkDeactivateUsers = (userIds: string[]) => {
-        setEmployees(prev => prev.map(emp => userIds.includes(emp.id) ? { ...emp, employmentStatus: 'Inactive' } : emp));
+        const deactivationDate = new Date().toISOString();
+        setEmployees(prev => prev.map(emp => userIds.includes(emp.id) ? { ...emp, employmentStatus: 'Inactive', deactivationDate } : emp));
     };
     
     const reactivateUser = (userId: string) => {
-        setEmployees(prev => prev.map(emp => emp.id === userId ? { ...emp, employmentStatus: 'دوام كامل' } : emp));
+        setEmployees(prev => prev.map(emp => emp.id === userId ? { ...emp, employmentStatus: 'دوام كامل', deactivationDate: undefined } : emp));
     };
     
     const bulkAssignAttendancePolicy = (policyId: string, employeeIds: string[]) => {

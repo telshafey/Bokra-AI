@@ -1,8 +1,6 @@
-
 import React from 'react';
 import type { HRRequest, PendingRequest, RequestStatus } from '../types';
 import { CheckCircleIcon, XCircleIcon } from './icons/Icons';
-import { LEAVE_TYPE_TRANSLATION } from '../constants';
 
 interface PendingRequestsProps {
     requests: PendingRequest[];
@@ -13,12 +11,12 @@ interface PendingRequestsProps {
 const getRequestDetailsText = (request: HRRequest): string => {
     switch (request.type) {
         case 'Leave':
-            return `إجازة ${LEAVE_TYPE_TRANSLATION[request.leaveType]}: ${request.reason}`;
+            return `إجازة ${request.leaveType}: ${request.reason}`;
         case 'AttendanceAdjustment':
             return `${request.adjustmentType === 'LateArrival' ? 'عذر تأخير' : 'انصراف مبكر'}: ${request.reason}`;
         case 'LeavePermit':
             return `إذن انصراف: ${request.reason}`;
-        case 'Certificate':
+        // FIX: Removed non-existent 'Certificate' case to align with HRRequest type.
         case 'DataUpdate':
             return request.details;
         default:

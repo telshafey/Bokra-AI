@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import type { EmployeeProfile, UserRole, Branch, NewUserPayload, AttendancePolicy, LeavePolicy, JobTitle, CompensationPackage, OvertimePolicy } from '../types';
 // FIX: Import ChevronDownIcon.
@@ -32,7 +31,7 @@ const RoleEditor: React.FC<{
             value={role}
             onChange={(e) => setRole(e.target.value as UserRole)}
             onBlur={handleSave} // Save when focus is lost
-            className="p-1 border border-slate-300 rounded-md bg-slate-50 focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold w-full"
+            className="p-1 border border-slate-300 dark:border-slate-600 rounded-md bg-slate-50 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold w-full"
         >
             {allRoles.map(r => <option key={r} value={r}>{r}</option>)}
         </select>
@@ -163,11 +162,11 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
             
             <ActionBar>
                  <div className="flex items-center gap-2 flex-wrap">
-                    <select value={branchFilter} onChange={(e) => setBranchFilter(e.target.value)} className="p-2 border border-slate-300 rounded-lg bg-slate-50 text-sm">
+                    <select value={branchFilter} onChange={(e) => setBranchFilter(e.target.value)} className="p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white text-sm">
                         <option value="all">كل الفروع</option>
                         {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
                     </select>
-                    <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="p-2 border border-slate-300 rounded-lg bg-slate-50 text-sm">
+                    <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white text-sm">
                         <option value="all">كل الحالات</option>
                         <option value="active">نشط</option>
                         <option value="inactive">غير نشط</option>
@@ -182,10 +181,10 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
             </ActionBar>
 
             {selectedUserIds.size > 0 && (
-                <div className="bg-sky-100 p-3 rounded-lg flex justify-between items-center mb-6">
-                    <span className="text-sky-800 font-semibold">{selectedUserIds.size} مستخدم محدد</span>
+                <div className="bg-sky-100 dark:bg-sky-900/50 p-3 rounded-lg flex justify-between items-center mb-6">
+                    <span className="text-sky-800 dark:text-sky-300 font-semibold">{selectedUserIds.size} مستخدم محدد</span>
                     <div className="flex gap-2">
-                        <button onClick={() => setIsBulkPolicyModalOpen(true)} className="bg-white text-sky-700 font-semibold px-3 py-1 rounded-md text-sm border border-sky-200 hover:bg-sky-50">تعيين سياسة</button>
+                        <button onClick={() => setIsBulkPolicyModalOpen(true)} className="bg-white dark:bg-slate-700 text-sky-700 dark:text-sky-300 font-semibold px-3 py-1 rounded-md text-sm border border-sky-200 dark:border-sky-800 hover:bg-sky-50 dark:hover:bg-slate-600">تعيين سياسة</button>
                         <button onClick={handleBulkDeactivate} className="bg-red-500 text-white font-semibold px-3 py-1 rounded-md text-sm hover:bg-red-600">إلغاء تفعيل</button>
                     </div>
                 </div>
@@ -193,8 +192,8 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
 
             <Card paddingClass="p-0">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-right text-slate-500">
-                        <thead className="text-xs text-slate-700 uppercase bg-slate-50">
+                    <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
+                        <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-50 dark:bg-slate-700">
                             <tr>
                                 <th scope="col" className="p-4"><input type="checkbox" className="form-checkbox h-5 w-5 rounded text-sky-600" onChange={handleToggleSelectAll} checked={selectedUserIds.size === sortedAndFilteredUsers.length && sortedAndFilteredUsers.length > 0} /></th>
                                 <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('name')} className="flex items-center gap-1">المستخدم {getSortIcon('name')}</button></th>
@@ -207,10 +206,19 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
                             </tr>
                         </thead>
                         <tbody>
-                            {sortedAndFilteredUsers.map((user) => (
-                                <tr key={user.id} className={`border-b hover:bg-slate-50 ${selectedUserIds.has(user.id) ? 'bg-sky-50' : ''}`}>
+                            {sortedAndFilteredUsers.map((user) => {
+                                const isInactive = user.employmentStatus === 'Inactive';
+                                let retentionInfo = '';
+                                if (isInactive && user.deactivationDate) {
+                                    const expiryDate = new Date(user.deactivationDate);
+                                    expiryDate.setFullYear(expiryDate.getFullYear() + 5);
+                                    retentionInfo = `فترة الاحتفاظ بالبيانات تنتهي في: ${expiryDate.toLocaleDateString('ar-EG-u-nu-latn')}`;
+                                }
+
+                                return (
+                                <tr key={user.id} className={`border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 ${selectedUserIds.has(user.id) ? 'bg-sky-50 dark:bg-sky-900/50' : 'bg-white dark:bg-slate-800'}`}>
                                     <td className="p-4"><input type="checkbox" className="form-checkbox h-5 w-5 rounded text-sky-600" onChange={() => handleToggleSelect(user.id)} checked={selectedUserIds.has(user.id)} /></td>
-                                    <td className="px-6 py-4 font-medium text-slate-900 whitespace-nowrap">
+                                    <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-200 whitespace-nowrap">
                                         <div className="flex items-center gap-3">
                                             <img src={user.avatarUrl} alt={user.name} className="w-10 h-10 rounded-full" />
                                             <span>{user.name}</span>
@@ -232,17 +240,29 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
                                         </div>
                                     </td>
                                     <td className="px-6 py-4 min-w-[150px]"><RoleEditor currentRole={user.role} onSave={(newRole) => onUpdateUserRole(user.id, newRole)} /></td>
-                                    <td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${user.employmentStatus === 'Inactive' ? 'bg-red-100 text-red-800' : 'bg-emerald-100 text-emerald-800'}`}>{user.employmentStatus === 'Inactive' ? 'غير نشط' : 'نشط'}</span></td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-2">
+                                            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${isInactive ? 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300' : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300'}`}>{isInactive ? 'غير نشط' : 'نشط'}</span>
+                                            {retentionInfo && (
+                                                <div className="relative group">
+                                                    <InformationCircleIcon className="w-4 h-4 text-slate-400 cursor-pointer" />
+                                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max bg-slate-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
+                                                        {retentionInfo}
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </td>
                                     <td className="px-6 py-4 flex items-center gap-1">
-                                         <button onClick={() => handleOpenEditModal(user)} className="p-2 rounded-full text-slate-400 hover:bg-sky-100 hover:text-sky-600" title="تعديل"><PencilIcon className="w-5 h-5" /></button>
+                                         <button onClick={() => handleOpenEditModal(user)} className="p-2 rounded-full text-slate-400 hover:bg-sky-100 hover:text-sky-600 dark:hover:bg-slate-700" title="تعديل"><PencilIcon className="w-5 h-5" /></button>
                                         {user.employmentStatus !== 'Inactive' ? (
-                                            <button onClick={() => onDeactivateUser(user.id)} disabled={!user.isEmployee} className="p-2 rounded-full text-slate-400 hover:bg-red-100 hover:text-red-600 disabled:text-slate-300 disabled:hover:bg-transparent" title="إلغاء التفعيل"><XCircleIcon className="w-6 h-6" /></button>
+                                            <button onClick={() => onDeactivateUser(user.id)} disabled={!user.isEmployee} className="p-2 rounded-full text-slate-400 hover:bg-red-100 hover:text-red-600 dark:hover:bg-slate-700 disabled:text-slate-300 dark:disabled:text-slate-600 disabled:hover:bg-transparent" title="إلغاء التفعيل"><XCircleIcon className="w-6 h-6" /></button>
                                         ) : (
-                                            <button onClick={() => onReactivateUser(user.id)} className="p-2 rounded-full text-slate-400 hover:bg-emerald-100 hover:text-emerald-600" title="إعادة تفعيل"><ArrowPathIcon className="w-6 h-6" /></button>
+                                            <button onClick={() => onReactivateUser(user.id)} className="p-2 rounded-full text-slate-400 hover:bg-emerald-100 hover:text-emerald-600 dark:hover:bg-slate-700" title="إعادة تفعيل"><ArrowPathIcon className="w-6 h-6" /></button>
                                         )}
                                     </td>
                                 </tr>
-                            ))}
+                            )})}
                         </tbody>
                     </table>
                 </div>
