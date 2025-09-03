@@ -240,21 +240,21 @@ const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ memberDetai
                     </div>
                  );
             default:
-                return <div className="p-6 text-center text-slate-500 dark:text-slate-400">محتوى "{activeTab}" غير متاح بعد.</div>;
+                return <div className="p-6 text-center text-slate-500 dark:text-slate-400">محتوى "{t(`teamMemberDetail.tabs.${activeTab}`)}" غير متاح بعد.</div>;
         }
     };
 
     const navItems: {id: DetailTab, label: string, icon: React.FC<React.SVGProps<SVGSVGElement>>}[] = [
-        { id: 'general', label: 'General', icon: DocumentTextIcon },
-        { id: 'history', label: 'History', icon: ClockIcon },
-        { id: 'attendance_type', label: 'Attendance type', icon: CalendarIcon },
-        { id: 'grace_minutes', label: 'Grace minutes', icon: ClockIcon },
-        { id: 'work_calendar', label: 'Work calendar', icon: CalendarIcon },
-        { id: 'leave_profile', label: 'Leave & break profile', icon: BriefcaseIcon },
-        { id: 'salary', label: 'Salary configuration', icon: BanknotesIcon },
-        { id: 'documents', label: 'Documents', icon: DocumentCheckIcon },
-        { id: 'petty_cash', label: 'Petty cash', icon: BanknotesIcon },
-        { id: 'assets', label: 'Assets', icon: BriefcaseIcon },
+        { id: 'general', label: t('teamMemberDetail.tabs.general'), icon: DocumentTextIcon },
+        { id: 'history', label: t('teamMemberDetail.tabs.history'), icon: ClockIcon },
+        { id: 'attendance_type', label: t('teamMemberDetail.tabs.attendance_type'), icon: CalendarIcon },
+        { id: 'grace_minutes', label: t('teamMemberDetail.tabs.grace_minutes'), icon: ClockIcon },
+        { id: 'work_calendar', label: t('teamMemberDetail.tabs.work_calendar'), icon: CalendarIcon },
+        { id: 'leave_profile', label: t('teamMemberDetail.tabs.leave_profile'), icon: BriefcaseIcon },
+        { id: 'salary', label: t('teamMemberDetail.tabs.salary'), icon: BanknotesIcon },
+        { id: 'documents', label: t('teamMemberDetail.tabs.documents'), icon: DocumentCheckIcon },
+        { id: 'petty_cash', label: t('teamMemberDetail.tabs.petty_cash'), icon: BanknotesIcon },
+        { id: 'assets', label: t('teamMemberDetail.tabs.assets'), icon: BriefcaseIcon },
     ];
 
     return (
