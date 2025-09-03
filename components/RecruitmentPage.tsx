@@ -3,6 +3,7 @@ import { JobOpening, Candidate, CandidateStage } from '../types';
 import { UsersIcon, BriefcaseIcon } from './icons/Icons';
 import PageHeader from './PageHeader';
 import Card from './Card';
+import { useTranslation } from './contexts/LanguageContext';
 
 const STAGE_TRANSLATION: Record<CandidateStage, string> = {
     Applied: 'المتقدمون',
@@ -40,6 +41,7 @@ interface RecruitmentPageProps {
 
 const RecruitmentPage: React.FC<RecruitmentPageProps> = ({ jobOpenings, candidates, onUpdateCandidateStage }) => {
     const [selectedJobId, setSelectedJobId] = useState<string | null>(jobOpenings.find(j => j.status === 'Open')?.id || null);
+    const { t } = useTranslation();
 
     const candidatesByJob = useMemo(() => {
         return candidates.reduce((acc, candidate) => {
@@ -145,7 +147,7 @@ const RecruitmentPage: React.FC<RecruitmentPageProps> = ({ jobOpenings, candidat
                         <div className="flex justify-between items-start">
                             <div>
                                 <h2 className="text-lg font-bold text-slate-800 dark:text-slate-100">{job.title}</h2>
-                                <p className="text-sm text-slate-500 dark:text-slate-400 my-1">{job.department}</p>
+                                <p className="text-sm text-slate-500 dark:text-slate-400 my-1">{t('departments.' + job.departmentKey)}</p>
                             </div>
                             <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${job.status === 'Open' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'}`}>
                                 {job.status === 'Open' ? 'مفتوحة' : 'مغلقة'}

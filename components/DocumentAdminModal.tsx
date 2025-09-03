@@ -78,6 +78,7 @@ const DocumentAdminModal: React.FC<DocumentAdminModalProps> = ({ isOpen, onClose
                                 <option value="استمارة ١ (تأمينات)">استمارة ١ (تأمينات)</option>
                                 <option value="استمارة ٢ (تأمينات)">استمارة ٢ (تأمينات)</option>
                                 <option value="استمارة ٦ (تأمينات)">استمارة ٦ (تأمينات)</option>
+                                <option value="شهادات تدريب">شهادات تدريب</option>
                             </select>
                         </div>
                     </div>

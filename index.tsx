@@ -8,6 +8,7 @@ import { CompanyStructureProvider } from './components/contexts/CompanyStructure
 import { UserProvider } from './components/contexts/UserContext';
 import { RequestProvider } from './components/contexts/RequestContext';
 import { LanguageProvider } from './components/contexts/LanguageContext';
+import { HelpCenterProvider } from './components/contexts/HelpCenterContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -18,17 +19,19 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <LanguageProvider>
-      <PoliciesProvider>
-        <AssetsProvider>
-          <CompanyStructureProvider>
-            <UserProvider>
-              <RequestProvider>
-                <App />
-              </RequestProvider>
-            </UserProvider>
-          </CompanyStructureProvider>
-        </AssetsProvider>
-      </PoliciesProvider>
+      <HelpCenterProvider>
+        <PoliciesProvider>
+          <AssetsProvider>
+            <CompanyStructureProvider>
+              <UserProvider>
+                <RequestProvider>
+                  <App />
+                </RequestProvider>
+              </UserProvider>
+            </CompanyStructureProvider>
+          </AssetsProvider>
+        </PoliciesProvider>
+      </HelpCenterProvider>
     </LanguageProvider>
   </React.StrictMode>
 );

@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import type { AttendancePolicy, EmployeeProfile, Branch, WorkLocation } from '../types';
 import { PlusCircleIcon, PencilIcon, ArchiveBoxIcon, UserGroupIcon, ArrowsUpDownIcon, ChevronUpIcon, ChevronDownIcon } from './icons/Icons';
@@ -7,6 +8,7 @@ import WorkLocationModal from './WorkLocationModal';
 import PageHeader from './PageHeader';
 import Card from './Card';
 import ActionBar from './ActionBar';
+import { useTranslation } from './contexts/LanguageContext';
 
 type SortableKeys = 'name' | 'scope';
 
@@ -53,6 +55,7 @@ const AttendancePolicyPage: React.FC<AttendancePolicyPageProps> = ({
     const [editingLocation, setEditingLocation] = useState<WorkLocation | null>(null);
     const [sortConfig, setSortConfig] = useState<{ key: SortableKeys, direction: 'asc' | 'desc' } | null>(null);
     const [selectedPolicyIds, setSelectedPolicyIds] = useState<Set<string>>(new Set());
+    const { t } = useTranslation();
 
     const visiblePolicies = useMemo(() => {
         let policies = attendancePolicies;
@@ -190,7 +193,8 @@ const AttendancePolicyPage: React.FC<AttendancePolicyPageProps> = ({
                                         <tr key={policy.id} className="border-b dark:border-slate-700">
                                             <td className="p-4"><input type="checkbox" checked={selectedPolicyIds.has(policy.id)} onChange={() => handleToggleSelect(policy.id)} /></td>
                                             <td className="px-6 py-4 font-semibold dark:text-slate-200">{policy.name}</td>
-                                            <td className="px-6 py-4">{policy.scope === 'company' ? 'عام للشركة' : `خاص بـ ${branches.find(b => b.id === policy.branchId)?.name || 'فرع'}`}</td>
+                                            {/* FIX: Replaced property access from `name` to `nameKey` and wrapped it in the translation function to match the type definition. */}
+                                            <td className="px-6 py-4">{policy.scope === 'company' ? 'عام للشركة' : `خاص بـ ${t(branches.find(b => b.id === policy.branchId)?.nameKey || 'فرع')}`}</td>
                                             <td className="px-6 py-4">{employees.filter(e => e.attendancePolicyId === policy.id).length}</td>
                                             <td className="px-6 py-4"><span className={`px-2 py-1 text-xs font-semibold rounded-full ${STATUS_STYLES[policy.status].bg} ${STATUS_STYLES[policy.status].text}`}>{policy.status === 'Active' ? 'نشط' : (policy.status === 'Archived' ? 'مؤرشفة' : 'بانتظار الموافقة')}</span></td>
                                             <td className="px-6 py-4 flex items-center gap-1">

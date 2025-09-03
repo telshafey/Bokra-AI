@@ -2,6 +2,8 @@
 import React from 'react';
 import type { AttentionItem } from '../types';
 import { timeSince } from '../constants';
+// FIX: Imported the useTranslation hook to pass the `t` function to `timeSince`.
+import { useTranslation } from './contexts/LanguageContext';
 
 interface AttentionWidgetProps {
   items: AttentionItem[];
@@ -9,6 +11,8 @@ interface AttentionWidgetProps {
 }
 
 const AttentionWidget: React.FC<AttentionWidgetProps> = ({ items, onItemClick }) => {
+    // FIX: Get the translation function `t` to pass to `timeSince`.
+    const { t } = useTranslation();
 
     return (
         <div className="bg-white p-6 rounded-xl shadow-md transition-shadow hover:shadow-lg">
@@ -32,7 +36,8 @@ const AttentionWidget: React.FC<AttentionWidgetProps> = ({ items, onItemClick })
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
-                             <span className="text-xs text-slate-400">{timeSince(item.timestamp)}</span>
+                             {/* FIX: Passed the `t` function as the second argument to `timeSince`. */}
+                             <span className="text-xs text-slate-400">{timeSince(item.timestamp, t)}</span>
                              <img src={item.employeeAvatarUrl} alt={item.employeeName} className="w-10 h-10 rounded-full object-cover"/>
                         </div>
                     </button>

@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import TeamMemberList from './TeamMemberList';
 import TeamMemberDetailView from './TeamMemberDetailView';
 import { EmployeeProfile, TeamMemberDetails, Branch, AttendancePolicy, LeavePolicy, JobTitle, MonthlyCheckIn, OvertimePolicy, PerformanceReview, NewUserPayload, AppModule, SalaryComponent, CompensationPackage, EmployeeDocument } from '../types';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface TeamAnalyticsPageProps {
   teamDetails: TeamMemberDetails[];
@@ -32,6 +33,7 @@ const TeamAnalyticsPage: React.FC<TeamAnalyticsPageProps> = ({
 }) => {
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(teamDetails[0]?.profile.id || null);
   const [branchFilter, setBranchFilter] = useState<string>('all');
+  const { t } = useTranslation();
 
   const canViewAllBranches = currentUser.role === 'Super Admin' || currentUser.role === 'Admin';
 
@@ -68,8 +70,9 @@ const TeamAnalyticsPage: React.FC<TeamAnalyticsPageProps> = ({
             className="p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
           >
             <option value="all">كل الفروع</option>
+            {/* FIX: Replaced property access from `name` to `nameKey` and wrapped it in the translation function to match the type definition. */}
             {branches.map(branch => (
-              <option key={branch.id} value={branch.id}>{branch.name}</option>
+              <option key={branch.id} value={branch.id}>{t(branch.nameKey)}</option>
             ))}
           </select>
         </div>

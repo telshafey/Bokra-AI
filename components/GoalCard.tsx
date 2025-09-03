@@ -1,6 +1,7 @@
 import React from 'react';
 import type { Goal, GoalStatus } from '../types';
 import { CheckCircleIcon, XCircleIcon, ClockIcon } from './icons/Icons'; // Example icons
+import { useTranslation } from './contexts/LanguageContext';
 
 const STATUS_STYLES: Record<GoalStatus, { text: string; bg: string; icon?: React.FC<React.SVGProps<SVGSVGElement>> }> = {
     'On Track': { text: 'text-sky-800', bg: 'bg-sky-100' },
@@ -10,13 +11,6 @@ const STATUS_STYLES: Record<GoalStatus, { text: string; bg: string; icon?: React
     'Draft': { text: 'text-slate-800', bg: 'bg-slate-100' },
 };
 
-const STATUS_TRANSLATION: Record<GoalStatus, string> = {
-    'On Track': 'على المسار',
-    'At Risk': 'في خطر',
-    'Off Track': 'خارج المسار',
-    'Completed': 'مكتمل',
-    'Draft': 'مسودة',
-}
 
 const ProgressBar: React.FC<{ progress: number }> = ({ progress }) => {
     let bgColor = 'bg-sky-500';
@@ -39,8 +33,10 @@ interface GoalCardProps {
 }
 
 const GoalCard: React.FC<GoalCardProps> = ({ goal }) => {
+    const { t, language } = useTranslation();
     const isObjective = goal.type === 'Objective';
     const statusStyle = STATUS_STYLES[goal.status];
+    const locale = language === 'ar' ? 'ar-EG' : 'en-US';
 
     return (
         <div className={`p-4 rounded-lg shadow-sm transition-shadow hover:shadow-md ${isObjective ? 'bg-white' : 'bg-slate-50'}`}>
@@ -55,10 +51,10 @@ const GoalCard: React.FC<GoalCardProps> = ({ goal }) => {
                 </div>
                 <div className="flex flex-col items-end gap-2">
                     <span className={`px-3 py-1 text-xs font-semibold rounded-full ${statusStyle.bg} ${statusStyle.text}`}>
-                        {STATUS_TRANSLATION[goal.status]}
+                        {t(`goalCard.statuses.${goal.status}`)}
                     </span>
                      <p className="text-xs text-slate-500">
-                        تاريخ الاستحقاق: {new Date(goal.dueDate).toLocaleDateString('ar-EG', { month: 'long', day: 'numeric' })}
+                        {t('goalCard.dueDate')}: {new Date(goal.dueDate).toLocaleDateString(locale, { month: 'long', day: 'numeric' })}
                     </p>
                 </div>
             </div>

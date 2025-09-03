@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import { XMarkIcon } from './icons/Icons';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface RequestExternalTaskModalProps {
     isOpen: boolean;
@@ -9,6 +9,7 @@ interface RequestExternalTaskModalProps {
 }
 
 const RequestExternalTaskModal: React.FC<RequestExternalTaskModalProps> = ({ isOpen, onClose, onSubmit }) => {
+    const { t } = useTranslation();
     const [title, setTitle] = useState('');
     const [description, setDescription] = useState('');
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -20,7 +21,7 @@ const RequestExternalTaskModal: React.FC<RequestExternalTaskModalProps> = ({ isO
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!title.trim() || !date || !startTime || !endTime) {
-            alert('يرجى تعبئة الحقول المطلوبة.');
+            alert(t('alerts.formErrors.requiredFields'));
             return;
         }
         onSubmit({ title, description, date, startTime, endTime });
@@ -37,37 +38,37 @@ const RequestExternalTaskModal: React.FC<RequestExternalTaskModalProps> = ({ isO
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-2xl font-bold text-slate-800">طلب مهمة عمل خارجية</h2>
+                    <h2 className="text-2xl font-bold text-slate-800">{t('myTasks.modal.title')}</h2>
                     <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
                         <XMarkIcon className="w-7 h-7" />
                     </button>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">عنوان المهمة</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('myTasks.modal.taskTitle')}</label>
                         <input type="text" value={title} onChange={e => setTitle(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg" required />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                          <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">تاريخ المهمة</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">{t('myTasks.modal.date')}</label>
                             <input type="date" value={date} onChange={e => setDate(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg" required />
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">وقت البدء</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">{t('myTasks.modal.startTime')}</label>
                             <input type="time" value={startTime} onChange={e => setStartTime(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg" required />
                         </div>
                          <div>
-                            <label className="block text-sm font-medium text-slate-700 mb-1">وقت الانتهاء</label>
+                            <label className="block text-sm font-medium text-slate-700 mb-1">{t('myTasks.modal.endTime')}</label>
                             <input type="time" value={endTime} onChange={e => setEndTime(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg" required />
                         </div>
                     </div>
                      <div>
-                        <label className="block text-sm font-medium text-slate-700 mb-1">الوصف</label>
+                        <label className="block text-sm font-medium text-slate-700 mb-1">{t('myTasks.modal.description')}</label>
                         <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3} className="w-full p-2 border border-slate-300 rounded-lg" />
                     </div>
                      <div className="flex justify-end gap-4 pt-4">
-                        <button type="button" onClick={onClose} className="py-2 px-6 bg-slate-100 rounded-lg font-semibold hover:bg-slate-200">إلغاء</button>
-                        <button type="submit" className="py-2 px-6 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700">إرسال الطلب</button>
+                        <button type="button" onClick={onClose} className="py-2 px-6 bg-slate-100 rounded-lg font-semibold hover:bg-slate-200">{t('general.cancel')}</button>
+                        <button type="submit" className="py-2 px-6 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700">{t('myTasks.modal.submit')}</button>
                     </div>
                 </form>
             </div>

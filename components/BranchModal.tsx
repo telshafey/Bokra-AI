@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { Branch, EmployeeProfile } from '../types';
@@ -17,7 +18,8 @@ const BranchModal: React.FC<BranchModalProps> = ({ isOpen, onClose, onSave, bran
     useEffect(() => {
         if (isOpen) {
             if (branchToEdit) {
-                setName(branchToEdit.name);
+                // FIX: Changed property access from `name` to `nameKey` to match the `Branch` type definition.
+                setName(branchToEdit.nameKey);
                 const currentManager = employees.find(e => e.branchId === branchToEdit.id && e.role === 'Branch Admin');
                 setSelectedManagerId(currentManager?.id || '');
             } else {

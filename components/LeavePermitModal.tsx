@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { LeavePermitRequest, AttendancePolicy } from '../types';

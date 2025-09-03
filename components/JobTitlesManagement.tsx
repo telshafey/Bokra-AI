@@ -2,6 +2,7 @@ import React, { useState, useMemo } from 'react';
 import type { JobTitle, EmployeeProfile } from '../types';
 import { PlusCircleIcon, PencilIcon, TrashIcon } from './icons/Icons';
 import JobTitleModal from './JobTitleModal';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface JobTitleNodeProps {
     jobTitle: JobTitle;
@@ -12,16 +13,17 @@ interface JobTitleNodeProps {
     onEdit: (jobTitle: JobTitle) => void;
     onDelete: (jobTitle: JobTitle) => void;
     canDelete: boolean;
+    t: (key: string) => string;
 }
 
-const JobTitleNode: React.FC<JobTitleNodeProps> = ({ jobTitle, level, children, employeeCount, onAdd, onEdit, onDelete, canDelete }) => {
+const JobTitleNode: React.FC<JobTitleNodeProps> = ({ jobTitle, level, children, employeeCount, onAdd, onEdit, onDelete, canDelete, t }) => {
     return (
         <div>
             <div className="flex items-center justify-between p-3 bg-slate-50 rounded-lg hover:bg-slate-100">
                 <div className="flex items-center">
                     <span style={{ marginRight: `${level * 2}rem` }}></span>
                     <div>
-                        <p className="font-bold text-slate-800">{jobTitle.name}</p>
+                        <p className="font-bold text-slate-800">{t(jobTitle.nameKey)}</p>
                         <p className="text-xs text-slate-500">{employeeCount} موظفين</p>
                     </div>
                 </div>
@@ -54,6 +56,7 @@ const JobTitlesManagement: React.FC<JobTitlesManagementProps> = ({ jobTitles, em
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingTitle, setEditingTitle] = useState<JobTitle | null>(null);
     const [parentTitleId, setParentTitleId] = useState<string | null>(null);
+    const { t } = useTranslation();
 
     const jobTitleMap = useMemo(() => new Map(jobTitles.map(jt => [jt.id, jt])), [jobTitles]);
     const childrenMap = useMemo(() => {
@@ -90,7 +93,7 @@ const JobTitlesManagement: React.FC<JobTitlesManagementProps> = ({ jobTitles, em
     };
 
     const handleDelete = (jobTitle: JobTitle) => {
-        if (confirm(`هل أنت متأكد من حذف منصب "${jobTitle.name}"؟`)) {
+        if (confirm(`هل أنت متأكد من حذف منصب "${t(jobTitle.nameKey)}"؟`)) {
             onDelete(jobTitle.id);
         }
     };
@@ -111,6 +114,7 @@ const JobTitlesManagement: React.FC<JobTitlesManagementProps> = ({ jobTitles, em
                     onEdit={handleOpenEditModal}
                     onDelete={() => handleDelete(jobTitle)}
                     canDelete={canDelete}
+                    t={t}
                 >
                     {renderTree(jobTitle.id, level + 1)}
                 </JobTitleNode>

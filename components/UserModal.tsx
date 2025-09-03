@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { Branch, EmployeeProfile, NewUserPayload, UserRole, AttendancePolicy, LeavePolicy, JobTitle, CompensationPackage, OvertimePolicy } from '../types';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface UserModalProps {
     isOpen: boolean;
@@ -37,10 +38,13 @@ const FormField: React.FC<{
 
 
 const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSave, userToEdit, branches, managers, attendancePolicies, overtimePolicies, leavePolicies, jobTitles, compensationPackages }) => {
+    const { t } = useTranslation();
+    const departmentKeys = ['management', 'hr', 'it', 'sales', 'system'];
+
     const getInitialState = (): NewUserPayload => ({
         name: '',
         jobTitleId: '',
-        department: '',
+        departmentKey: 'it',
         hireDate: new Date().toISOString().split('T')[0],
         branchId: branches[0]?.id || '',
         role: 'Employee',
@@ -69,7 +73,7 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSave, userToEd
             setFormData({
                 name: userToEdit.name,
                 jobTitleId: userToEdit.jobTitleId || '',
-                department: userToEdit.department,
+                departmentKey: userToEdit.departmentKey,
                 hireDate: userToEdit.hireDate,
                 branchId: userToEdit.branchId,
                 role: userToEdit.role,
@@ -130,13 +134,17 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSave, userToEd
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             <FormField label="الاسم الكامل" name="name" value={formData.name} onChange={handleChange} />
                             <FormField label="المسمى الوظيفي" name="jobTitleId" value={formData.jobTitleId} onChange={handleChange}>
-                                <select><option value="">-- اختر --</option>{jobTitles.map(jt => <option key={jt.id} value={jt.id}>{jt.name}</option>)}</select>
+                                <select><option value="">-- اختر --</option>{jobTitles.map(jt => <option key={jt.id} value={jt.id}>{t(jt.nameKey)}</option>)}</select>
                             </FormField>
-                            <FormField label="القسم" name="department" value={formData.department} onChange={handleChange} />
+                             <FormField label="القسم" name="departmentKey" value={formData.departmentKey} onChange={handleChange}>
+                                <select>
+                                    {departmentKeys.map(key => <option key={key} value={key}>{t(`departments.${key}`)}</option>)}
+                                </select>
+                            </FormField>
                             <FormField label="تاريخ التعيين" name="hireDate" value={formData.hireDate} onChange={handleChange} type="date" />
                              <FormField label="الراتب الأساسي" name="baseSalary" value={String(formData.baseSalary || '')} onChange={handleChange} type="number" />
                             <FormField label="الفرع" name="branchId" value={formData.branchId} onChange={handleChange}>
-                                <select>{branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}</select>
+                                <select>{branches.map(b => <option key={b.id} value={b.id}>{t(b.nameKey)}</option>)}</select>
                             </FormField>
                              <FormField label="المدير المباشر" name="managerId" value={formData.managerId} onChange={handleChange} required={false}>
                                 <select><option value="">لا يوجد</option>{managers.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}</select>

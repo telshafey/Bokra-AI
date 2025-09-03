@@ -7,6 +7,7 @@ import PageHeader from './PageHeader';
 import Card from './Card';
 import ActionBar from './ActionBar';
 import BulkAssignPolicyModal from './BulkAssignPolicyModal';
+import { useTranslation } from './contexts/LanguageContext';
 
 
 type SortableKeys = 'name' | 'title' | 'branchName' | 'employmentStatus';
@@ -65,6 +66,7 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
     const [sortConfig, setSortConfig] = useState<{ key: SortableKeys, direction: 'asc' | 'desc' } | null>(null);
     const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set());
     const [isBulkPolicyModalOpen, setIsBulkPolicyModalOpen] = useState(false);
+    const { t } = useTranslation();
 
 
     const managers = useMemo(() => 
@@ -100,7 +102,30 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
         setSortConfig({ key, direction });
     };
 
-    const handleToggleSelect = (userId: string) => {
+    const getSortIcon = (key: SortableKeys) => {
+        if (!sortConfig || sortConfig.key !== key) return <ArrowsUpDownIcon className="w-4 h-4 text-slate-400" />;
+        return sortConfig.direction === 'asc' ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />;
+    };
+
+    const handleOpenAddModal = () => {
+        setEditingUser(null);
+        setIsUserModalOpen(true);
+    };
+
+    const handleOpenEditModal = (user: EmployeeProfile) => {
+        setEditingUser(user);
+        setIsUserModalOpen(true);
+    };
+
+    const handleSaveUser = (userData: NewUserPayload) => {
+        if (editingUser) {
+            onUpdateUser(editingUser.id, userData);
+        } else {
+            onAddNewUser(userData);
+        }
+    };
+    
+    const handleToggleSelectUser = (userId: string) => {
         setSelectedUserIds(prev => {
             const newSet = new Set(prev);
             if (newSet.has(userId)) {
@@ -119,105 +144,67 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
             setSelectedUserIds(new Set(sortedAndFilteredUsers.map(u => u.id)));
         }
     };
-
-    const handleOpenAddModal = () => {
-        setEditingUser(null);
-        setIsUserModalOpen(true);
-    };
-
-    const handleOpenEditModal = (user: EmployeeProfile) => {
-        setEditingUser(user);
-        setIsUserModalOpen(true);
-    };
     
-    const handleSaveUser = (userData: NewUserPayload) => {
-        if (editingUser) {
-            onUpdateUser(editingUser.id, userData);
-        } else {
-            onAddNewUser(userData);
-        }
-        setIsUserModalOpen(false);
-    };
-
     const handleBulkDeactivate = () => {
-        if (confirm(`هل أنت متأكد من رغبتك في إلغاء تفعيل ${selectedUserIds.size} مستخدم؟`)) {
+        if (confirm(t('alerts.confirmations.deactivateUsers', { count: selectedUserIds.size }))) {
             onBulkDeactivateUsers(Array.from(selectedUserIds));
             setSelectedUserIds(new Set());
         }
     };
-    
-    const getSortIcon = (key: SortableKeys) => {
-        if (!sortConfig || sortConfig.key !== key) {
-            return <ArrowsUpDownIcon className="w-4 h-4 text-slate-400" />;
-        }
-        return sortConfig.direction === 'asc' ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />;
-    };
 
     return (
         <div className="space-y-6">
-            <PageHeader 
+            <PageHeader
                 title="إدارة الموظفين"
-                subtitle="عرض وتعديل بيانات جميع الموظفين في النظام."
+                subtitle="إدارة بيانات الموظفين، الصلاحيات، وحالات التفعيل."
             />
             
             <ActionBar>
-                 <div className="flex items-center gap-2 flex-wrap">
-                    <select value={branchFilter} onChange={(e) => setBranchFilter(e.target.value)} className="p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white text-sm">
+                <div className="flex items-center gap-4">
+                    <select value={branchFilter} onChange={e => setBranchFilter(e.target.value)} className="p-2 border dark:border-slate-600 rounded-lg text-sm bg-slate-50 dark:bg-slate-700 dark:text-white">
                         <option value="all">كل الفروع</option>
-                        {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                        {branches.map(b => <option key={b.id} value={b.id}>{t(b.nameKey)}</option>)}
                     </select>
-                    <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white text-sm">
+                     <select value={statusFilter} onChange={e => setStatusFilter(e.target.value)} className="p-2 border dark:border-slate-600 rounded-lg text-sm bg-slate-50 dark:bg-slate-700 dark:text-white">
                         <option value="all">كل الحالات</option>
                         <option value="active">نشط</option>
                         <option value="inactive">غير نشط</option>
                     </select>
                 </div>
-                 <button 
-                    onClick={handleOpenAddModal}
-                    className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-sm">
-                    <PlusCircleIcon className="w-5 h-5"/>
-                    <span>إضافة مستخدم</span>
+                 <button onClick={handleOpenAddModal} className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg">
+                    <PlusCircleIcon className="w-5 h-5" />
+                    <span>إضافة موظف جديد</span>
                 </button>
             </ActionBar>
 
             {selectedUserIds.size > 0 && (
-                <div className="bg-sky-100 dark:bg-sky-900/50 p-3 rounded-lg flex justify-between items-center mb-6">
-                    <span className="text-sky-800 dark:text-sky-300 font-semibold">{selectedUserIds.size} مستخدم محدد</span>
-                    <div className="flex gap-2">
-                        <button onClick={() => setIsBulkPolicyModalOpen(true)} className="bg-white dark:bg-slate-700 text-sky-700 dark:text-sky-300 font-semibold px-3 py-1 rounded-md text-sm border border-sky-200 dark:border-sky-800 hover:bg-sky-50 dark:hover:bg-slate-600">تعيين سياسة</button>
-                        <button onClick={handleBulkDeactivate} className="bg-red-500 text-white font-semibold px-3 py-1 rounded-md text-sm hover:bg-red-600">إلغاء تفعيل</button>
+                 <div className="bg-sky-100 dark:bg-sky-900/50 p-3 rounded-lg flex justify-between items-center">
+                    <span className="text-sky-800 dark:text-sky-300 font-semibold">{selectedUserIds.size} موظفين محددين</span>
+                    <div className="flex items-center gap-2">
+                         <button onClick={() => setIsBulkPolicyModalOpen(true)} className="bg-sky-500 text-white font-semibold px-3 py-1 rounded-md text-sm hover:bg-sky-600">تعيين سياسة</button>
+                         <button onClick={handleBulkDeactivate} className="bg-red-500 text-white font-semibold px-3 py-1 rounded-md text-sm hover:bg-red-600">إلغاء تفعيل</button>
                     </div>
                 </div>
             )}
 
             <Card paddingClass="p-0">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
-                        <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-50 dark:bg-slate-700">
+                    <table className="w-full text-sm text-right text-slate-500 dark:text-slate-300">
+                        <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-100 dark:bg-slate-700">
                             <tr>
-                                <th scope="col" className="p-4"><input type="checkbox" className="form-checkbox h-5 w-5 rounded text-sky-600" onChange={handleToggleSelectAll} checked={selectedUserIds.size === sortedAndFilteredUsers.length && sortedAndFilteredUsers.length > 0} /></th>
-                                <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('name')} className="flex items-center gap-1">المستخدم {getSortIcon('name')}</button></th>
-                                <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('title')} className="flex items-center gap-1">المسمى الوظيفي {getSortIcon('title')}</button></th>
-                                <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('branchName')} className="flex items-center gap-1">الفرع {getSortIcon('branchName')}</button></th>
-                                <th scope="col" className="px-6 py-3">سياسة الحضور</th>
-                                <th scope="col" className="px-6 py-3">الدور</th>
-                                <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('employmentStatus')} className="flex items-center gap-1">الحالة {getSortIcon('employmentStatus')}</button></th>
-                                <th scope="col" className="px-6 py-3">إجراءات</th>
+                                <th className="p-4"><input type="checkbox" onChange={handleToggleSelectAll} checked={selectedUserIds.size === sortedAndFilteredUsers.length && sortedAndFilteredUsers.length > 0} /></th>
+                                <th className="px-6 py-3"><button onClick={() => handleSort('name')} className="flex items-center gap-1">الموظف {getSortIcon('name')}</button></th>
+                                <th className="px-6 py-3"><button onClick={() => handleSort('title')} className="flex items-center gap-1">المسمى الوظيفي {getSortIcon('title')}</button></th>
+                                <th className="px-6 py-3"><button onClick={() => handleSort('branchName')} className="flex items-center gap-1">الفرع {getSortIcon('branchName')}</button></th>
+                                <th className="px-6 py-3">الصلاحية (Role)</th>
+                                <th className="px-6 py-3"><button onClick={() => handleSort('employmentStatus')} className="flex items-center gap-1">الحالة {getSortIcon('employmentStatus')}</button></th>
+                                <th className="px-6 py-3">إجراءات</th>
                             </tr>
                         </thead>
                         <tbody>
-                            {sortedAndFilteredUsers.map((user) => {
-                                const isInactive = user.employmentStatus === 'Inactive';
-                                let retentionInfo = '';
-                                if (isInactive && user.deactivationDate) {
-                                    const expiryDate = new Date(user.deactivationDate);
-                                    expiryDate.setFullYear(expiryDate.getFullYear() + 5);
-                                    retentionInfo = `فترة الاحتفاظ بالبيانات تنتهي في: ${expiryDate.toLocaleDateString('ar-EG-u-nu-latn')}`;
-                                }
-
-                                return (
-                                <tr key={user.id} className={`border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 ${selectedUserIds.has(user.id) ? 'bg-sky-50 dark:bg-sky-900/50' : 'bg-white dark:bg-slate-800'}`}>
-                                    <td className="p-4"><input type="checkbox" className="form-checkbox h-5 w-5 rounded text-sky-600" onChange={() => handleToggleSelect(user.id)} checked={selectedUserIds.has(user.id)} /></td>
+                            {sortedAndFilteredUsers.map(user => (
+                                <tr key={user.id} className="bg-white dark:bg-slate-800 border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700">
+                                    <td className="p-4"><input type="checkbox" checked={selectedUserIds.has(user.id)} onChange={() => handleToggleSelectUser(user.id)}/></td>
                                     <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-200 whitespace-nowrap">
                                         <div className="flex items-center gap-3">
                                             <img src={user.avatarUrl} alt={user.name} className="w-10 h-10 rounded-full" />
@@ -225,44 +212,23 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">{user.title}</td>
-                                    <td className="px-6 py-4">{user.branchName || '-'}</td>
+                                    <td className="px-6 py-4">{user.branchName}</td>
+                                    <td className="px-6 py-4"><RoleEditor currentRole={user.role} onSave={(newRole) => onUpdateUserRole(user.id, newRole)} /></td>
                                     <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2">
-                                            <span>{user.attendancePolicyName || '-'}</span>
-                                            {user.attendancePolicyName && user.attendancePolicyName !== 'N/A' && (
-                                                <div className="relative group">
-                                                    <InformationCircleIcon className="w-4 h-4 text-slate-400 cursor-pointer" />
-                                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max max-w-xs bg-slate-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
-                                                        فترة السماح: {attendancePolicies.find(p => p.id === user.attendancePolicyId)?.gracePeriodInMinutes} دقيقة
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
+                                        <span className={`px-2 py-1 rounded-full text-xs font-semibold ${user.employmentStatus === 'Inactive' ? 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300' : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300'}`}>
+                                            {user.employmentStatus}
+                                        </span>
                                     </td>
-                                    <td className="px-6 py-4 min-w-[150px]"><RoleEditor currentRole={user.role} onSave={(newRole) => onUpdateUserRole(user.id, newRole)} /></td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-2">
-                                            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${isInactive ? 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300' : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300'}`}>{isInactive ? 'غير نشط' : 'نشط'}</span>
-                                            {retentionInfo && (
-                                                <div className="relative group">
-                                                    <InformationCircleIcon className="w-4 h-4 text-slate-400 cursor-pointer" />
-                                                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-max bg-slate-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
-                                                        {retentionInfo}
-                                                    </div>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 flex items-center gap-1">
-                                         <button onClick={() => handleOpenEditModal(user)} className="p-2 rounded-full text-slate-400 hover:bg-sky-100 hover:text-sky-600 dark:hover:bg-slate-700" title="تعديل"><PencilIcon className="w-5 h-5" /></button>
+                                    <td className="px-6 py-4 flex items-center gap-2">
+                                        <button onClick={() => handleOpenEditModal(user)} className="p-2 text-slate-500 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400" title="تعديل"><PencilIcon className="w-5 h-5" /></button>
                                         {user.employmentStatus !== 'Inactive' ? (
-                                            <button onClick={() => onDeactivateUser(user.id)} disabled={!user.isEmployee} className="p-2 rounded-full text-slate-400 hover:bg-red-100 hover:text-red-600 dark:hover:bg-slate-700 disabled:text-slate-300 dark:disabled:text-slate-600 disabled:hover:bg-transparent" title="إلغاء التفعيل"><XCircleIcon className="w-6 h-6" /></button>
+                                             <button onClick={() => onDeactivateUser(user.id)} className="p-2 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500" title="إلغاء تفعيل"><XCircleIcon className="w-5 h-5" /></button>
                                         ) : (
-                                            <button onClick={() => onReactivateUser(user.id)} className="p-2 rounded-full text-slate-400 hover:bg-emerald-100 hover:text-emerald-600 dark:hover:bg-slate-700" title="إعادة تفعيل"><ArrowPathIcon className="w-6 h-6" /></button>
+                                            <button onClick={() => onReactivateUser(user.id)} className="p-2 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-500" title="إعادة تفعيل"><ArrowPathIcon className="w-5 h-5" /></button>
                                         )}
                                     </td>
                                 </tr>
-                            )})}
+                            ))}
                         </tbody>
                     </table>
                 </div>
@@ -273,7 +239,7 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
                 onClose={() => setIsUserModalOpen(false)}
                 onSave={handleSaveUser}
                 userToEdit={editingUser}
-                branches={branches.filter(b => b.status === 'Active')}
+                branches={branches}
                 managers={managers}
                 attendancePolicies={attendancePolicies}
                 overtimePolicies={overtimePolicies}
@@ -281,10 +247,11 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
                 jobTitles={jobTitles}
                 compensationPackages={compensationPackages}
             />
-            <BulkAssignPolicyModal
+            
+            <BulkAssignPolicyModal 
                 isOpen={isBulkPolicyModalOpen}
                 onClose={() => setIsBulkPolicyModalOpen(false)}
-                employees={allUsers.filter(u => selectedUserIds.has(u.id))}
+                employees={sortedAndFilteredUsers.filter(u => selectedUserIds.has(u.id))}
                 attendancePolicies={attendancePolicies}
                 overtimePolicies={overtimePolicies}
                 leavePolicies={leavePolicies}
@@ -295,5 +262,4 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
         </div>
     );
 };
-
 export default SystemAdminPage;

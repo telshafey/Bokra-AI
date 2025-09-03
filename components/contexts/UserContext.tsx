@@ -1,7 +1,9 @@
+
 import React, { createContext, useContext, useState } from 'react';
 import { EmployeeProfile, UserContextType, UserProviderProps, NewUserPayload, UserRole } from '../../types';
 import { ALL_EMPLOYEES } from '../../constants';
 import { useCompanyStructureContext } from './CompanyStructureContext';
+import { useTranslation } from './LanguageContext';
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
@@ -14,6 +16,7 @@ export const useUserContext = () => {
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const { jobTitles } = useCompanyStructureContext();
     const [employees, setEmployees] = useState<EmployeeProfile[]>(ALL_EMPLOYEES);
+    const { t } = useTranslation();
 
     const updateUserRole = (userId: string, newRole: UserRole) => {
         setEmployees(prev => prev.map(emp => emp.id === userId ? { ...emp, role: newRole } : emp));
@@ -52,17 +55,20 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const addNewUser = (newUserPayload: NewUserPayload) => {
         const newEmployeeId = `BOK-${Math.floor(1000 + Math.random() * 9000)}`;
         const newId = `emp-${Math.floor(1000 + Math.random() * 9000)}`;
+        // FIX: Changed property access from `name` to `nameKey` and used the translation function to get the display title.
+        const jobTitle = jobTitles.find(jt => jt.id === newUserPayload.jobTitleId);
 
         const newUserProfile: EmployeeProfile = {
           id: newId,
           employeeId: newEmployeeId,
           name: newUserPayload.name,
           jobTitleId: newUserPayload.jobTitleId,
-          title: jobTitles.find(jt => jt.id === newUserPayload.jobTitleId)?.name || '',
+          title: jobTitle ? t(jobTitle.nameKey) : '',
           role: newUserPayload.role,
           isEmployee: true,
           avatarUrl: `https://i.pravatar.cc/100?u=${newId}`,
-          department: newUserPayload.department,
+          // FIX: Changed property from `department` to `departmentKey` to match type definitions.
+          departmentKey: newUserPayload.departmentKey,
           hireDate: newUserPayload.hireDate,
           employmentStatus: 'دوام كامل',
           managerId: newUserPayload.managerId,
@@ -99,12 +105,15 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const updateUser = (userId: string, updatedData: NewUserPayload) => {
         setEmployees(prev => prev.map(emp => {
             if (emp.id === userId) {
+                // FIX: Changed property access from `name` to `nameKey` and used the translation function to get the display title.
+                const jobTitle = jobTitles.find(jt => jt.id === updatedData.jobTitleId);
                 return {
                     ...emp,
                     name: updatedData.name,
                     jobTitleId: updatedData.jobTitleId,
-                    title: jobTitles.find(jt => jt.id === updatedData.jobTitleId)?.name || emp.title,
-                    department: updatedData.department,
+                    title: jobTitle ? t(jobTitle.nameKey) : emp.title,
+                    // FIX: Changed property from `department` to `departmentKey` to match type definitions.
+                    departmentKey: updatedData.departmentKey,
                     hireDate: updatedData.hireDate,
                     branchId: updatedData.branchId,
                     role: updatedData.role,
@@ -153,6 +162,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         });
     };
 
+    const updateEmployeeManager = (employeeId: string, newManagerId: string) => {
+        setEmployees(prev => prev.map(emp => 
+            emp.id === employeeId ? { ...emp, managerId: newManagerId } : emp
+        ));
+    };
+
     const value = {
         employees,
         updateUserRole,
@@ -166,6 +181,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
         addNewUser,
         updateUser,
         updateBranchManager,
+        updateEmployeeManager,
     };
 
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>;

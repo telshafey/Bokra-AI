@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { JobTitle } from '../types';
@@ -15,7 +16,8 @@ const JobTitleModal: React.FC<JobTitleModalProps> = ({ isOpen, onClose, onSave, 
 
     useEffect(() => {
         if (isOpen) {
-            setName(jobTitleToEdit?.name || '');
+            // FIX: Changed property access from `name` to `nameKey` to match the `JobTitle` type definition.
+            setName(jobTitleToEdit?.nameKey || '');
         }
     }, [isOpen, jobTitleToEdit]);
 
@@ -26,7 +28,8 @@ const JobTitleModal: React.FC<JobTitleModalProps> = ({ isOpen, onClose, onSave, 
         if (name.trim()) {
             const jobTitleData: JobTitle = {
                 id: jobTitleToEdit?.id || `jt-${Date.now()}`,
-                name: name.trim(),
+                // FIX: Changed property from `name` to `nameKey` to align with the `JobTitle` type definition.
+                nameKey: name.trim(),
                 parentId: jobTitleToEdit?.parentId ?? parentId,
             };
             onSave(jobTitleData);

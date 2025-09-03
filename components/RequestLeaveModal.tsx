@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, ArrowUpTrayIcon } from './icons/Icons';
 import type { LeaveRequest, LeaveType } from '../types';

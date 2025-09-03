@@ -11,6 +11,7 @@ import { useAssetsContext } from './contexts/AssetsContext';
 import ActionBar from './ActionBar';
 // FIX: Import COMPANY_BRANCHES to resolve reference error.
 import { COMPANY_BRANCHES } from '../constants';
+import { useTranslation } from './contexts/LanguageContext';
 
 type SortableKeys = 'name' | 'category' | 'serialNumber' | 'status' | 'assignedToId' | 'purchaseValue' | 'currentValue';
 
@@ -27,14 +28,16 @@ const AssetsManagementPage: React.FC<AssetsManagementPageProps> = ({ employees }
     const [sortConfig, setSortConfig] = useState<{ key: SortableKeys, direction: 'asc' | 'desc' } | null>(null);
     const [branchFilter, setBranchFilter] = useState('all');
     const [depreciationFilter, setDepreciationFilter] = useState<'all' | Asset['depreciationStatus']>('all');
+    const { t } = useTranslation();
 
     const employeeMap = useMemo(() => new Map(employees.map(e => [e.id, e])), [employees]);
     const branches = useMemo(() => {
         const branchMap = new Map<string, Branch>();
         employees.forEach(e => {
             const branch = COMPANY_BRANCHES.find(b => b.id === e.branchId);
+            // FIX: Replaced property access from `name` to `nameKey` to align with type definitions.
             if(branch && !branchMap.has(branch.id)) {
-                branchMap.set(branch.id, { id: branch.id, name: branch.name, status: 'Active' });
+                branchMap.set(branch.id, { id: branch.id, nameKey: branch.nameKey, status: 'Active' });
             }
         });
         return Array.from(branchMap.values());
@@ -127,7 +130,8 @@ const AssetsManagementPage: React.FC<AssetsManagementPageProps> = ({ employees }
                  <div className="flex items-center gap-4">
                      <select value={branchFilter} onChange={(e) => setBranchFilter(e.target.value)} className="p-2 border rounded-lg text-sm bg-slate-50">
                         <option value="all">كل الفروع</option>
-                        {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                        {/* FIX: Replaced property access from `name` to `nameKey` and wrapped it in the translation function to match the type definition. */}
+                        {branches.map(b => <option key={b.id} value={b.id}>{t(b.nameKey)}</option>)}
                     </select>
                      <select value={depreciationFilter} onChange={(e) => setDepreciationFilter(e.target.value as any)} className="p-2 border rounded-lg text-sm bg-slate-50">
                         <option value="all">كل حالات الإهلاك</option>

@@ -1,5 +1,4 @@
 
-
 import React, { useState, useMemo } from 'react';
 import { AttendanceRecord, EmployeeInfraction, EmployeeProfile, AttendancePolicy, AttendanceAdjustmentRequest, LeavePermitRequest, RequestStatus, AttendanceEvent, ExternalTask, AttendanceStatus, Branch } from '../types';
 import AttendanceSummary from './AttendanceSummary';
@@ -12,19 +11,13 @@ import EmployeeAttendanceCard from './EmployeeAttendanceCard';
 import { ALL_EMPLOYEES, COMPANY_BRANCHES } from '../constants';
 import { useRequestContext } from './contexts/RequestContext';
 import { usePoliciesContext } from './contexts/PoliciesContext';
+import { useTranslation } from './contexts/LanguageContext';
 
 const STATUS_BADGE: Record<RequestStatus, string> = {
     Approved: 'bg-emerald-100 text-emerald-800',
     Pending: 'bg-amber-100 text-amber-800',
     Rejected: 'bg-red-100 text-red-800',
 };
-
-const STATUS_TRANSLATION: Record<RequestStatus, string> = {
-    Approved: 'موافق عليه',
-    Pending: 'قيد الانتظار',
-    Rejected: 'مرفوض',
-};
-
 
 interface AttendancePageProps {
   records: AttendanceRecord[];
@@ -35,6 +28,7 @@ interface AttendancePageProps {
 }
 
 const EmployeeAttendanceView: React.FC<AttendancePageProps> = ({ records, attendanceEvents, infractions, currentUser, externalTasks }) => {
+  const { t } = useTranslation();
   const [isExcuseModalOpen, setIsExcuseModalOpen] = useState(false);
   const [isPermitModalOpen, setIsPermitModalOpen] = useState(false);
   // FIX: Destructure `leavePermitRequests` correctly from the context hook.
@@ -67,44 +61,44 @@ const EmployeeAttendanceView: React.FC<AttendancePageProps> = ({ records, attend
 
   const combinedRequests = useMemo(() => {
     const mappedAdjustments = userAdjustmentRequests.map(r => ({
-        id: `adj-${r.id}`, date: r.date, type: r.adjustmentType === 'LateArrival' ? 'عذر تأخير' : 'انصراف مبكر', details: r.reason, status: r.status
+        id: `adj-${r.id}`, date: r.date, type: t(`attendance.excuseType.${r.adjustmentType === 'LateArrival' ? 'late' : 'early'}`), details: r.reason, status: r.status
     }));
     const mappedPermits = userPermitRequests.map(r => ({
-        id: `prm-${r.id}`, date: r.date, type: 'إذن انصراف', details: `من ${r.startTime} إلى ${r.endTime}`, status: r.status
+        id: `prm-${r.id}`, date: r.date, type: t('attendance.permitType'), details: t('attendance.permitDetails', { startTime: r.startTime, endTime: r.endTime }), status: r.status
     }));
     return [...mappedAdjustments, ...mappedPermits].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-  }, [userAdjustmentRequests, userPermitRequests]);
+  }, [userAdjustmentRequests, userPermitRequests, t]);
 
   return (
     <div className="space-y-6">
        <div className="flex justify-end items-center flex-wrap gap-4">
         <div className="flex items-center gap-2">
             <button onClick={() => setIsPermitModalOpen(true)} className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-md hover:shadow-lg">
-                <ClockIcon className="w-6 h-6"/><span>طلب إذن انصراف (مسبق)</span>
+                <ClockIcon className="w-6 h-6"/><span>{t('attendance.requestPermit')}</span>
             </button>
             <button onClick={() => setIsExcuseModalOpen(true)} className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-md hover:shadow-lg">
-                <PlusCircleIcon className="w-6 h-6"/><span>تقديم عذر (بعد الواقعة)</span>
+                <PlusCircleIcon className="w-6 h-6"/><span>{t('attendance.submitExcuse')}</span>
             </button>
         </div>
       </div>
       <AttendanceSummary presentDays={totalPresent} absentDays={totalAbsent} overtimeHours={totalOvertime} lateDays={lateCount} />
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
         <div className="xl:col-span-2 bg-white p-6 rounded-xl shadow-md transition-shadow hover:shadow-lg">
-          <h2 className="text-xl font-bold mb-4 text-slate-700">سجل الحضور لشهر أغسطس 2025</h2>
+          <h2 className="text-xl font-bold mb-4 text-slate-700">{t('attendance.logTitle', { month: 'أغسطس', year: 2025 })}</h2>
           <AttendanceLogTable records={records} events={attendanceEvents} infractions={infractions} policy={attendancePolicy} adjustmentRequests={userAdjustmentRequests} permitRequests={userPermitRequests} externalTasks={externalTasks} />
         </div>
         <div className="bg-white p-6 rounded-xl shadow-md transition-shadow hover:shadow-lg">
-          <h2 className="text-xl font-bold mb-4 text-slate-700">تقويم الشهر</h2>
+          <h2 className="text-xl font-bold mb-4 text-slate-700">{t('attendance.monthCalendar')}</h2>
            <CalendarView records={records} year={2025} month={7} />
         </div>
       </div>
       <div className="bg-white p-6 rounded-xl shadow-md transition-shadow hover:shadow-lg">
-            <h2 className="text-xl font-bold mb-4 text-slate-700">سجل طلبات الحضور</h2>
+            <h2 className="text-xl font-bold mb-4 text-slate-700">{t('attendance.requestsLog')}</h2>
             <div className="overflow-x-auto max-h-[60vh] overflow-y-auto">
                 <table className="w-full text-sm text-right text-slate-500">
                     <thead className="text-xs text-slate-700 uppercase bg-slate-100 sticky top-0">
                         <tr>
-                            <th scope="col" className="px-6 py-3">النوع</th><th scope="col" className="px-6 py-3">التاريخ</th><th scope="col" className="px-6 py-3">التفاصيل</th><th scope="col" className="px-6 py-3">الحالة</th>
+                            <th scope="col" className="px-6 py-3">{t('general.type')}</th><th scope="col" className="px-6 py-3">{t('general.date')}</th><th scope="col" className="px-6 py-3">{t('general.details')}</th><th scope="col" className="px-6 py-3">{t('general.status')}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -113,10 +107,10 @@ const EmployeeAttendanceView: React.FC<AttendancePageProps> = ({ records, attend
                                 <td className="px-6 py-4 font-medium text-slate-900">{req.type}</td>
                                 <td className="px-6 py-4">{new Date(req.date).toLocaleDateString('ar-EG-u-nu-latn')}</td>
                                 <td className="px-6 py-4">{req.details}</td>
-                                <td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_BADGE[req.status]}`}>{STATUS_TRANSLATION[req.status]}</span></td>
+                                <td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_BADGE[req.status]}`}>{t(`requestStatus.${req.status}`)}</span></td>
                             </tr>
                         ))}
-                         {combinedRequests.length === 0 && (<tr><td colSpan={4} className="text-center py-12 text-slate-500"><p className="font-semibold text-lg">لا توجد طلبات متعلقة بالدوام.</p></td></tr>)}
+                         {combinedRequests.length === 0 && (<tr><td colSpan={4} className="text-center py-12 text-slate-500"><p className="font-semibold text-lg">{t('attendance.noRequests')}</p></td></tr>)}
                     </tbody>
                 </table>
             </div>
@@ -130,6 +124,7 @@ const EmployeeAttendanceView: React.FC<AttendancePageProps> = ({ records, attend
 
 
 const ManagerAttendanceView: React.FC<AttendancePageProps> = ({ records, attendanceEvents, currentUser }) => {
+    const { t } = useTranslation();
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
     const [statusFilter, setStatusFilter] = useState<AttendanceStatus | 'all'>('all');
@@ -145,7 +140,8 @@ const ManagerAttendanceView: React.FC<AttendancePageProps> = ({ records, attenda
             ALL_EMPLOYEES.forEach(e => teamMemberIds.add(e.id));
         }
         const members = ALL_EMPLOYEES.filter(emp => teamMemberIds.has(emp.id));
-        const depts = [...new Set(members.map(e => e.department))];
+        // FIX: Replaced property access from `department` to `departmentKey` to match the type definition.
+        const depts = [...new Set(members.map(e => e.departmentKey))];
         const branchIds = [...new Set(members.map(e => e.branchId))];
         const brnchs = COMPANY_BRANCHES.filter(b => branchIds.includes(b.id));
         return { teamMembers: members, departments: depts, branches: brnchs };
@@ -162,7 +158,8 @@ const ManagerAttendanceView: React.FC<AttendancePageProps> = ({ records, attenda
         return teamMembers.filter(emp => {
             const searchTermMatch = emp.name.toLowerCase().includes(searchTerm.toLowerCase());
             const branchMatch = branchFilter === 'all' || emp.branchId === branchFilter;
-            const deptMatch = departmentFilter === 'all' || emp.department === departmentFilter;
+            // FIX: Replaced property access from `department` to `departmentKey` to match the type definition.
+            const deptMatch = departmentFilter === 'all' || emp.departmentKey === departmentFilter;
             
             const empStatusForDay = dailyStatuses.get(emp.id) || 'Absent';
             const statusMatch = statusFilter === 'all' || empStatusForDay === statusFilter;
@@ -178,7 +175,7 @@ const ManagerAttendanceView: React.FC<AttendancePageProps> = ({ records, attenda
                     <div className="relative lg:col-span-2">
                         <input
                             type="text"
-                            placeholder="ابحث عن موظف..."
+                            placeholder={t('attendance.searchEmployee')}
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full p-2 pr-10 border border-slate-300 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500"
@@ -187,18 +184,19 @@ const ManagerAttendanceView: React.FC<AttendancePageProps> = ({ records, attenda
                     </div>
                     <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} className="p-2 border border-slate-300 rounded-lg bg-slate-50"/>
                     <select value={statusFilter} onChange={e => setStatusFilter(e.target.value as any)} className="p-2 border border-slate-300 rounded-lg bg-slate-50">
-                        <option value="all">كل الحالات</option>
-                        <option value="Present">حاضر</option>
-                        <option value="Absent">غائب</option>
-                        <option value="Leave">إجازة</option>
+                        <option value="all">{t('attendance.allStatuses')}</option>
+                        <option value="Present">{t('attendance.statuses.Present')}</option>
+                        <option value="Absent">{t('attendance.statuses.Absent')}</option>
+                        <option value="Leave">{t('attendance.statuses.Leave')}</option>
                     </select>
                     <select value={departmentFilter} onChange={e => setDepartmentFilter(e.target.value)} className="p-2 border border-slate-300 rounded-lg bg-slate-50">
-                        <option value="all">كل الأقسام</option>
-                        {departments.map(d => <option key={d} value={d}>{d}</option>)}
+                        <option value="all">{t('attendance.allDepartments')}</option>
+                        {departments.map(d => <option key={d} value={d}>{t(`departments.${d}`)}</option>)}
                     </select>
                      <select value={branchFilter} onChange={e => setBranchFilter(e.target.value)} className="p-2 border border-slate-300 rounded-lg bg-slate-50">
-                        <option value="all">كل الفروع</option>
-                         {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                        <option value="all">{t('attendance.allBranches')}</option>
+                         {/* FIX: Replaced property access from `name` to `nameKey` and wrapped it in the translation function to match the type definition. */}
+                         {branches.map(b => <option key={b.id} value={b.id}>{t(b.nameKey)}</option>)}
                     </select>
                 </div>
             </div>

@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { BellIcon, SunIcon, MoonIcon, LanguageIcon } from './icons/Icons';
-import { EmployeeProfile, Notification } from '../types';
+import { EmployeeProfile, Notification, Branch } from '../types';
 import NotificationPanel from './NotificationPanel';
 import { useTranslation, Language } from './contexts/LanguageContext';
 
@@ -21,6 +20,7 @@ interface HeaderProps {
     setTheme: (theme: 'light' | 'dark') => void;
     language: Language;
     setLanguage: (lang: Language) => void;
+    branches: Branch[];
 }
 
 const Header: React.FC<HeaderProps> = ({ 
@@ -37,7 +37,8 @@ const Header: React.FC<HeaderProps> = ({
     theme,
     setTheme,
     language,
-    setLanguage
+    setLanguage,
+    branches
 }) => {
   const [isPanelOpen, setIsPanelOpen] = useState(false);
   const { t } = useTranslation();
@@ -60,6 +61,17 @@ const Header: React.FC<HeaderProps> = ({
     setLanguage(language === 'ar' ? 'en' : 'ar');
   };
 
+  const getDisplayTitle = (employee: EmployeeProfile): string => {
+    if (employee.role === 'Branch Admin') {
+        const branch = branches.find(b => b.id === employee.branchId);
+        if (branch) {
+            const branchShortName = t(`branches_short.${branch.nameKey.split('.')[1]}`);
+            return t('jobTitles.branchAdminShort', { branchName: branchShortName });
+        }
+    }
+    return employee.isEmployee ? employee.title : employee.role;
+  };
+
 
   return (
     <header className="bg-white dark:bg-slate-800 shadow-sm p-4">
@@ -80,7 +92,7 @@ const Header: React.FC<HeaderProps> = ({
                   className="p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
               >
                   {allEmployees.map(emp => (
-                      <option key={emp.id} value={emp.id}>{emp.name} ({emp.isEmployee ? emp.title : emp.role})</option>
+                      <option key={emp.id} value={emp.id}>{emp.name} - {getDisplayTitle(emp)}</option>
                   ))}
               </select>
           </div>
@@ -131,7 +143,7 @@ const Header: React.FC<HeaderProps> = ({
             />
             <div>
               <p className="font-semibold text-slate-700 dark:text-slate-200">{currentUser.name}</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">{currentUser.isEmployee ? currentUser.title : currentUser.role}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400">{getDisplayTitle(currentUser)}</p>
             </div>
           </div>
         </div>

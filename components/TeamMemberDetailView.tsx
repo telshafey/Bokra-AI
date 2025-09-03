@@ -1,6 +1,8 @@
+
 import React, { useState, useMemo, useEffect } from 'react';
 import type { TeamMemberDetails, EmployeeProfile, Branch, PerformanceReview, HRRequest, RequestType, RequestStatus, EmployeeInfraction, AttendancePolicy, LeavePolicy, JobTitle, Course, EmployeeCourse, MonthlyCheckIn, OvertimePolicy, NewUserPayload, AppModule, ExternalTask, TeamMemberStats, SalaryComponent, CompensationPackage, DocumentType, EmployeeDocument, AttendanceEvent } from '../types';
 import { UserCircleIcon, CalendarIcon, BriefcaseIcon, AcademicCapIcon, CheckCircleIcon, PresentationChartLineIcon, PencilSquareIcon, ClipboardDocumentListIcon, PlusCircleIcon, DocumentCheckIcon, ExclamationTriangleIcon, BookOpenIcon, CheckBadgeIcon, XCircleIcon, DocumentTextIcon, ClockIcon, BanknotesIcon, ArrowUpTrayIcon, ArrowDownTrayIcon, PencilIcon, TrashIcon, MapPinIcon } from './icons/Icons';
+import { useTranslation } from './contexts/LanguageContext';
 
 type DetailTab = 'general' | 'history' | 'attendance_type' | 'grace_minutes' | 'work_calendar' | 'leave_profile' | 'salary' | 'documents' | 'petty_cash' | 'assets';
 
@@ -49,6 +51,7 @@ interface TeamMemberDetailViewProps {
 const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ memberDetails, currentUser, salaryComponents, compensationPackages, onSaveDocument }) => {
     const [activeTab, setActiveTab] = useState<DetailTab>('general');
     const { profile, stats, dailyPunches } = memberDetails;
+    const { t } = useTranslation();
 
     // State for salary tab editing
     const [editedBaseSalary, setEditedBaseSalary] = useState(profile.baseSalary || 0);
@@ -263,7 +266,8 @@ const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ memberDetai
                         <img src={profile.avatarUrl} alt={profile.name} className="w-16 h-16 rounded-full" />
                         <div>
                             <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{profile.name}</h2>
-                            <p className="text-md text-slate-500 dark:text-slate-400">{profile.title} • {profile.department}</p>
+                            {/* FIX: Replaced property access from `department` to `departmentKey` to match type definition, and wrapped it in the translation function. */}
+                            <p className="text-md text-slate-500 dark:text-slate-400">{profile.title} • {t('departments.' + profile.departmentKey)}</p>
                         </div>
                     </div>
                      <div className="flex items-center gap-2">

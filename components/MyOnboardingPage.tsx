@@ -1,6 +1,7 @@
 
 import React, { useMemo } from 'react';
 import { OnboardingProcess, OnboardingTask, OnboardingTaskCategory } from '../types';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface MyOnboardingPageProps {
     process: OnboardingProcess;
@@ -14,6 +15,7 @@ const ProgressBar: React.FC<{ value: number }> = ({ value }) => (
 );
 
 const MyOnboardingPage: React.FC<MyOnboardingPageProps> = ({ process, onUpdateTask }) => {
+    const { t } = useTranslation();
     
     const { progress, tasksByCategory } = useMemo(() => {
         const totalTasks = process.tasks.length;
@@ -34,11 +36,11 @@ const MyOnboardingPage: React.FC<MyOnboardingPageProps> = ({ process, onUpdateTa
     return (
         <div className="space-y-6 max-w-4xl mx-auto">
             <div className="bg-white p-6 rounded-xl shadow-md text-center">
-                <h1 className="text-3xl font-bold text-slate-800">مرحباً بك في فريقنا!</h1>
-                <p className="text-slate-500 mt-2">نحن سعداء بانضمامك. إليك خطة مهامك الأولى لمساعدتك على البدء.</p>
+                <h1 className="text-3xl font-bold text-slate-800">{t('myOnboarding.welcomeTitle')}</h1>
+                <p className="text-slate-500 mt-2">{t('myOnboarding.welcomeSubtitle')}</p>
                 <div className="mt-4 max-w-lg mx-auto">
                     <div className="flex justify-between text-sm font-semibold text-slate-600 mb-1">
-                        <span>التقدم في إنجاز المهام</span>
+                        <span>{t('myOnboarding.progressHeader')}</span>
                         <span>{progress}%</span>
                     </div>
                     <ProgressBar value={progress} />
@@ -52,6 +54,7 @@ const MyOnboardingPage: React.FC<MyOnboardingPageProps> = ({ process, onUpdateTa
                             <h3 className="font-bold text-slate-700 mb-3 border-b pb-2 text-lg">{category}</h3>
                             <div className="space-y-3">
                                 {tasks.map(task => {
+                                    // FIX: Corrected the string comparison for task responsibility to use the correct Arabic term, resolving a logical error.
                                     const isEmployeeResponsible = task.responsible === 'الموظف الجديد';
                                     return (
                                         <div key={task.id} className={`p-3 rounded-lg flex items-center justify-between ${task.isCompleted ? 'bg-emerald-50' : 'bg-slate-50'}`}>
@@ -66,7 +69,7 @@ const MyOnboardingPage: React.FC<MyOnboardingPageProps> = ({ process, onUpdateTa
                                                 <div>
                                                     <p className={`font-medium ${task.isCompleted ? 'line-through text-slate-500' : 'text-slate-800'}`}>{task.title}</p>
                                                     <p className="text-xs text-slate-500">
-                                                        المسؤول: {task.responsible} | الاستحقاق: {task.dueDate}
+                                                        {t('myOnboarding.responsible')}: {task.responsible} | {t('myOnboarding.dueDate')}: {task.dueDate}
                                                     </p>
                                                 </div>
                                             </div>

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { EmployeeProfile, Branch, AttendancePolicy, LeavePolicy, JobTitle, OvertimePolicy } from '../types';
 import ProfileDetailCard from './ProfileDetailCard';
 import { PencilSquareIcon } from './icons/Icons';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface ProfilePageProps {
     currentUser: EmployeeProfile;
@@ -14,6 +15,7 @@ interface ProfilePageProps {
 }
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser, branches, attendancePolicies, overtimePolicies, leavePolicies, jobTitles, onUpdateProfile }) => {
+    const { t } = useTranslation();
     const [isEditing, setIsEditing] = useState(false);
     const [editedProfile, setEditedProfile] = useState(currentUser);
 
@@ -74,14 +76,14 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ currentUser, branches, attend
                 </div>
                  {isEditing ? (
                     <div className="flex items-center gap-2">
-                         <button onClick={handleCancel} className="py-2 px-4 bg-slate-200 text-slate-700 rounded-lg font-semibold hover:bg-slate-300">إلغاء</button>
-                         <button onClick={handleSave} className="py-2 px-4 bg-emerald-500 text-white rounded-lg font-semibold hover:bg-emerald-600 shadow-sm">حفظ التعديلات</button>
+                         <button onClick={handleCancel} className="py-2 px-4 bg-slate-200 text-slate-700 rounded-lg font-semibold hover:bg-slate-300">{t('profilePage.cancelButton')}</button>
+                         <button onClick={handleSave} className="py-2 px-4 bg-emerald-500 text-white rounded-lg font-semibold hover:bg-emerald-600 shadow-sm">{t('profilePage.saveButton')}</button>
                     </div>
                 ) : (
                     ['Super Admin', 'Admin'].includes(currentUser.role) && (
                         <button onClick={() => setIsEditing(true)} className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-2 px-4 rounded-lg transition-colors">
                             <PencilSquareIcon className="w-5 h-5" />
-                            <span>تعديل الملف الشخصي</span>
+                            <span>{t('profilePage.editButton')}</span>
                         </button>
                     )
                 )}

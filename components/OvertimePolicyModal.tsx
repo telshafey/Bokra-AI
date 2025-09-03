@@ -1,6 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { OvertimePolicy, EmployeeProfile, Branch } from '../types';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface OvertimePolicyModalProps {
     isOpen: boolean;
@@ -13,6 +15,7 @@ interface OvertimePolicyModalProps {
 
 const OvertimePolicyModal: React.FC<OvertimePolicyModalProps> = ({ isOpen, onClose, onSave, policyToEdit, currentUser, branches }) => {
     
+    const { t } = useTranslation();
     const getInitialState = (): OvertimePolicy => ({
         id: `ot-policy-${Date.now()}`,
         name: '',
@@ -105,7 +108,8 @@ const OvertimePolicyModal: React.FC<OvertimePolicyModalProps> = ({ isOpen, onClo
                                 required={policy.scope === 'branch'}
                             >
                                 <option value="">-- اختر فرع --</option>
-                                {branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                                {/* FIX: Replaced property access from `name` to `nameKey` and wrapped it in the translation function to match the type definition. */}
+                                {branches.map(b => <option key={b.id} value={b.id}>{t(b.nameKey)}</option>)}
                             </select>
                         </div>
                     )}

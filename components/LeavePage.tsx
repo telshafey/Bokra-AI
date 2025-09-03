@@ -32,16 +32,10 @@ const STATUS_BADGE: Record<RequestStatus, string> = {
     Rejected: 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300',
 };
 
-const STATUS_TRANSLATION: Record<RequestStatus, string> = {
-    Approved: 'موافق عليه',
-    Pending: 'قيد الانتظار',
-    Rejected: 'مرفوض',
-}
-
-const BalanceCard: React.FC<{ balance: LeaveBalance }> = ({ balance }) => {
+const BalanceCard: React.FC<{ balance: LeaveBalance; t: (key: string) => string }> = ({ balance, t }) => {
     const Icon = LEAVE_TYPE_ICONS[balance.type];
     const color = LEAVE_TYPE_COLORS[balance.type];
-    const unit = balance.type === 'NewbornRegistration' ? 'مرات' : 'يوم';
+    const unit = balance.type === 'NewbornRegistration' ? t('leave.balanceCard.timesUnit') : t('leave.balanceCard.dayUnit');
 
     return (
         <div className="bg-white dark:bg-slate-800 p-5 rounded-xl shadow-md flex items-center gap-4 transition-all duration-300 hover:shadow-lg hover:scale-105">
@@ -72,7 +66,7 @@ const LeavePage: React.FC<LeavePageProps> = ({ currentUser }) => {
     return (
         <div className="space-y-6">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {currentUser.leaveBalances.map(balance => <BalanceCard key={balance.type} balance={balance} />)}
+                {currentUser.leaveBalances.map(balance => <BalanceCard key={balance.type} balance={balance} t={t} />)}
             </div>
             
             <ActionBar>
@@ -81,22 +75,22 @@ const LeavePage: React.FC<LeavePageProps> = ({ currentUser }) => {
                     onClick={() => setIsModalOpen(true)}
                     className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-md hover:shadow-lg">
                     <PlusCircleIcon className="w-6 h-6"/>
-                    <span>طلب إجازة جديد</span>
+                    <span>{t('leave.newRequest')}</span>
                 </button>
             </ActionBar>
 
-            <Card title="سجل الإجازات" paddingClass="p-0">
+            <Card title={t('leave.balanceHistory')} paddingClass="p-0">
                 <div className="overflow-x-auto max-h-[60vh] overflow-y-auto">
                     <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
                         <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-50 dark:bg-slate-700 sticky top-0">
                             <tr>
-                                <th scope="col" className="px-6 py-3">نوع الإجازة</th>
-                                <th scope="col" className="px-6 py-3">تاريخ البدء</th>
-                                <th scope="col" className="px-6 py-3">تاريخ الانتهاء</th>
-                                <th scope="col" className="px-6 py-3">المدة</th>
-                                <th scope="col" className="px-6 py-3">الحالة</th>
-                                <th scope="col" className="px-6 py-3">السبب</th>
-                                <th scope="col" className="px-6 py-3">المرفقات</th>
+                                <th scope="col" className="px-6 py-3">{t('leave.leaveType')}</th>
+                                <th scope="col" className="px-6 py-3">{t('leave.startDate')}</th>
+                                <th scope="col" className="px-6 py-3">{t('leave.endDate')}</th>
+                                <th scope="col" className="px-6 py-3">{t('leave.duration')}</th>
+                                <th scope="col" className="px-6 py-3">{t('general.status')}</th>
+                                <th scope="col" className="px-6 py-3">{t('leave.reason')}</th>
+                                <th scope="col" className="px-6 py-3">{t('leave.attachments')}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -107,10 +101,10 @@ const LeavePage: React.FC<LeavePageProps> = ({ currentUser }) => {
                                     </td>
                                     <td className="px-6 py-4">{new Date(request.startDate).toLocaleDateString('ar-EG-u-nu-latn')}</td>
                                     <td className="px-6 py-4">{new Date(request.endDate).toLocaleDateString('ar-EG-u-nu-latn')}</td>
-                                    <td className="px-6 py-4">{request.duration} أيام</td>
+                                    <td className="px-6 py-4">{request.duration} {t('general.days')}</td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_BADGE[request.status]}`}>
-                                            {STATUS_TRANSLATION[request.status]}
+                                            {t(`requestStatus.${request.status}`)}
                                         </span>
                                     </td>
                                     <td className="px-6 py-4 max-w-xs truncate" title={request.reason}>

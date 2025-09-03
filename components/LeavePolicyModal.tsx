@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, PlusCircleIcon, TrashIcon } from './icons/Icons';
 import type { LeavePolicy, EmployeeProfile, Branch, AnnualLeaveTier } from '../types';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface LeavePolicyModalProps {
     isOpen: boolean;
@@ -15,6 +16,7 @@ interface LeavePolicyModalProps {
 
 const LeavePolicyModal: React.FC<LeavePolicyModalProps> = ({ isOpen, onClose, onSave, policyToEdit, currentUser, branches }) => {
     
+    const { t } = useTranslation();
     const getInitialState = (): LeavePolicy => ({
         id: `leave-policy-${Date.now()}`,
         name: '',
@@ -106,7 +108,8 @@ const LeavePolicyModal: React.FC<LeavePolicyModalProps> = ({ isOpen, onClose, on
                         ) : <input type="text" value={`خاص بـ ${currentUser.branchName}`} readOnly className="w-full p-2 border rounded-lg bg-slate-100 text-slate-500" />}
                         {policy.scope === 'branch' && currentUser.role !== 'Branch Admin' && currentUser.role !== 'Admin' && (
                             <select value={policy.branchId || ''} onChange={e => handleChange('branchId', e.target.value)} className="w-full p-2 border rounded-lg bg-slate-50" required={policy.scope === 'branch'}>
-                                <option value="">-- اختر فرع --</option>{branches.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
+                                {/* FIX: Replaced property access from `name` to `nameKey` and wrapped it in the translation function to match the type definition. */}
+                                <option value="">-- اختر فرع --</option>{branches.map(b => <option key={b.id} value={b.id}>{t(b.nameKey)}</option>)}
                             </select>
                         )}
                     </div>

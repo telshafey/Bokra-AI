@@ -1,7 +1,10 @@
+
 import React from 'react';
 import type { Notification, EmployeeProfile } from '../types';
 import { TrashIcon, CheckCircleIcon } from './icons/Icons';
 import { timeSince } from '../constants';
+// FIX: Imported the useTranslation hook to pass the `t` function to `timeSince`.
+import { useTranslation } from './contexts/LanguageContext';
 
 
 interface NotificationPanelProps {
@@ -14,6 +17,8 @@ interface NotificationPanelProps {
 }
 
 const NotificationPanel: React.FC<NotificationPanelProps> = ({ notifications, allUsers, onMarkAsRead, onMarkAllAsRead, onClearAll, onClose }) => {
+    // FIX: Get the translation function `t` to pass to `timeSince`.
+    const { t } = useTranslation();
     const userMap = new Map(allUsers.map(u => [u.id, u]));
 
     return (
@@ -45,7 +50,8 @@ const NotificationPanel: React.FC<NotificationPanelProps> = ({ notifications, al
                                 {sender && <img src={sender.avatarUrl} alt={sender.name} className="w-10 h-10 rounded-full flex-shrink-0" />}
                                 <div className="flex-1">
                                     <p className="text-sm text-slate-700 dark:text-slate-300 leading-tight" dangerouslySetInnerHTML={{ __html: notif.message.replace(sender?.name || 'النظام', `<strong>${sender?.name || 'النظام'}</strong>`) }}></p>
-                                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{timeSince(notif.timestamp)}</p>
+                                    {/* FIX: Passed the `t` function as the second argument to `timeSince`. */}
+                                    <p className="text-xs text-slate-400 dark:text-slate-500 mt-1">{timeSince(notif.timestamp, t)}</p>
                                 </div>
                                 {!notif.isRead && <div className="w-2.5 h-2.5 bg-sky-500 rounded-full mt-1.5 flex-shrink-0"></div>}
                             </div>

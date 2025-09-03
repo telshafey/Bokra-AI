@@ -4,6 +4,7 @@ import {
     UserCircleIcon, UsersIcon, CalendarIcon, DocumentDuplicateIcon, BriefcaseIcon, ShieldExclamationIcon, ExclamationTriangleIcon, ClockIcon
 } from './icons/Icons';
 import { EmployeeProfile, Branch, AttendancePolicy, EmployeeInfraction, LeavePolicy, JobTitle, OvertimePolicy } from '../types';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface InfoItemProps {
     icon: React.FC<React.SVGProps<SVGSVGElement>>;
@@ -88,50 +89,53 @@ const ProfileDetailCard: React.FC<ProfileDetailCardProps> = ({
     leavePolicies = [],
     jobTitles = [],
 }) => {
-    const branchOptions = branches.map(b => ({ value: b.id, label: b.name }));
-    const jobTitleOptions = [{ value: '', label: 'بدون منصب' }, ...jobTitles.map(jt => ({ value: jt.id, label: jt.name }))];
+    const { t, language } = useTranslation();
+    const locale = language === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US';
+
+    const branchOptions = branches.map(b => ({ value: b.id, label: t(b.nameKey) }));
+    const jobTitleOptions = [{ value: '', label: t('profilePage.noPolicy') }, ...jobTitles.map(jt => ({ value: jt.id, label: t(jt.nameKey) }))];
     
     const activeAttendancePolicies = attendancePolicies.filter(p => p.status === 'Active');
     const activeOvertimePolicies = overtimePolicies.filter(p => p.status === 'Active');
     const activeLeavePolicies = leavePolicies.filter(p => p.status === 'Active');
 
-    const attendancePolicyOptions = [{ value: '', label: 'بدون سياسة' }, ...activeAttendancePolicies.map(p => ({ value: p.id, label: p.name }))];
-    const overtimePolicyOptions = [{ value: '', label: 'بدون سياسة' }, ...activeOvertimePolicies.map(p => ({ value: p.id, label: p.name }))];
-    const leavePolicyOptions = [{ value: '', label: 'بدون سياسة' }, ...activeLeavePolicies.map(p => ({ value: p.id, label: p.name }))];
+    const attendancePolicyOptions = [{ value: '', label: t('profilePage.noPolicy') }, ...activeAttendancePolicies.map(p => ({ value: p.id, label: p.name }))];
+    const overtimePolicyOptions = [{ value: '', label: t('profilePage.noPolicy') }, ...activeOvertimePolicies.map(p => ({ value: p.id, label: p.name }))];
+    const leavePolicyOptions = [{ value: '', label: t('profilePage.noPolicy') }, ...activeLeavePolicies.map(p => ({ value: p.id, label: p.name }))];
     
     const hasInfractions = infractions && infractions.length > 0;
     
     return (
         <>
             <div className="space-y-6">
-                <InfoCard title="معلومات الاتصال">
-                    <InfoItem icon={PhoneIcon} label="رقم الهاتف" value={profile.contact.phone} isEditing={isEditing} fieldName="contact.phone" onChange={onProfileChange} />
-                    <InfoItem icon={EnvelopeIcon} label="البريد الإلكتروني (العمل)" value={profile.contact.workEmail} isEditing={isEditing} fieldName="contact.workEmail" onChange={onProfileChange} />
-                    <InfoItem icon={EnvelopeIcon} label="البريد الإلكتروني (شخصي)" value={profile.contact.personalEmail} isEditing={isEditing} fieldName="contact.personalEmail" onChange={onProfileChange} />
+                <InfoCard title={t('profilePage.contactInfo')}>
+                    <InfoItem icon={PhoneIcon} label={t('profilePage.phone')} value={profile.contact.phone} isEditing={isEditing} fieldName="contact.phone" onChange={onProfileChange} />
+                    <InfoItem icon={EnvelopeIcon} label={t('profilePage.workEmail')} value={profile.contact.workEmail} isEditing={isEditing} fieldName="contact.workEmail" onChange={onProfileChange} />
+                    <InfoItem icon={EnvelopeIcon} label={t('profilePage.personalEmail')} value={profile.contact.personalEmail} isEditing={isEditing} fieldName="contact.personalEmail" onChange={onProfileChange} />
                 </InfoCard>
                 
-                <InfoCard title="المعلومات الشخصية">
-                    <InfoItem icon={CakeIcon} label="تاريخ الميلاد" value={profile.personal.dateOfBirth} isEditing={isEditing} fieldName="personal.dateOfBirth" fieldType="date" onChange={onProfileChange} />
-                    <InfoItem icon={FlagIcon} label="الجنسية" value={profile.personal.nationality} isEditing={isEditing} fieldName="personal.nationality" onChange={onProfileChange} />
-                    <InfoItem icon={IdentificationIcon} label="الرقم القومي" value={profile.personal.nationalId} />
-                    <InfoItem icon={HeartIcon} label="الحالة الاجتماعية" value={profile.personal.maritalStatus} isEditing={isEditing} fieldName="personal.maritalStatus" fieldType="select" options={[{value: 'أعزب', label: 'أعزب'}, {value: 'متزوج', label: 'متزوج'}]} onChange={onProfileChange} />
-                    <InfoItem icon={UserCircleIcon} label="الجنس" value={profile.personal.gender} isEditing={isEditing} fieldName="personal.gender" fieldType="select" options={[{value: 'Male', label: 'ذكر'}, {value: 'Female', label: 'أنثى'}]} onChange={onProfileChange} />
-                    <InfoItem icon={BriefcaseIcon} label="الديانة" value={profile.personal.religion} isEditing={isEditing} fieldName="personal.religion" fieldType="select" options={[{value: 'Muslim', label: 'مسلم'}, {value: 'Christian', label: 'مسيحي'}]} onChange={onProfileChange} />
+                <InfoCard title={t('profilePage.personalInfo')}>
+                    <InfoItem icon={CakeIcon} label={t('profilePage.dob')} value={profile.personal.dateOfBirth} isEditing={isEditing} fieldName="personal.dateOfBirth" fieldType="date" onChange={onProfileChange} />
+                    <InfoItem icon={FlagIcon} label={t('profilePage.nationality')} value={profile.personal.nationality} isEditing={isEditing} fieldName="personal.nationality" onChange={onProfileChange} />
+                    <InfoItem icon={IdentificationIcon} label={t('profilePage.nationalId')} value={profile.personal.nationalId} />
+                    <InfoItem icon={HeartIcon} label={t('profilePage.maritalStatus')} value={profile.personal.maritalStatus} isEditing={isEditing} fieldName="personal.maritalStatus" fieldType="select" options={[{value: 'أعزب', label: t('profilePage.maritalStatuses.single')}, {value: 'متزوج', label: t('profilePage.maritalStatuses.married')}]} onChange={onProfileChange} />
+                    <InfoItem icon={UserCircleIcon} label={t('profilePage.gender')} value={profile.personal.gender} isEditing={isEditing} fieldName="personal.gender" fieldType="select" options={[{value: 'Male', label: t('profilePage.genders.male')}, {value: 'Female', label: t('profilePage.genders.female')}]} onChange={onProfileChange} />
+                    <InfoItem icon={BriefcaseIcon} label={t('profilePage.religion')} value={profile.personal.religion} isEditing={isEditing} fieldName="personal.religion" fieldType="select" options={[{value: 'Muslim', label: t('profilePage.religions.muslim')}, {value: 'Christian', label: t('profilePage.religions.christian')}]} onChange={onProfileChange} />
                 </InfoCard>
             </div>
             
             <div className="space-y-6">
-                <InfoCard title="المعلومات الوظيفية">
-                    <InfoItem icon={BriefcaseIcon} label="المسمى الوظيفي" value={isEditing ? profile.jobTitleId : profile.title} isEditing={isEditing} fieldName="jobTitleId" fieldType="select" options={jobTitleOptions} onChange={onProfileChange} />
-                    <InfoItem icon={UsersIcon} label="القسم" value={profile.department} />
-                    <InfoItem icon={UserCircleIcon} label="المدير المباشر" value={profile.manager} />
-                    <InfoItem icon={BriefcaseIcon} label="الفرع" value={isEditing ? profile.branchId : profile.branchName} isEditing={isEditing} fieldName="branchId" fieldType="select" options={branchOptions} onChange={onProfileChange} />
-                    <InfoItem icon={CalendarIcon} label="تاريخ التعيين" value={new Date(profile.hireDate).toLocaleDateString('ar-EG-u-nu-latn', { year: 'numeric', month: 'long', day: 'numeric' })} />
-                    <InfoItem icon={DocumentDuplicateIcon} label="الحالة الوظيفية" value={profile.employmentStatus} />
+                <InfoCard title={t('profilePage.jobInfo')}>
+                    <InfoItem icon={BriefcaseIcon} label={t('profilePage.jobTitle')} value={isEditing ? profile.jobTitleId : profile.title} isEditing={isEditing} fieldName="jobTitleId" fieldType="select" options={jobTitleOptions} onChange={onProfileChange} />
+                    <InfoItem icon={UsersIcon} label={t('profilePage.department')} value={t('departments.' + profile.departmentKey)} />
+                    <InfoItem icon={UserCircleIcon} label={t('profilePage.manager')} value={profile.manager} />
+                    <InfoItem icon={BriefcaseIcon} label={t('profilePage.branch')} value={isEditing ? profile.branchId : profile.branchName} isEditing={isEditing} fieldName="branchId" fieldType="select" options={branchOptions} onChange={onProfileChange} />
+                    <InfoItem icon={CalendarIcon} label={t('profilePage.hireDate')} value={new Date(profile.hireDate).toLocaleDateString(locale, { year: 'numeric', month: 'long', day: 'numeric' })} />
+                    <InfoItem icon={DocumentDuplicateIcon} label={t('profilePage.employmentStatus')} value={profile.employmentStatus} />
                      <div className="flex items-start gap-4 py-3">
                         <ShieldExclamationIcon className="w-6 h-6 text-slate-500 dark:text-slate-400 mt-1 flex-shrink-0" />
                         <div className="flex-1">
-                            <p className="text-sm text-slate-500 dark:text-slate-400">سياسة الحضور والمخالفات</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">{t('profilePage.attendancePolicy')}</p>
                             {isEditing ? (
                                     <select
                                     value={profile.attendancePolicyId || ''}
@@ -147,7 +151,7 @@ const ProfileDetailCard: React.FC<ProfileDetailCardProps> = ({
                                         <div className="relative group">
                                             <ExclamationTriangleIcon className="w-5 h-5 text-amber-500" />
                                             <div className="absolute bottom-full mb-2 w-max bg-slate-800 text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-20">
-                                                لدى الموظف مخالفات مسجلة
+                                                {t('profilePage.hasInfractions')}
                                             </div>
                                         </div>
                                     )}
@@ -158,7 +162,7 @@ const ProfileDetailCard: React.FC<ProfileDetailCardProps> = ({
                     <div className="flex items-start gap-4 py-3">
                         <ClockIcon className="w-6 h-6 text-slate-500 dark:text-slate-400 mt-1 flex-shrink-0" />
                         <div className="flex-1">
-                            <p className="text-sm text-slate-500 dark:text-slate-400">سياسة الوقت الإضافي</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">{t('profilePage.overtimePolicy')}</p>
                             {isEditing ? (
                                     <select
                                     value={profile.overtimePolicyId || ''}
@@ -175,7 +179,7 @@ const ProfileDetailCard: React.FC<ProfileDetailCardProps> = ({
                      <div className="flex items-start gap-4 py-3">
                         <BriefcaseIcon className="w-6 h-6 text-slate-500 dark:text-slate-400 mt-1 flex-shrink-0" />
                         <div className="flex-1">
-                            <p className="text-sm text-slate-500 dark:text-slate-400">سياسة الإجازات</p>
+                            <p className="text-sm text-slate-500 dark:text-slate-400">{t('profilePage.leavePolicy')}</p>
                             {isEditing ? (
                                     <select
                                     value={profile.leavePolicyId || ''}

@@ -1,24 +1,13 @@
 import React from 'react';
 import type { AppModule } from '../types';
 import { CogIcon } from './icons/Icons';
+import { ALL_MODULES_CONFIG } from '../constants';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface ModuleManagementPageProps {
     activeModules: Set<AppModule>;
     onToggleModule: (moduleKey: AppModule) => void;
 }
-
-const ALL_MODULES_CONFIG: { key: AppModule; name: string; description: string }[] = [
-    { key: 'performance', name: 'إدارة الأداء', description: 'يشمل تقييمات الأداء، الأهداف، المتابعة الشهرية، وتحليل المخاطر.' },
-    { key: 'learning', name: 'التطوير والتدريب', description: 'إدارة الدورات التدريبية الداخلية والخارجية وخطط التطوير للموظفين.' },
-    { key: 'recruitment', name: 'التوظيف وإدارة المتقدمين', description: 'إدارة الوظائف الشاغرة ومتابعة المتقدمين عبر مراحل التوظيف.' },
-    { key: 'onboarding', name: 'إجراءات التعيين', description: 'إنشاء ومتابعة خطط ومهام الموظفين الجدد.' },
-    { key: 'offboarding', name: 'إجراءات إنهاء الخدمة', description: 'إدارة ومتابعة مهام الموظفين المغادرين.' },
-    { key: 'support', name: 'تذاكر الدعم الفني', description: 'نظام متكامل لتلقي ومعالجة استفسارات وشكاوى الموظفين.' },
-    { key: 'compensation', name: 'التعويضات والمزايا', description: 'إدارة مكونات الرواتب وإنشاء حزم مالية مختلفة.' },
-    { key: 'job_titles', name: 'الهيكل الوظيفي', description: 'بناء وإدارة شجرة المسميات الوظيفية للشركة.' },
-    { key: 'documents', name: 'المستندات والأوراق', description: 'إدارة المستندات الرسمية للموظفين مثل العقود ومسوغات التعيين.' },
-    { key: 'assets', name: 'إدارة العهد', description: 'تتبع أصول الشركة المسلمة للموظفين، مثل أجهزة اللابتوب والهواتف.' },
-];
 
 const ModuleToggle: React.FC<{ enabled: boolean; setEnabled: () => void }> = ({ enabled, setEnabled }) => (
     <button
@@ -37,6 +26,7 @@ const ModuleToggle: React.FC<{ enabled: boolean; setEnabled: () => void }> = ({ 
 
 
 const ModuleManagementPage: React.FC<ModuleManagementPageProps> = ({ activeModules, onToggleModule }) => {
+    const { t } = useTranslation();
     return (
         <div className="space-y-6">
             <div className="text-center">
@@ -49,8 +39,8 @@ const ModuleManagementPage: React.FC<ModuleManagementPageProps> = ({ activeModul
                     {ALL_MODULES_CONFIG.map(module => (
                         <div key={module.key} className="flex items-center justify-between py-4">
                             <div>
-                                <h3 className="font-bold text-slate-800 text-lg">{module.name}</h3>
-                                <p className="text-sm text-slate-500">{module.description}</p>
+                                <h3 className="font-bold text-slate-800 text-lg">{t(module.nameKey)}</h3>
+                                <p className="text-sm text-slate-500">{t(module.descriptionKey)}</p>
                             </div>
                             <ModuleToggle 
                                 enabled={activeModules.has(module.key)} 

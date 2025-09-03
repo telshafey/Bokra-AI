@@ -1,67 +1,69 @@
 
-
-
 import React from 'react';
-import { HomeIcon, CalendarIcon, DocumentTextIcon, UserCircleIcon, CogIcon, ArrowLeftOnRectangleIcon, BriefcaseIcon, BanknotesIcon, ChartPieIcon, AcademicCapIcon, UserGroupIcon, ClipboardDocumentListIcon, DocumentCheckIcon, BuildingOfficeIcon, PresentationChartLineIcon, CheckCircleIcon, ShieldCheckIcon, ShieldExclamationIcon, BookOpenIcon, UsersIcon, DocumentDuplicateIcon, ClockIcon, QuestionMarkCircleIcon, CheckBadgeIcon, ArchiveBoxIcon, ClipboardDocumentCheckIcon, UserPlusIcon, UserMinusIcon, ChevronDownIcon, ExclamationTriangleIcon, ArrowsUpDownIcon, ChevronUpIcon, ComputerDesktopIcon, SitemapIcon } from './components/icons/Icons';
+import { HomeIcon, CalendarIcon, DocumentTextIcon, UserCircleIcon, CogIcon, ArrowLeftOnRectangleIcon, BriefcaseIcon, BanknotesIcon, ChartPieIcon, AcademicCapIcon, UserGroupIcon, ClipboardDocumentListIcon, DocumentCheckIcon, BuildingOfficeIcon, PresentationChartLineIcon, CheckCircleIcon, ShieldCheckIcon, ShieldExclamationIcon, BookOpenIcon, UsersIcon, DocumentDuplicateIcon, ClockIcon, QuestionMarkCircleIcon, CheckBadgeIcon, ArchiveBoxIcon, ClipboardDocumentCheckIcon, UserPlusIcon, UserMinusIcon, ChevronDownIcon, ExclamationTriangleIcon, ArrowsUpDownIcon, ChevronUpIcon, ComputerDesktopIcon, SitemapIcon, LifebuoyIcon, IdentificationIcon } from './components/icons/Icons';
 // FIX: Added all missing type imports.
-import type { NavItem, EmployeeProfile, AttendanceRecord, Payslip, PayslipItem, LeaveRequest, HRRequest, TeamMemberDetails, LeaveType, LeaveDistributionDataItem, TeamWeeklyAttendanceItem, Branch, Goal, PerformanceReview, Skill, DevelopmentSuggestion, AttendancePolicy, LeavePolicy, EmployeeInfraction, JobTitle, Course, EmployeeCourse, Notification, MonthlyCheckIn, SalaryComponent, CompensationPackage, SupportTicket, EmployeeDashboardData, TeamDashboardData, RecentActivityItem, AttentionItem, TeamLearningStat, OvertimePolicy, AttendanceAdjustmentRequest, LeavePermitRequest, TeamMember, JobOpening, Candidate, OnboardingTemplate, OnboardingProcess, OnboardingTaskCategory, OnboardingResponsible, OffboardingTemplate, OffboardingProcess, OffboardingTaskCategory, OffboardingResponsible, NavGroup, EmployeeDocument, WorkLocation, AttendanceEvent, ExternalTask, TeamReportsData, TeamMemberStats, RequestType, AttendanceStatus, ApprovalContext, OverlappingLeave, PerformanceCycle, TeamMemberPerformanceData, ManagerPerformanceData, Asset } from './types';
+import type { NavItem, EmployeeProfile, AttendanceRecord, Payslip, PayslipItem, LeaveRequest, HRRequest, TeamMemberDetails, LeaveType, LeaveDistributionDataItem, TeamWeeklyAttendanceItem, Branch, Goal, PerformanceReview, Skill, DevelopmentSuggestion, AttendancePolicy, LeavePolicy, EmployeeInfraction, JobTitle, Course, EmployeeCourse, Notification, MonthlyCheckIn, SalaryComponent, CompensationPackage, SupportTicket, EmployeeDashboardData, TeamDashboardData, RecentActivityItem, AttentionItem, TeamLearningStat, OvertimePolicy, AttendanceAdjustmentRequest, LeavePermitRequest, TeamMember, JobOpening, Candidate, OnboardingTemplate, OnboardingProcess, OnboardingTaskCategory, OnboardingResponsible, OffboardingTemplate, OffboardingProcess, OffboardingTaskCategory, OffboardingResponsible, NavGroup, EmployeeDocument, WorkLocation, AttendanceEvent, ExternalTask, TeamReportsData, TeamMemberStats, RequestType, AttendanceStatus, ApprovalContext, OverlappingLeave, PerformanceCycle, TeamMemberPerformanceData, ManagerPerformanceData, Asset, HelpCategory, HelpArticle, AppModule } from './types';
+
+// =================================================================================
+// ===== MODULE MANAGEMENT =====
+// =================================================================================
+export const ALL_MODULES_CONFIG: { key: AppModule; nameKey: string; descriptionKey: string }[] = [
+    { key: 'performance', nameKey: 'modules.performance.name', descriptionKey: 'modules.performance.description' },
+    { key: 'learning', nameKey: 'modules.learning.name', descriptionKey: 'modules.learning.description' },
+    { key: 'recruitment', nameKey: 'modules.recruitment.name', descriptionKey: 'modules.recruitment.description' },
+    { key: 'onboarding', nameKey: 'modules.onboarding.name', descriptionKey: 'modules.onboarding.description' },
+    { key: 'offboarding', nameKey: 'modules.offboarding.name', descriptionKey: 'modules.offboarding.description' },
+    { key: 'support', nameKey: 'modules.support.name', descriptionKey: 'modules.support.description' },
+    { key: 'compensation', nameKey: 'modules.compensation.name', descriptionKey: 'modules.compensation.description' },
+    { key: 'job_titles', nameKey: 'modules.job_titles.name', descriptionKey: 'modules.job_titles.description' },
+    { key: 'documents', nameKey: 'modules.documents.name', descriptionKey: 'modules.documents.description' },
+    { key: 'assets', nameKey: 'modules.assets.name', descriptionKey: 'modules.assets.description' },
+    { key: 'help_center', nameKey: 'modules.help_center.name', descriptionKey: 'modules.help_center.description' },
+];
 
 // =================================================================================
 // ===== COMPANY STRUCTURE & HIERARCHY =====
 // =================================================================================
 
 export const COMPANY_BRANCHES: Branch[] = [
-    { id: 'branch-cai', name: 'المقر الرئيسي بالقاهرة', status: 'Active' },
-    { id: 'branch-alex', name: 'فرع الإسكندرية', status: 'Active' },
+    { id: 'branch-cai', nameKey: 'branches.cairo', status: 'Active' },
+    { id: 'branch-alex', nameKey: 'branches.alexandria', status: 'Active' },
+    { id: 'branch-ras-sedr', nameKey: 'branches.rasSedr', status: 'Active' },
 ];
 
 export const MOCK_JOB_TITLES: JobTitle[] = [
-    { id: 'jt-super-admin', name: 'Super Admin', parentId: null },
-    { id: 'jt-admin-cai', name: 'مسؤول منصة القاهرة', parentId: 'jt-super-admin' },
-    { id: 'jt-admin-alex', name: 'مسؤول منصة الإسكندرية', parentId: 'jt-super-admin' },
-    { id: 'jt-gm', name: 'المدير العام', parentId: null },
-    { id: 'jt-hr-manager', name: 'مدير الموارد البشرية', parentId: 'jt-gm' },
-    { id: 'jt-branch-manager-alex', name: 'مدير فرع الإسكندرية', parentId: 'jt-gm' },
-    { id: 'jt-dev-lead', name: 'قائد فريق التطوير', parentId: 'jt-hr-manager' },
-    { id: 'jt-sse', name: 'مهندس برمجيات أول', parentId: 'jt-dev-lead' },
-    { id: 'jt-se', name: 'مهندس برمجيات', parentId: 'jt-dev-lead' },
-    { id: 'jt-sales-lead', name: 'قائد فريق المبيعات', parentId: 'jt-branch-manager-alex' },
-    { id: 'jt-sales-rep', name: 'مسؤول مبيعات', parentId: 'jt-sales-lead' },
+    { id: 'jt-super-admin', nameKey: 'jobTitles.superAdmin', parentId: null },
+    { id: 'jt-admin', nameKey: 'jobTitles.platformAdmin', parentId: 'jt-super-admin' },
+    { id: 'jt-branch-admin', nameKey: 'jobTitles.branchManager', parentId: 'jt-super-admin' },
+    { id: 'jt-gm', nameKey: 'jobTitles.gm', parentId: null },
+    { id: 'jt-hr-manager', nameKey: 'jobTitles.hrManager', parentId: 'jt-gm' },
+    { id: 'jt-branch-manager-emp', nameKey: 'jobTitles.branchManager', parentId: 'jt-gm' },
+    { id: 'jt-dev-lead', nameKey: 'jobTitles.devLead', parentId: 'jt-hr-manager' },
+    { id: 'jt-sse', nameKey: 'jobTitles.sse', parentId: 'jt-dev-lead' },
+    { id: 'jt-se', nameKey: 'jobTitles.se', parentId: 'jt-dev-lead' },
+    { id: 'jt-sales-lead', nameKey: 'jobTitles.salesLead', parentId: 'jt-branch-manager-emp' },
+    { id: 'jt-sales-rep', nameKey: 'jobTitles.salesRep', parentId: 'jt-sales-lead' },
 ];
 
 export const ALL_EMPLOYEES: EmployeeProfile[] = [
-     {
-        id: 'emp-999', employeeId: 'SYS-001', name: 'مسؤول النظام الخارق', jobTitleId: 'jt-super-admin', title: '', role: 'Super Admin', isEmployee: false, avatarUrl: 'https://i.pravatar.cc/100?u=superadmin', department: 'System', hireDate: '2020-01-01', employmentStatus: 'System Account', managerId: undefined, branchId: 'branch-cai', checkInStatus: 'CheckedOut',
+    // --- Super Admin (Global) ---
+    {
+        id: 'emp-999', employeeId: 'SYS-001', name: 'مسؤول النظام الخارق', jobTitleId: 'jt-super-admin', title: '', role: 'Super Admin', isEmployee: false, avatarUrl: 'https://i.pravatar.cc/100?u=superadmin', departmentKey: 'system', hireDate: '2020-01-01', employmentStatus: 'System Account', managerId: undefined, branchId: 'branch-cai', checkInStatus: 'CheckedOut',
         leaveBalances: [], baseSalary: 0,
         contact: { phone: '-', workEmail: 'superadmin@system.local', personalEmail: '-' },
         personal: { dateOfBirth: '-', nationality: '-', nationalId: '-', maritalStatus: '-', gender: 'Male', religion: '-' }, address: '-',
         performanceScore: 0, satisfactionSurveyScore: 0, lastPromotionDate: null, salaryComparedToMarket: 'Average',
     },
+    // --- Cairo Branch Admin (Fatima Ahmed) ---
     {
-        id: 'emp-000', employeeId: 'SYS-002', name: 'مسؤول منصة القاهرة', jobTitleId: 'jt-admin-cai', title: '', role: 'Admin', isEmployee: false, avatarUrl: 'https://i.pravatar.cc/100?u=admin', department: 'System', hireDate: '2020-01-10', employmentStatus: 'System Account', managerId: 'emp-999', branchId: 'branch-cai', checkInStatus: 'CheckedOut',
+        id: 'emp-cai-admin', employeeId: 'SYS-005', name: 'فاطمة أحمد', jobTitleId: 'jt-branch-admin', title: '', role: 'Branch Admin', isEmployee: false, avatarUrl: 'https://i.pravatar.cc/100?u=fatima', departmentKey: 'system', hireDate: '2022-03-10', employmentStatus: 'System Account', managerId: 'emp-999', branchId: 'branch-cai', checkInStatus: 'CheckedOut',
         leaveBalances: [], baseSalary: 0,
-        contact: { phone: '-', workEmail: 'admin@system.local', personalEmail: '-' },
-        personal: { dateOfBirth: '-', nationality: '-', nationalId: '-', maritalStatus: '-', gender: 'Male', religion: '-' }, address: '-',
+        contact: { phone: '-', workEmail: 'admin.cai@system.local', personalEmail: '-' },
+        personal: { dateOfBirth: '-', nationality: '-', nationalId: '-', maritalStatus: '-', gender: 'Female', religion: '-' }, address: '-',
         performanceScore: 0, satisfactionSurveyScore: 0, lastPromotionDate: null, salaryComparedToMarket: 'Average',
     },
     {
-        id: 'emp-100', employeeId: 'SYS-003', name: 'أحمد محمود', jobTitleId: 'jt-admin-alex', title: '', role: 'Admin', isEmployee: false, avatarUrl: 'https://i.pravatar.cc/100?u=admin-alex', department: 'System', hireDate: '2022-02-15', employmentStatus: 'System Account', managerId: 'emp-999', branchId: 'branch-alex', checkInStatus: 'CheckedOut',
-        leaveBalances: [], baseSalary: 0,
-        contact: { phone: '-', workEmail: 'admin.alex@system.local', personalEmail: '-' },
-        personal: { dateOfBirth: '-', nationality: '-', nationalId: '-', maritalStatus: '-', gender: 'Male', religion: '-' }, address: '-',
-        performanceScore: 0, satisfactionSurveyScore: 0, lastPromotionDate: null, salaryComparedToMarket: 'Average',
-    },
-    {
-        id: 'emp-gm', employeeId: 'BOK-0001', name: 'علي سالم', jobTitleId: 'jt-gm', title: '', role: 'General Manager', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=gm', department: 'الإدارة', hireDate: '2021-01-01', employmentStatus: 'دوام كامل', managerId: undefined, branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 40000,
-        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 30, used: 5 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 2 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 1 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
-        contact: { phone: '01012345678', workEmail: 'ali.salem@bokra.hr', personalEmail: 'ali.salem@email.com' },
-        personal: { dateOfBirth: '1970-05-15', nationality: 'مصري', nationalId: '27005150100123', maritalStatus: 'متزوج', gender: 'Male', religion: 'Muslim' }, address: '123 شارع النيل، القاهرة',
-        performanceScore: 4.8, satisfactionSurveyScore: 4.5, lastPromotionDate: '2023-01-01', salaryComparedToMarket: 'Above',
-        leavePolicyId: 'leave-policy-management',
-        compensationPackageId: 'pkg-manager',
-    },
-    {
-        id: 'emp-001', employeeId: 'BOK-0002', name: 'فاطمة أحمد', jobTitleId: 'jt-hr-manager', title: '', role: 'HR Manager', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=fatima', department: 'الموارد البشرية', hireDate: '2022-03-10', employmentStatus: 'دوام كامل', managerId: 'emp-gm', branchId: 'branch-cai', checkInStatus: 'CheckedIn', baseSalary: 25000,
+        id: 'emp-001', employeeId: 'BOK-0002', name: 'فاطمة أحمد', jobTitleId: 'jt-hr-manager', title: '', role: 'HR Manager', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=fatima', departmentKey: 'hr', hireDate: '2022-03-10', employmentStatus: 'دوام كامل', managerId: 'emp-gm', branchId: 'branch-cai', checkInStatus: 'CheckedIn', baseSalary: 25000,
         leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 5 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 1 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 3 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01123456789', workEmail: 'fatima.ahmed@bokra.hr', personalEmail: 'fatima.ahmed@email.com' },
         personal: { dateOfBirth: '1988-11-20', nationality: 'مصرية', nationalId: '28811200100456', maritalStatus: 'متزوج', gender: 'Female', religion: 'Muslim' }, address: '456 شارع الجمهورية، القاهرة',
@@ -71,8 +73,50 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
         leavePolicyId: 'leave-policy-standard',
         compensationPackageId: 'pkg-manager',
     },
+    // --- Alexandria Branch Admin (Ahmed Mahmoud) ---
     {
-        id: 'emp-002', employeeId: 'BOK-0003', name: 'كريم عادل', jobTitleId: 'jt-dev-lead', title: '', role: 'Team Lead', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=karim', department: 'تكنولوجيا المعلومات', hireDate: '2021-08-15', employmentStatus: 'دوام كامل', managerId: 'emp-001', branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 20000,
+        id: 'emp-100', employeeId: 'SYS-003', name: 'أحمد محمود', jobTitleId: 'jt-branch-admin', title: '', role: 'Branch Admin', isEmployee: false, avatarUrl: 'https://i.pravatar.cc/100?u=admin-alex', departmentKey: 'system', hireDate: '2022-02-15', employmentStatus: 'System Account', managerId: 'emp-999', branchId: 'branch-alex', checkInStatus: 'CheckedOut',
+        leaveBalances: [], baseSalary: 0,
+        contact: { phone: '-', workEmail: 'admin.alex@system.local', personalEmail: '-' },
+        personal: { dateOfBirth: '-', nationality: '-', nationalId: '-', maritalStatus: '-', gender: 'Male', religion: '-' }, address: '-',
+        performanceScore: 0, satisfactionSurveyScore: 0, lastPromotionDate: null, salaryComparedToMarket: 'Average',
+    },
+    {
+        id: 'emp-101', employeeId: 'BOK-1001', name: 'أحمد محمود', jobTitleId: 'jt-branch-manager-emp', title: '', role: 'Team Lead', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=admin-alex', departmentKey: 'management', hireDate: '2022-05-10', employmentStatus: 'دوام كامل', managerId: 'emp-gm', branchId: 'branch-alex', checkInStatus: 'CheckedOut', baseSalary: 22000,
+        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 7 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 2 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
+        contact: { phone: '01276543210', workEmail: 'ahmed.mahmoud@bokra.hr', personalEmail: 'ahmed.m@email.com' },
+        personal: { dateOfBirth: '1989-09-09', nationality: 'مصري', nationalId: '28909090200789', maritalStatus: 'متزوج', gender: 'Male', religion: 'Muslim' }, address: '12 شارع فؤاد، الإسكندرية',
+        performanceScore: 4.6, satisfactionSurveyScore: 4.8, lastPromotionDate: null, salaryComparedToMarket: 'Average',
+        leavePolicyId: 'leave-policy-standard',
+    },
+    // --- Ras Sedr Branch Admin (Khaled Amin) ---
+    {
+        id: 'emp-200', employeeId: 'SYS-004', name: 'خالد أمين', jobTitleId: 'jt-branch-admin', title: '', role: 'Branch Admin', isEmployee: false, avatarUrl: 'https://i.pravatar.cc/100?u=admin-ras', departmentKey: 'system', hireDate: '2023-01-01', employmentStatus: 'System Account', managerId: 'emp-999', branchId: 'branch-ras-sedr', checkInStatus: 'CheckedOut',
+        leaveBalances: [], baseSalary: 0,
+        contact: { phone: '-', workEmail: 'admin.ras@system.local', personalEmail: '-' },
+        personal: { dateOfBirth: '-', nationality: '-', nationalId: '-', maritalStatus: '-', gender: 'Male', religion: '-' }, address: '-',
+        performanceScore: 0, satisfactionSurveyScore: 0, lastPromotionDate: null, salaryComparedToMarket: 'Average',
+    },
+    {
+        id: 'emp-201', employeeId: 'BOK-2001', name: 'خالد أمين', jobTitleId: 'jt-branch-manager-emp', title: '', role: 'Team Lead', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=admin-ras', departmentKey: 'management', hireDate: '2023-02-01', employmentStatus: 'دوام كامل', managerId: 'emp-gm', branchId: 'branch-ras-sedr', checkInStatus: 'CheckedOut', baseSalary: 19000,
+        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 2 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 0 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
+        contact: { phone: '01023456789', workEmail: 'khaled.amin@bokra.hr', personalEmail: 'khaled.a@email.com' },
+        personal: { dateOfBirth: '1990-06-20', nationality: 'مصري', nationalId: '29006200100123', maritalStatus: 'متزوج', gender: 'Male', religion: 'Muslim' }, address: '1 طريق السلام، رأس سدر',
+        performanceScore: 4.3, satisfactionSurveyScore: 4.6, lastPromotionDate: null, salaryComparedToMarket: 'Average',
+        leavePolicyId: 'leave-policy-standard',
+    },
+    // --- Other Employees ---
+    {
+        id: 'emp-gm', employeeId: 'BOK-0001', name: 'علي سالم', jobTitleId: 'jt-gm', title: '', role: 'General Manager', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=gm', departmentKey: 'management', hireDate: '2021-01-01', employmentStatus: 'دوام كامل', managerId: undefined, branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 40000,
+        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 30, used: 5 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 2 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 1 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
+        contact: { phone: '01012345678', workEmail: 'ali.salem@bokra.hr', personalEmail: 'ali.salem@email.com' },
+        personal: { dateOfBirth: '1970-05-15', nationality: 'مصري', nationalId: '27005150100123', maritalStatus: 'متزوج', gender: 'Male', religion: 'Muslim' }, address: '123 شارع النيل، القاهرة',
+        performanceScore: 4.8, satisfactionSurveyScore: 4.5, lastPromotionDate: '2023-01-01', salaryComparedToMarket: 'Above',
+        leavePolicyId: 'leave-policy-management',
+        compensationPackageId: 'pkg-manager',
+    },
+    {
+        id: 'emp-002', employeeId: 'BOK-0003', name: 'كريم عادل', jobTitleId: 'jt-dev-lead', title: '', role: 'Team Lead', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=karim', departmentKey: 'it', hireDate: '2021-08-15', employmentStatus: 'دوام كامل', managerId: 'emp-001', branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 20000,
         leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 10 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 0 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01234567890', workEmail: 'karim.adel@bokra.hr', personalEmail: 'karim.adel@email.com' },
         personal: { dateOfBirth: '1992-02-10', nationality: 'مصري', nationalId: '29202100100789', maritalStatus: 'أعزب', gender: 'Male', religion: 'Muslim' }, address: '789 شارع التحرير، القاهرة',
@@ -82,7 +126,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
         compensationPackageId: 'pkg-tech-l2',
     },
     {
-        id: 'emp-003', employeeId: 'BOK-0004', name: 'هدى زكي', jobTitleId: 'jt-sse', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=hoda', department: 'تكنولوجيا المعلومات', hireDate: '2022-11-01', employmentStatus: 'دوام كامل', managerId: 'emp-002', branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 12000,
+        id: 'emp-003', employeeId: 'BOK-0004', name: 'هدى زكي', jobTitleId: 'jt-sse', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=hoda', departmentKey: 'it', hireDate: '2022-11-01', employmentStatus: 'دوام كامل', managerId: 'emp-002', branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 12000,
         leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 45, used: 2 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 3 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 1 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01098765432', workEmail: 'hoda.zaki@bokra.hr', personalEmail: 'hoda.zaki@email.com' },
         personal: { dateOfBirth: '1995-07-25', nationality: 'مصرية', nationalId: '29507250100123', maritalStatus: 'أعزب', gender: 'Female', religion: 'Muslim', isSpecialNeeds: true }, address: '101 شارع عباس العقاد، القاهرة',
@@ -93,7 +137,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
         compensationPackageId: 'pkg-tech-l1',
     },
     {
-        id: 'emp-004', employeeId: 'BOK-0005', name: 'طارق حسن', jobTitleId: 'jt-se', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=tarek', department: 'تكنولوجيا المعلومات', hireDate: '2023-06-20', employmentStatus: 'دوام كامل', managerId: 'emp-002', branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 9000,
+        id: 'emp-004', employeeId: 'BOK-0005', name: 'طارق حسن', jobTitleId: 'jt-se', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=tarek', departmentKey: 'it', hireDate: '2023-06-20', employmentStatus: 'دوام كامل', managerId: 'emp-002', branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 9000,
         leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 0 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 4 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01187654321', workEmail: 'tarek.hassan@bokra.hr', personalEmail: 'tarek.hassan@email.com' },
         personal: { dateOfBirth: '1998-01-30', nationality: 'مصري', nationalId: '29801300100456', maritalStatus: 'أعزب', gender: 'Male', religion: 'Muslim' }, address: '202 شارع مكرم عبيد، القاهرة',
@@ -104,7 +148,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
         compensationPackageId: 'pkg-tech-l1',
     },
      {
-        id: 'emp-005', employeeId: 'BOK-0006', name: 'سارة كمال', jobTitleId: 'jt-se', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=sara', department: 'تكنولوجيا المعلومات', hireDate: '2025-09-01', employmentStatus: 'دوام كامل', managerId: 'emp-002', branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 9500,
+        id: 'emp-005', employeeId: 'BOK-0006', name: 'سارة كمال', jobTitleId: 'jt-se', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=sara', departmentKey: 'it', hireDate: '2025-09-01', employmentStatus: 'دوام كامل', managerId: 'emp-002', branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 9500,
         leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 15, used: 0 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 0 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01011223344', workEmail: 'sara.kamal@bokra.hr', personalEmail: 'sara.kamal@email.com' },
         personal: { dateOfBirth: '1999-03-15', nationality: 'مصرية', nationalId: '29903150100123', maritalStatus: 'أعزب', gender: 'Female', religion: 'Muslim' }, address: '303 شارع التسعين، القاهرة',
@@ -115,15 +159,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
         compensationPackageId: 'pkg-tech-l1',
     },
     {
-        id: 'emp-101', employeeId: 'BOK-1001', name: 'عمر فوزي', jobTitleId: 'jt-branch-manager-alex', title: '', role: 'Branch Admin', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=omar', department: 'الإدارة', hireDate: '2022-05-10', employmentStatus: 'دوام كامل', managerId: 'emp-gm', branchId: 'branch-alex', checkInStatus: 'CheckedOut', baseSalary: 22000,
-        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 7 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 2 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
-        contact: { phone: '01276543210', workEmail: 'omar.fawzy@bokra.hr', personalEmail: 'omar.fawzy@email.com' },
-        personal: { dateOfBirth: '1989-09-09', nationality: 'مصري', nationalId: '28909090200789', maritalStatus: 'متزوج', gender: 'Male', religion: 'Muslim' }, address: '12 شارع فؤاد، الإسكندرية',
-        performanceScore: 4.6, satisfactionSurveyScore: 4.8, lastPromotionDate: null, salaryComparedToMarket: 'Average',
-        leavePolicyId: 'leave-policy-standard',
-    },
-    {
-        id: 'emp-102', employeeId: 'BOK-1002', name: 'منى سيد', jobTitleId: 'jt-sales-lead', title: '', role: 'Team Lead', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=mona', department: 'المبيعات', hireDate: '2023-01-05', employmentStatus: 'دوام كامل', managerId: 'emp-101', branchId: 'branch-alex', checkInStatus: 'CheckedOut', baseSalary: 18000,
+        id: 'emp-102', employeeId: 'BOK-1002', name: 'منى سيد', jobTitleId: 'jt-sales-lead', title: '', role: 'Team Lead', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=mona', departmentKey: 'sales', hireDate: '2023-01-05', employmentStatus: 'دوام كامل', managerId: 'emp-101', branchId: 'branch-alex', checkInStatus: 'CheckedOut', baseSalary: 18000,
         leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 4 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 1 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 0 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01065432109', workEmail: 'mona.sayed@bokra.hr', personalEmail: 'mona.sayed@email.com' },
         personal: { dateOfBirth: '1994-04-12', nationality: 'مصرية', nationalId: '29404120200123', maritalStatus: 'أعزب', gender: 'Female', religion: 'Muslim' }, address: '34 شارع صفية زغلول، الإسكندرية',
@@ -132,7 +168,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
         leavePolicyId: 'leave-policy-standard',
     },
     {
-        id: 'emp-103', employeeId: 'BOK-1003', name: 'يوسف إبراهيم', jobTitleId: 'jt-sales-rep', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=youssef', department: 'المبيعات', hireDate: '2023-09-01', employmentStatus: 'دوام كامل', managerId: 'emp-102', branchId: 'branch-alex', checkInStatus: 'CheckedOut', baseSalary: 8500,
+        id: 'emp-103', employeeId: 'BOK-1003', name: 'يوسف إبراهيم', jobTitleId: 'jt-sales-rep', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=youssef', departmentKey: 'sales', hireDate: '2023-09-01', employmentStatus: 'دوام كامل', managerId: 'emp-102', branchId: 'branch-alex', checkInStatus: 'CheckedOut', baseSalary: 8500,
         leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 1 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 1 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
         contact: { phone: '01154321098', workEmail: 'youssef.ibrahim@bokra.hr', personalEmail: 'youssef.ibrahim@email.com' },
         personal: { dateOfBirth: '1999-12-01', nationality: 'مصري', nationalId: '29912010200456', maritalStatus: 'أعزب', gender: 'Male', religion: 'Muslim' }, address: '56 شارع أبو قير، الإسكندرية',
@@ -141,7 +177,16 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
         leavePolicyId: 'leave-policy-standard',
     },
     {
-        id: 'emp-inactive-1', employeeId: 'BOK-9001', name: 'موظف سابق', jobTitleId: 'jt-se', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=inactive', department: 'تكنولوجيا المعلومات', hireDate: '2021-01-01', employmentStatus: 'Inactive', deactivationDate: '2023-08-31T10:00:00.000Z', managerId: 'emp-002', branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 8000,
+        id: 'emp-202', employeeId: 'BOK-2002', name: 'جنى طاهر', jobTitleId: 'jt-sales-rep', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=jana', departmentKey: 'sales', hireDate: '2023-05-15', employmentStatus: 'دوام كامل', managerId: 'emp-201', branchId: 'branch-ras-sedr', checkInStatus: 'CheckedOut', baseSalary: 8000,
+        leaveBalances: [ { type: 'Annual', typeName: 'إجازة سنوية', balance: 21, used: 0 }, { type: 'Sick', typeName: 'إجازة مرضية', balance: 15, used: 0 }, { type: 'Casual', typeName: 'إجازة عارضة', balance: 7, used: 1 }, { type: 'Unpaid', typeName: 'بدون أجر', balance: 99, used: 0 }, { type: 'NewbornRegistration', typeName: 'إجازة تسجيل مولود', balance: 3, used: 0 } ],
+        contact: { phone: '01134567890', workEmail: 'jana.taher@bokra.hr', personalEmail: 'jana.t@email.com' },
+        personal: { dateOfBirth: '1998-10-10', nationality: 'مصرية', nationalId: '29810100100456', maritalStatus: 'أعزب', gender: 'Female', religion: 'Muslim' }, address: '10 شارع البحر، رأس سدر',
+        performanceScore: 3.8, satisfactionSurveyScore: 4.1, lastPromotionDate: null, salaryComparedToMarket: 'Average',
+        overtimePolicyId: 'ot-policy-high-rate',
+        leavePolicyId: 'leave-policy-standard',
+    },
+    {
+        id: 'emp-inactive-1', employeeId: 'BOK-9001', name: 'موظف سابق', jobTitleId: 'jt-se', title: '', role: 'Employee', isEmployee: true, avatarUrl: 'https://i.pravatar.cc/100?u=inactive', departmentKey: 'it', hireDate: '2021-01-01', employmentStatus: 'Inactive', deactivationDate: '2023-08-31T10:00:00.000Z', managerId: 'emp-002', branchId: 'branch-cai', checkInStatus: 'CheckedOut', baseSalary: 8000,
         leaveBalances: [], contact: { phone: '-', workEmail: 'ex.employee@bokra.hr', personalEmail: '-' },
         personal: { dateOfBirth: '-', nationality: 'مصري', nationalId: '-', maritalStatus: 'أعزب', gender: 'Male', religion: 'Muslim' }, address: '-',
         performanceScore: 3.0, satisfactionSurveyScore: 3.0, lastPromotionDate: null, salaryComparedToMarket: 'Average',
@@ -418,7 +463,7 @@ export const MOCK_JOB_OPENINGS: JobOpening[] = [
     {
         id: 'job-01',
         title: 'مهندس برمجيات أول (Frontend)',
-        department: 'تكنولوجيا المعلومات',
+        departmentKey: 'it',
         status: 'Open',
         datePosted: '2025-08-15',
         description: 'نبحث عن مهندس برمجيات أول متخصص في الواجهات الأمامية للانضمام إلى فريقنا الديناميكي.',
@@ -427,7 +472,7 @@ export const MOCK_JOB_OPENINGS: JobOpening[] = [
     {
         id: 'job-02',
         title: 'مسؤول مبيعات',
-        department: 'المبيعات',
+        departmentKey: 'sales',
         status: 'Open',
         datePosted: '2025-08-10',
         description: 'مطلوب مسؤول مبيعات لديه شغف بتحقيق الأهداف لفرعنا في الإسكندرية.',
@@ -436,7 +481,7 @@ export const MOCK_JOB_OPENINGS: JobOpening[] = [
     {
         id: 'job-03',
         title: 'مصمم واجهة مستخدم (UI/UX)',
-        department: 'تكنولوجيا المعلومات',
+        departmentKey: 'it',
         status: 'Closed',
         datePosted: '2025-07-20',
         description: 'تم إغلاق هذه الوظيفة.',
@@ -687,7 +732,9 @@ export const NAV_GROUPS: NavGroup[] = [
       { nameKey: 'sidebar.learning', icon: BookOpenIcon, path: '/learning', requiresEmployee: true, pageTitleKey: 'pageTitles.learning', module: 'learning' },
       { nameKey: 'sidebar.myDocuments', icon: DocumentDuplicateIcon, path: '/documents', requiresEmployee: true, pageTitleKey: 'pageTitles.myDocuments', module: 'documents' },
       { nameKey: 'sidebar.myAssets', icon: ComputerDesktopIcon, path: '/my-assets', requiresEmployee: true, pageTitleKey: 'pageTitles.myAssets', module: 'assets' },
+      { nameKey: 'sidebar.employeeDirectory', icon: IdentificationIcon, path: '/directory', pageTitleKey: 'pageTitles.employeeDirectory' },
       { nameKey: 'sidebar.support', icon: QuestionMarkCircleIcon, path: '/support', pageTitleKey: 'pageTitles.support', module: 'support' },
+      { nameKey: 'sidebar.helpCenter', icon: LifebuoyIcon, path: '/help', pageTitleKey: 'pageTitles.helpCenter', module: 'help_center' },
     ]
   },
   {
@@ -834,21 +881,104 @@ export const MOCK_EXTERNAL_TASKS: ExternalTask[] = [
     },
 ];
 
-export const timeSince = (dateString: string): string => {
+// =================================================================================
+// ===== HELP CENTER MOCK DATA =====
+// =================================================================================
+export const MOCK_HELP_CATEGORIES: HelpCategory[] = [
+    { id: 'cat-leave', name: { ar: 'الإجازات', en: 'Leave Policies' }, icon: BriefcaseIcon },
+    { id: 'cat-attendance', name: { ar: 'الحضور والانصراف', en: 'Attendance' }, icon: ClockIcon },
+    { id: 'cat-work-hours', name: { ar: 'ساعات العمل والإضافي', en: 'Work Hours & Overtime' }, icon: ClockIcon },
+    { id: 'cat-contracts', name: { ar: 'العقود وإنهاء الخدمة', en: 'Contracts & Termination' }, icon: DocumentDuplicateIcon },
+    { id: 'cat-payroll', name: { ar: 'الرواتب', en: 'Payroll' }, icon: BanknotesIcon },
+    { id: 'cat-benefits', name: { ar: 'مزايا الشركة', en: 'Company Benefits' }, icon: CheckCircleIcon },
+    { id: 'cat-penalties', name: { ar: 'الجزاءات والعقوبات', en: 'Penalties & Sanctions' }, icon: ShieldExclamationIcon },
+];
+
+export const MOCK_HELP_ARTICLES: HelpArticle[] = [
+    { 
+        id: 'art-1', categoryId: 'cat-leave', 
+        title: { ar: 'كيف يتم حساب رصيد الإجازات السنوية؟', en: 'How is annual leave balance calculated?' },
+        content: { ar: 'وفقًا لقانون العمل المصري، يحصل الموظف على 21 يومًا إجازة سنوية بعد إتمام عام كامل في الخدمة. يزداد الرصيد إلى 30 يومًا بعد 10 سنوات من الخدمة أو عند بلوغ سن الخمسين.', en: 'According to Egyptian labor law, an employee is entitled to 21 days of annual leave after completing one full year of service. The balance increases to 30 days after 10 years of service or upon reaching the age of 50.' },
+        keywords: ['annual', 'leave', 'vacation', 'سنوية', 'إجازة'] 
+    },
+    { 
+        id: 'art-2', categoryId: 'cat-leave', 
+        title: { ar: 'ما هي إجراءات الإجازة المرضية؟', en: 'What is the procedure for sick leave?' },
+        content: { ar: 'يجب إبلاغ المدير المباشر في نفس يوم المرض. إذا زادت مدة الإجازة عن يوم واحد، يجب تقديم تقرير طبي معتمد.', en: 'The direct manager must be notified on the same day of sickness. If the leave exceeds one day, a certified medical report must be submitted.' },
+        keywords: ['sick', 'leave', 'illness', 'مرضية', 'إجازة', 'مرض'] 
+    },
+    { 
+        id: 'art-3', categoryId: 'cat-payroll', 
+        title: { ar: 'متى يتم إصدار كشف الراتب؟', en: 'When is the payslip issued?' },
+        content: { ar: 'يتم إصدار كشف الراتب في اليوم الأخير من كل شهر ميلادي ويمكنك الاطلاع عليه وتحميله من خلال هذه المنصة.', en: 'The payslip is issued on the last day of each calendar month. You can view and download it through this platform.' },
+        keywords: ['payslip', 'salary', 'راتب', 'كشف'] 
+    },
+    { 
+        id: 'art-4', categoryId: 'cat-attendance', 
+        title: { ar: 'ما هي سياسة التأخير عن العمل؟', en: 'What is the company\'s policy on lateness?' },
+        content: { ar: 'يوجد فترة سماح لمدة 15 دقيقة. بعد ذلك، يتم تطبيق خصومات تصاعدية حسب مدة التأخير وفقًا للائحة الداخلية للشركة والسياسة المسندة إليك.', en: 'There is a grace period of 15 minutes. After that, progressive deductions are applied based on the duration of the lateness, as per the company\'s internal regulations and the policy assigned to you.' },
+        keywords: ['late', 'tardiness', 'attendance', 'تأخير', 'حضور'] 
+    },
+    { 
+        id: 'art-5', categoryId: 'cat-benefits', 
+        title: { ar: 'كيف يمكنني استخدام التأمين الطبي؟', en: 'How can I use the medical insurance?' },
+        content: { ar: 'يمكنك استخدام بطاقة التأمين الطبي الخاصة بك في جميع المستشفيات والمراكز الطبية المعتمدة في الشبكة. للحصول على موافقة مسبقة، يرجى التواصل مع قسم الموارد البشرية.', en: 'You can use your medical insurance card at all accredited hospitals and medical centers in the network. For pre-approval, please contact the HR department.' },
+        keywords: ['medical', 'insurance', 'health', 'تأمين', 'صحي'] 
+    },
+    { 
+        id: 'art-6', categoryId: 'cat-attendance', 
+        title: { ar: 'ما هي ساعات العمل الرسمية وفترات الراحة؟', en: 'What are the official work hours and break times?' },
+        content: { ar: 'ينص قانون العمل على ألا تتجاوز ساعات العمل الفعلية 8 ساعات في اليوم أو 48 ساعة في الأسبوع. يجب أن تتخلل ساعات العمل فترة راحة لا تقل عن ساعة، بحيث لا يعمل الموظف أكثر من 5 ساعات متصلة.', en: 'The labor law states that actual working hours shall not exceed 8 hours per day or 48 hours per week. Working hours must include a break period of at least one hour, ensuring an employee does not work more than 5 consecutive hours.' },
+        keywords: ['work hours', 'break', 'schedule', 'ساعات عمل', 'راحة'] 
+    },
+    { 
+        id: 'art-7', categoryId: 'cat-work-hours', 
+        title: { ar: 'كيف يتم احتساب أجر العمل الإضافي؟', en: 'How is overtime pay calculated?' },
+        content: { ar: 'يتم احتساب أجر العمل الإضافي بناءً على الأجر الأساسي للساعة مضروبًا في معامل. وفقًا للقانون، يكون المعامل 1.35 عن ساعات العمل النهارية الإضافية، و1.7 عن الساعات الليلية. في أيام العطلات الرسمية، يكون المعامل 2 بالإضافة إلى يوم إجازة آخر.', en: 'Overtime pay is calculated based on the basic hourly wage multiplied by a factor. According to the law, the factor is 1.35 for extra daytime hours and 1.7 for nighttime hours. On public holidays, the factor is 2, in addition to another day off.' },
+        keywords: ['overtime', 'additional', 'pay', 'إضافي', 'أجر'] 
+    },
+    { 
+        id: 'art-8', categoryId: 'cat-contracts', 
+        title: { ar: 'ما هي القواعد المتعلقة بفترة الاختبار؟', en: 'What are the rules regarding the probation period?' },
+        content: { ar: 'لا يجوز تعيين العامل تحت الاختبار لمدة تزيد على ثلاثة أشهر أو تعيينه تحت الاختبار أكثر من مرة واحدة لدى نفس صاحب العمل. خلال هذه الفترة، يجوز لأي من الطرفين إنهاء العقد دون إشعار مسبق.', en: 'An employee may not be appointed on probation for a period exceeding three months or be appointed on probation more than once with the same employer. During this period, either party may terminate the contract without prior notice.' },
+        keywords: ['probation', 'test period', 'contract', 'فترة اختبار', 'عقد'] 
+    },
+    { 
+        id: 'art-9', categoryId: 'cat-contracts', 
+        title: { ar: 'ما هي إجراءات تقديم الاستقالة وفترة الإخطار؟', en: 'What is the procedure for resignation and the notice period?' },
+        content: { ar: 'يجب على الموظف الذي يرغب في إنهاء العقد (غير محدد المدة) أن يخطر صاحب العمل كتابيًا قبل الإنهاء. فترة الإخطار هي شهران إذا لم تتجاوز مدة خدمته عشر سنوات، وثلاثة أشهر إذا تجاوزت هذه المدة.', en: 'An employee wishing to terminate an indefinite-term contract must notify the employer in writing before the termination. The notice period is two months if their service does not exceed ten years, and three months if it exceeds that period.' },
+        keywords: ['resignation', 'notice period', 'quit', 'استقالة', 'فترة إخطار'] 
+    },
+    { 
+        id: 'art-10', categoryId: 'cat-leave', 
+        title: { ar: 'هل يوجد إجازة أبوة في قانون العمل؟', en: 'Is there paternity leave in the labor law?' },
+        content: { ar: 'نعم، استحدث القانون الجديد إجازة أبوة مدفوعة الأجر لمدة يوم واحد، تُمنح للموظف في اليوم التالي للولادة أو في اليوم الذي يختاره خلال الأسبوع الأول من الولادة.', en: 'Yes, the new law introduced a one-day paid paternity leave, granted to the employee on the day following the birth or on a day of his choosing within the first week of the birth.' },
+        keywords: ['paternity', 'leave', 'father', 'أبوة', 'إجازة'] 
+    },
+    { 
+        id: 'art-11', categoryId: 'cat-work-hours', 
+        title: { ar: 'هل أستحق أجراً كاملاً في العطلات الرسمية؟', en: 'Am I entitled to full pay on public holidays?' },
+        content: { ar: 'نعم، يستحق العامل أجراً كاملاً عن أيام العطلات الرسمية. إذا استدعت ظروف العمل تشغيل العامل في هذا اليوم، يستحق بالإضافة إلى أجره عن هذا اليوم مثلي هذا الأجر (أي أجر مضاعف) أو يوم إجازة إضافي.', en: 'Yes, an employee is entitled to full pay on public holidays. If work conditions require the employee to work on this day, they are entitled to double their wage for this day in addition to their normal wage, or an additional day off.' },
+        keywords: ['holiday', 'official', 'public', 'عطلة', 'رسمية'] 
+    },
+];
+
+
+export const timeSince = (dateString: string, t: (key: string, replacements?: { [key: string]: string | number }) => string): string => {
     const date = new Date(dateString);
     const seconds = Math.floor((new Date().getTime() - date.getTime()) / 1000);
   
     let interval = seconds / 31536000;
-    if (interval > 1) return `منذ ${Math.floor(interval)} سنة`;
+    if (interval > 1) return t('time.yearsAgo', { count: Math.floor(interval) });
     interval = seconds / 2592000;
-    if (interval > 1) return `منذ ${Math.floor(interval)} شهر`;
+    if (interval > 1) return t('time.monthsAgo', { count: Math.floor(interval) });
     interval = seconds / 86400;
-    if (interval > 1) return `منذ ${Math.floor(interval)} يوم`;
+    if (interval > 1) return t('time.daysAgo', { count: Math.floor(interval) });
     interval = seconds / 3600;
-    if (interval > 1) return `منذ ${Math.floor(interval)} ساعة`;
+    if (interval > 1) return t('time.hoursAgo', { count: Math.floor(interval) });
     interval = seconds / 60;
-    if (interval > 1) return `منذ ${Math.floor(interval)} دقيقة`;
-    return 'الآن';
+    if (interval > 1) return t('time.minutesAgo', { count: Math.floor(interval) });
+    return t('time.now');
 };
 
 export const generatePayslips = (
@@ -862,7 +992,9 @@ export const generatePayslips = (
     attendanceAdjustmentRequests: AttendanceAdjustmentRequest[],
     leavePermitRequests: LeavePermitRequest[],
     externalTasks: ExternalTask[],
-    leaveRequests: LeaveRequest[]
+    leaveRequests: LeaveRequest[],
+    t: (key: string, replacements?: { [key: string]: string | number }) => string,
+    lang: 'ar' | 'en'
 ): Payslip[] => {
     const employee = employees.find(e => e.id === employeeId);
     if (!employee || !employee.baseSalary) return [];
@@ -870,12 +1002,13 @@ export const generatePayslips = (
     const attendancePolicy = attendancePolicies.find(p => p.id === employee.attendancePolicyId);
     const overtimePolicy = overtimePolicies.find(p => p.id === employee.overtimePolicyId);
     const compPackage = compensationPackages.find(p => p.id === employee.compensationPackageId);
+    const locale = lang === 'ar' ? 'ar-EG' : 'en-US';
     
     const payslips: Payslip[] = [];
     for (let i = 0; i < 3; i++) {
         const date = new Date();
         date.setMonth(date.getMonth() - i);
-        const monthName = date.toLocaleDateString('ar-EG', { month: 'long' });
+        const monthName = date.toLocaleDateString(locale, { month: 'long' });
         const year = date.getFullYear();
         
         const monthAttendance = allAttendance.filter(r => 
@@ -885,7 +1018,7 @@ export const generatePayslips = (
         );
         
         const baseSalary = employee.baseSalary;
-        const earnings: PayslipItem[] = [{ description: 'الراتب الأساسي', amount: baseSalary }];
+        const earnings: PayslipItem[] = [{ description: t('payslip.baseSalary'), amount: baseSalary }];
         const deductions: PayslipItem[] = [];
         const dailyRate = baseSalary / 22; // Assuming 22 working days
         const hourlyRate = dailyRate / 8; // Assuming 8 hours/day
@@ -932,7 +1065,7 @@ export const generatePayslips = (
         if (overtimeHours > 0 && overtimePolicy) {
             // FIX: Corrected property access to match the updated OvertimePolicy type.
             const overtimePay = (overtimeHours * hourlyRate * overtimePolicy.overtimeRateNormal);
-            earnings.push({ description: 'أجر إضافي', amount: parseFloat(overtimePay.toFixed(2)) });
+            earnings.push({ description: t('payslip.overtimePay'), amount: parseFloat(overtimePay.toFixed(2)) });
         }
         
         // Calculate lateness deductions
@@ -980,7 +1113,7 @@ export const generatePayslips = (
         }, 0);
 
         if (lateDeductions > 0) {
-             deductions.push({ description: 'خصم تأخير', amount: parseFloat(lateDeductions.toFixed(2)) });
+             deductions.push({ description: t('payslip.latenessDeduction'), amount: parseFloat(lateDeductions.toFixed(2)) });
         }
 
         // Calculate early leave deductions
@@ -1031,7 +1164,7 @@ export const generatePayslips = (
         }, 0);
 
         if (earlyLeaveDeductions > 0) {
-            deductions.push({ description: 'خصم انصراف مبكر', amount: parseFloat(earlyLeaveDeductions.toFixed(2)) });
+            deductions.push({ description: t('payslip.earlyDepartureDeduction'), amount: parseFloat(earlyLeaveDeductions.toFixed(2)) });
         }
 
         // Calculate sick leave deductions (25% deduction for each sick day)
@@ -1047,7 +1180,7 @@ export const generatePayslips = (
 
         if (sickDaysInMonth > 0) {
             const sickLeaveDeduction = sickDaysInMonth * dailyRate * 0.25; // 25% deduction
-            deductions.push({ description: `خصم إجازة مرضية (${sickDaysInMonth} أيام)`, amount: parseFloat(sickLeaveDeduction.toFixed(2)) });
+            deductions.push({ description: t('payslip.sickLeaveDeduction', { days: sickDaysInMonth }), amount: parseFloat(sickLeaveDeduction.toFixed(2)) });
         }
 
 
@@ -1091,6 +1224,7 @@ export const getDerivedData = (
   goals: Goal[],
   attendanceEvents: AttendanceEvent[],
   assets: Asset[],
+  t: (key: string, replacements?: { [key: string]: any }) => string
 ) => {
 
 // FIX: Explicitly type the return value of the map function to ensure type safety.
@@ -1154,17 +1288,28 @@ export const getDerivedData = (
       const assignedAssets = assetsWithDepreciation.filter(a => a.assignedToId === emp.id);
       return {
           ...emp,
-          branchName: branch?.name || 'N/A',
+          branchName: branch ? t(branch.nameKey) : 'N/A',
           attendancePolicyName: attendancePolicy?.name || 'N/A',
           overtimePolicyName: overtimePolicy?.name || 'N/A',
           leavePolicyName: leavePolicy?.name || 'N/A',
-          title: jobTitle?.name || emp.title,
+          title: jobTitle ? t(jobTitle.nameKey) : emp.title,
           assets: assignedAssets,
       };
   });
 
   const currentUserProfile = allEmployeesWithDetails.find(e => e.id === currentUserId)!;
-  const teamMembersProfiles = allEmployeesWithDetails.filter(emp => emp.managerId === currentUserId && emp.isEmployee);
+  
+  const teamMembersProfiles = allEmployeesWithDetails.filter(emp => {
+    if (currentUserProfile.role === 'Super Admin' || currentUserProfile.role === 'General Manager' || currentUserProfile.role === 'HR Manager') {
+        return emp.isEmployee; // Show all employees
+    }
+    if (currentUserProfile.role === 'Branch Admin') {
+        return emp.branchId === currentUserProfile.branchId && emp.isEmployee;
+    }
+    // Default for Team Lead
+    return emp.managerId === currentUserId && emp.isEmployee;
+  });
+
   const teamMemberIds = teamMembersProfiles.map(m => m.id);
   
   // --- Employee Dashboard Stats ---
@@ -1209,7 +1354,7 @@ export const getDerivedData = (
                   id: n.id,
                   icon: CheckCircleIcon, // Placeholder
                   text: n.message,
-                  timestamp: timeSince(n.timestamp),
+                  timestamp: timeSince(n.timestamp, t),
                   pageKey,
               };
           }),
@@ -1306,7 +1451,7 @@ export const getDerivedData = (
                     id: `course-${emp.id}-${course.id}`,
                     type: 'course',
                     icon: AcademicCapIcon,
-                    text: `طلب موافقة على دورة: ${course.title}`,
+                    text: t('attention.courseApprovalRequest', { courseTitle: course.title }),
                     employeeName: emp.name,
                     employeeAvatarUrl: emp.avatarUrl,
                     timestamp: new Date().toISOString(), // Placeholder
@@ -1316,16 +1461,17 @@ export const getDerivedData = (
         });
 
     // 3. Pending External Task Requests
+// FIX: Renamed the lambda parameter from `t` to `task` to avoid shadowing the translation function `t`.
     externalTasks
-        .filter(t => teamMemberIds.includes(t.employeeId) && t.status === 'PendingApproval' && t.requestedById === t.employeeId)
-        .forEach(t => {
-            const emp = allEmployeesWithDetails.find(e => e.id === t.employeeId);
+        .filter(task => teamMemberIds.includes(task.employeeId) && task.status === 'PendingApproval' && task.requestedById === task.employeeId)
+        .forEach(task => {
+            const emp = allEmployeesWithDetails.find(e => e.id === task.employeeId);
             if(emp) {
                 attentionItems.push({
-                    id: `task-${t.id}`,
+                    id: `task-${task.id}`,
                     type: 'external_task',
                     icon: ClipboardDocumentListIcon,
-                    text: `طلب مهمة خارجية: ${t.title}`,
+                    text: t('attention.externalTaskRequest', { taskTitle: task.title }),
                     employeeName: emp.name,
                     employeeAvatarUrl: emp.avatarUrl,
                     timestamp: new Date().toISOString(), // Placeholder for request time
@@ -1487,6 +1633,7 @@ export const getDerivedData = (
       endDate: `${new Date().getFullYear()}-07-31`,
   };
 
+  // FIX: Completed the logic inside the map function, which was causing a syntax error and a type mismatch.
   const teamPerformanceData: TeamMemberPerformanceData[] = teamMembersProfiles.map(member => {
       const memberGoals = goals.filter(g => g.employeeId === member.id);
       const goalProgress = memberGoals.length > 0 ? Math.round(memberGoals.reduce((sum, g) => sum + g.progress, 0) / memberGoals.length) : 0;
@@ -1496,33 +1643,25 @@ export const getDerivedData = (
           .sort((a,b) => new Date(b.date).getTime() - new Date(a.date).getTime())[0] || null;
 
       const review = performanceReviews.find(r => r.employeeId === member.id && r.cycle === performanceCycle.name);
-      let reviewStatus: 'Not Started' | 'In Progress' | 'Completed' = 'Not Started';
-      if (review) {
-          if (review.status === 'Completed') reviewStatus = 'Completed';
-          else reviewStatus = 'In Progress';
-      }
+      const reviewStatus: TeamMemberPerformanceData['reviewStatus'] = review ? (review.status === 'Completed' ? 'Completed' : 'In Progress') : 'Not Started';
 
       return {
-          member,
-          goalProgress,
-          latestCheckIn,
-          reviewStatus,
+        member,
+        goalProgress,
+        latestCheckIn,
+        reviewStatus,
       };
   });
-
-  const reviewsCompleted = teamPerformanceData.filter(d => d.reviewStatus === 'Completed').length;
-  const avgTeamGoalProgress = teamPerformanceData.length > 0 ? Math.round(teamPerformanceData.reduce((sum, d) => sum + d.goalProgress, 0) / teamPerformanceData.length) : 0;
 
   const managerPerformanceData: ManagerPerformanceData = {
       cycle: performanceCycle,
       cycleStats: {
-          totalReviews: teamMembersProfiles.length,
-          reviewsCompleted,
-          avgTeamGoalProgress,
+        totalReviews: teamPerformanceData.length,
+        reviewsCompleted: teamPerformanceData.filter(p => p.reviewStatus === 'Completed').length,
+        avgTeamGoalProgress: teamPerformanceData.length > 0 ? Math.round(teamPerformanceData.reduce((sum, p) => sum + p.goalProgress, 0) / teamPerformanceData.length) : 0,
       },
       teamPerformance: teamPerformanceData,
   };
-
 
   return {
     currentUserProfile,

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { AttendanceRecord, AttendanceStatus } from '../types';
+import { useTranslation } from './contexts/LanguageContext';
 
 const STATUS_STYLES: Record<AttendanceStatus, string> = {
     Present: 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border-emerald-200',
@@ -17,7 +18,8 @@ interface CalendarViewProps {
 }
 
 const CalendarView: React.FC<CalendarViewProps> = ({ records, year, month }) => {
-    const daysOfWeek = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+    const { t } = useTranslation();
+    const daysOfWeek = t('calendar.days', { returnObjects: true }) as unknown as string[];
     
     const recordsMap = new Map(records.map(r => [new Date(r.date).getDate(), r.status]));
 

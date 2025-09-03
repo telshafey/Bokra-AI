@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatBubbleOvalLeftEllipsisIcon, PaperAirplaneIcon, XMarkIcon } from './icons/Icons';
 import { sendMessageToAI } from '../services/geminiService';
@@ -68,7 +69,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ currentUser }) => {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="fixed bottom-6 left-6 bg-sky-600 text-white p-4 rounded-full shadow-lg hover:bg-sky-700 transition-transform transform hover:scale-110 focus:outline-none z-50"
-        aria-label="Open AI Assistant"
+        aria-label={t('chatbot.openAIAssistant')}
       >
         <ChatBubbleOvalLeftEllipsisIcon className="w-8 h-8" />
       </button>

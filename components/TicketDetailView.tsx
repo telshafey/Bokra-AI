@@ -1,7 +1,10 @@
+
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { EmployeeProfile, SupportTicket, TicketStatus } from '../types';
 import { ArrowRightIcon, PaperAirplaneIcon } from './icons/Icons';
 import { timeSince } from '../constants';
+// FIX: Imported useTranslation hook to pass the 't' function to timeSince.
+import { useTranslation } from './contexts/LanguageContext';
 
 const STATUS_BADGE_CLASSES: Record<TicketStatus, string> = {
     New: 'bg-sky-100 text-sky-800',
@@ -35,6 +38,8 @@ const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, currentUser
     const [newMessage, setNewMessage] = useState('');
     const isAdmin = useMemo(() => ['Super Admin', 'Admin', 'HR Manager'].includes(currentUser.role), [currentUser.role]);
     const chatEndRef = useRef<HTMLDivElement>(null);
+    // FIX: Get the translation function 't' to pass to timeSince.
+    const { t } = useTranslation();
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -108,7 +113,8 @@ const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, currentUser
                         <p><strong>الأولوية:</strong> {ticket.priority}</p>
                         <p><strong>الفئة:</strong> {ticket.category}</p>
                         <p><strong>تاريخ الإنشاء:</strong> {formatTimestamp(ticket.createdAt)}</p>
-                        <p><strong>آخر تحديث:</strong> {timeSince(ticket.updatedAt)}</p>
+                        {/* FIX: Passed the 't' function as the second argument to timeSince. */}
+                        <p><strong>آخر تحديث:</strong> {timeSince(ticket.updatedAt, t)}</p>
                         <p><strong>المسؤول:</strong> {userMap.get(ticket.assignedToId || '')?.name || 'لم يتم التعيين'}</p>
                     </div>
 

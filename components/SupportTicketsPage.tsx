@@ -1,9 +1,12 @@
+
 import React, { useState, useMemo } from 'react';
 import type { EmployeeProfile, SupportTicket, TicketStatus, TicketPriority } from '../types';
 import CreateTicketModal from './CreateTicketModal';
 import TicketDetailView from './TicketDetailView';
 import { PlusCircleIcon } from './icons/Icons';
 import { timeSince } from '../constants';
+// FIX: Imported the useTranslation hook to pass the `t` function to `timeSince`.
+import { useTranslation } from './contexts/LanguageContext';
 
 const STATUS_BADGE_CLASSES: Record<TicketStatus, string> = {
     New: 'bg-sky-100 text-sky-800 dark:bg-sky-900/60 dark:text-sky-300',
@@ -40,6 +43,8 @@ const SupportTicketsPage: React.FC<SupportTicketsPageProps> = ({ currentUser, al
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [selectedTicket, setSelectedTicket] = useState<SupportTicket | null>(null);
     const [activeFilter, setActiveFilter] = useState<TicketStatus | 'All'>('All');
+    // FIX: Get the translation function 't' to pass to timeSince.
+    const { t } = useTranslation();
 
     const isAdminView = useMemo(() => ['Super Admin', 'Admin', 'HR Manager'].includes(currentUser.role), [currentUser.role]);
 
@@ -151,7 +156,8 @@ const SupportTicketsPage: React.FC<SupportTicketsPageProps> = ({ currentUser, al
                                             المسؤول: <span className="font-semibold text-slate-700 dark:text-slate-300">{assignedTo?.name || 'لم يحدد'}</span>
                                         </span>
                                         <span>
-                                            آخر تحديث: {timeSince(ticket.updatedAt)}
+                                            {/* FIX: Passed the 't' function as the second argument to timeSince. */}
+                                            آخر تحديث: {timeSince(ticket.updatedAt, t)}
                                         </span>
                                     </div>
                                 </div>

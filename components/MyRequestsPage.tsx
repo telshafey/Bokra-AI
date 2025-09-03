@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import type { HRRequest, RequestStatus, RequestType, EmployeeProfile, LeavePermitRequest } from '../types';
 import { BriefcaseIcon, DocumentTextIcon, IdentificationIcon, ClockIcon, ArrowsUpDownIcon, ChevronUpIcon, ChevronDownIcon, PlusCircleIcon } from './icons/Icons';
@@ -8,6 +9,7 @@ import AttendanceAdjustmentModal from './AttendanceAdjustmentModal';
 import LeavePermitModal from './LeavePermitModal';
 import { useRequestContext } from './contexts/RequestContext';
 import { usePoliciesContext } from './contexts/PoliciesContext';
+import { useTranslation } from './contexts/LanguageContext';
 
 
 type FilterStatus = 'All' | RequestStatus;
@@ -19,17 +21,11 @@ const STATUS_BADGE: Record<RequestStatus, string> = {
     Rejected: 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300',
 };
 
-const STATUS_TRANSLATION: Record<RequestStatus, string> = {
-    Approved: 'موافق عليه',
-    Pending: 'قيد الانتظار',
-    Rejected: 'مرفوض',
-};
-
-const REQUEST_TYPE_INFO: Record<RequestType, { translation: string; icon: React.FC<React.SVGProps<SVGSVGElement>>; color: string }> = {
-    Leave: { translation: 'طلب إجازة', icon: BriefcaseIcon, color: 'text-sky-500 dark:text-sky-400' },
-    DataUpdate: { translation: 'تحديث بيانات', icon: IdentificationIcon, color: 'text-amber-500 dark:text-amber-400' },
-    AttendanceAdjustment: { translation: 'طلب تعديل حضور', icon: ClockIcon, color: 'text-purple-500 dark:text-purple-400' },
-    LeavePermit: { translation: 'طلب إذن انصراف', icon: ClockIcon, color: 'text-indigo-500 dark:text-indigo-400' },
+const REQUEST_TYPE_ICONS: Record<RequestType, { icon: React.FC<React.SVGProps<SVGSVGElement>>; color: string }> = {
+    Leave: { icon: BriefcaseIcon, color: 'text-sky-500 dark:text-sky-400' },
+    DataUpdate: { icon: IdentificationIcon, color: 'text-amber-500 dark:text-amber-400' },
+    AttendanceAdjustment: { icon: ClockIcon, color: 'text-purple-500 dark:text-purple-400' },
+    LeavePermit: { icon: ClockIcon, color: 'text-indigo-500 dark:text-indigo-400' },
 };
 
 const FilterButton: React.FC<{ label: string; isActive: boolean; onClick: () => void; count: number }> = ({ label, isActive, onClick, count }) => (
@@ -48,14 +44,18 @@ const FilterButton: React.FC<{ label: string; isActive: boolean; onClick: () => 
     </button>
 );
 
-const RequestDetails: React.FC<{ request: HRRequest }> = ({ request }) => {
+const RequestDetails: React.FC<{ request: HRRequest; t: (key: string, replacements?: { [key: string]: any }) => string; lang: 'ar' | 'en' }> = ({ request, t, lang }) => {
+    const locale = lang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US';
+    const formatDate = (date: string) => new Date(date).toLocaleDateString(locale);
+
     switch (request.type) {
         case 'Leave':
-            return <span>من {request.startDate} إلى {request.endDate} ({request.duration} أيام) - {request.reason}</span>;
+            return <span>{t('myRequests.detailsFormat.leave', { startDate: formatDate(request.startDate), endDate: formatDate(request.endDate), duration: request.duration, reason: request.reason })}</span>;
         case 'AttendanceAdjustment':
-            return <span>{request.adjustmentType === 'LateArrival' ? 'عذر تأخير' : 'انصراف مبكر'} بتاريخ {request.date} - {request.reason}</span>;
+            const adjType = t(`myRequests.detailsFormat.${request.adjustmentType === 'LateArrival' ? 'late' : 'early'}`);
+            return <span>{t('myRequests.detailsFormat.attendance', { type: adjType, date: formatDate(request.date), reason: request.reason })}</span>;
         case 'LeavePermit':
-            return <span>بتاريخ {request.date} من {request.startTime} إلى {request.endTime} - {request.reason}</span>;
+            return <span>{t('myRequests.detailsFormat.permit', { date: formatDate(request.date), startTime: request.startTime, endTime: request.endTime, reason: request.reason })}</span>;
         case 'DataUpdate':
             return <span>{request.details}</span>;
         default:
@@ -69,6 +69,7 @@ interface MyRequestsPageProps {
 }
 
 const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests, currentUser }) => {
+    const { t, language } = useTranslation();
     const [activeFilter, setActiveFilter] = useState<FilterStatus>('All');
     const [sortConfig, setSortConfig] = useState<{ key: SortableKeys, direction: 'asc' | 'desc' } | null>({ key: 'submissionDate', direction: 'desc' });
     const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
@@ -134,20 +135,20 @@ const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests, currentUser }
             <ActionBar>
                 <div className="flex items-center gap-2 flex-wrap">
                     <button onClick={() => setIsLeaveModalOpen(true)} className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-sm shadow-sm">
-                        <PlusCircleIcon className="w-5 h-5"/><span>طلب إجازة</span>
+                        <PlusCircleIcon className="w-5 h-5"/><span>{t('myRequests.newLeave')}</span>
                     </button>
                     <button onClick={() => setIsPermitModalOpen(true)} className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-sm shadow-sm">
-                        <ClockIcon className="w-5 h-5"/><span>طلب إذن انصراف</span>
+                        <ClockIcon className="w-5 h-5"/><span>{t('myRequests.newPermit')}</span>
                     </button>
                     <button onClick={() => setIsAdjustmentModalOpen(true)} className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-sm shadow-sm">
-                        <PlusCircleIcon className="w-5 h-5"/><span>تقديم عذر حضور</span>
+                        <PlusCircleIcon className="w-5 h-5"/><span>{t('myRequests.newExcuse')}</span>
                     </button>
                 </div>
                  <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-full">
-                    <FilterButton label="الكل" isActive={activeFilter === 'All'} onClick={() => setActiveFilter('All')} count={requestCounts.All} />
-                    <FilterButton label="قيد الانتظار" isActive={activeFilter === 'Pending'} onClick={() => setActiveFilter('Pending')} count={requestCounts.Pending} />
-                    <FilterButton label="موافق عليه" isActive={activeFilter === 'Approved'} onClick={() => setActiveFilter('Approved')} count={requestCounts.Approved} />
-                    <FilterButton label="مرفوض" isActive={activeFilter === 'Rejected'} onClick={() => setActiveFilter('Rejected')} count={requestCounts.Rejected} />
+                    <FilterButton label={t('myRequests.filterAll')} isActive={activeFilter === 'All'} onClick={() => setActiveFilter('All')} count={requestCounts.All} />
+                    <FilterButton label={t('myRequests.filterPending')} isActive={activeFilter === 'Pending'} onClick={() => setActiveFilter('Pending')} count={requestCounts.Pending} />
+                    <FilterButton label={t('myRequests.filterApproved')} isActive={activeFilter === 'Approved'} onClick={() => setActiveFilter('Approved')} count={requestCounts.Approved} />
+                    <FilterButton label={t('myRequests.filterRejected')} isActive={activeFilter === 'Rejected'} onClick={() => setActiveFilter('Rejected')} count={requestCounts.Rejected} />
                 </div>
             </ActionBar>
 
@@ -157,33 +158,33 @@ const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests, currentUser }
                     <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
                         <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-100 dark:bg-slate-700">
                             <tr>
-                                <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('type')} className="flex items-center gap-1">نوع الطلب {getSortIcon('type')}</button></th>
-                                <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('submissionDate')} className="flex items-center gap-1">تاريخ التقديم {getSortIcon('submissionDate')}</button></th>
-                                <th scope="col" className="px-6 py-3">التفاصيل</th>
-                                <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('status')} className="flex items-center gap-1">الحالة {getSortIcon('status')}</button></th>
+                                <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('type')} className="flex items-center gap-1">{t('myRequests.table.requestType')} {getSortIcon('type')}</button></th>
+                                <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('submissionDate')} className="flex items-center gap-1">{t('myRequests.table.submissionDate')} {getSortIcon('submissionDate')}</button></th>
+                                <th scope="col" className="px-6 py-3">{t('myRequests.table.details')}</th>
+                                <th scope="col" className="px-6 py-3"><button onClick={() => handleSort('status')} className="flex items-center gap-1">{t('myRequests.table.status')} {getSortIcon('status')}</button></th>
                             </tr>
                         </thead>
                         <tbody>
                             {sortedAndFilteredRequests.map((request) => {
-                                const typeInfo = REQUEST_TYPE_INFO[request.type];
+                                const typeInfo = REQUEST_TYPE_ICONS[request.type];
                                 const Icon = typeInfo.icon;
                                 return (
                                     <tr key={request.id} className="border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50 odd:bg-white dark:odd:bg-slate-800 even:bg-slate-50 dark:even:bg-slate-800/50">
                                         <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-200 whitespace-nowrap">
                                             <div className="flex items-center gap-3">
                                                 <Icon className={`w-6 h-6 ${typeInfo.color}`} />
-                                                <span>{typeInfo.translation}</span>
+                                                <span>{t(`myRequests.requestTypes.${request.type}`)}</span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4">
-                                            {new Date(request.submissionDate).toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' })}
+                                            {new Date(request.submissionDate).toLocaleDateString(language === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <RequestDetails request={request} />
+                                            <RequestDetails request={request} t={t} lang={language} />
                                         </td>
                                         <td className="px-6 py-4">
                                             <span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_BADGE[request.status]}`}>
-                                                {STATUS_TRANSLATION[request.status]}
+                                                {t(`requestStatus.${request.status}`)}
                                             </span>
                                         </td>
                                     </tr>
@@ -193,8 +194,8 @@ const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests, currentUser }
                     </table>
                      {sortedAndFilteredRequests.length === 0 && (
                         <div className="text-center py-12 text-slate-500 dark:text-slate-400">
-                            <p className="font-semibold text-lg">لا توجد طلبات تطابق هذا الفلتر.</p>
-                            <p className="text-sm">حاول تحديد فلتر مختلف لعرض طلباتك.</p>
+                            <p className="font-semibold text-lg">{t('myRequests.noRequests')}</p>
+                            <p className="text-sm">{t('myRequests.tryDifferentFilter')}</p>
                         </div>
                     )}
                 </div>

@@ -1,6 +1,7 @@
+
 import type React from 'react';
 
-export type AppModule = 'performance' | 'learning' | 'recruitment' | 'onboarding' | 'offboarding' | 'support' | 'compensation' | 'job_titles' | 'documents' | 'assets';
+export type AppModule = 'performance' | 'learning' | 'recruitment' | 'onboarding' | 'offboarding' | 'support' | 'compensation' | 'job_titles' | 'documents' | 'assets' | 'help_center';
 
 export interface NavItem {
   nameKey: string; // Key for translation
@@ -27,7 +28,7 @@ export type UserRole = 'Super Admin' | 'Admin' | 'Branch Admin' | 'General Manag
 
 export interface Branch {
     id: string;
-    name: string;
+    nameKey: string; // for translation
     status: 'Active' | 'Archived';
 }
 
@@ -36,7 +37,7 @@ export type EmploymentStatus = 'دوام كامل' | 'System Account' | 'Inactiv
 
 export interface JobTitle {
     id: string;
-    name: string;
+    nameKey: string; // for translation
     parentId: string | null;
 }
 
@@ -143,7 +144,7 @@ export interface PoliciesProviderProps {
 export interface NewUserPayload {
     name: string;
     jobTitleId: string;
-    department: string;
+    departmentKey: string; // changed from department
     hireDate: string;
     baseSalary: number | undefined;
     branchId: string;
@@ -178,6 +179,7 @@ export interface UserContextType {
     addNewUser: (newUserPayload: NewUserPayload) => void;
     updateUser: (userId: string, updatedData: NewUserPayload) => void;
     updateBranchManager: (branchId: string, newManagerId: string) => void;
+    updateEmployeeManager: (employeeId: string, newManagerId: string) => void;
 }
 
 export interface UserProviderProps {
@@ -223,7 +225,7 @@ export interface EmployeeProfile extends Employee {
     isEmployee: boolean; // Distinguishes real employees from system accounts
     branchId: string;
     branchName?: string; // Optional, can be added dynamically
-    department: string;
+    departmentKey: string; // changed from department
     manager?: string; // Manager Name
     managerId?: string; // Manager ID for hierarchy
     hireDate: string;
@@ -477,7 +479,7 @@ export interface PerformanceReview {
 }
 
 // --- New Employee Document System ---
-export type DocumentType = 'عقد عمل' | 'مسوغات تعيين' | 'استمارة ١ (تأمينات)' | 'استمارة ٢ (تأمينات)' | 'استمارة ٦ (تأمينات)';
+export type DocumentType = 'عقد عمل' | 'مسوغات تعيين' | 'استمارة ١ (تأمينات)' | 'استمارة ٢ (تأمينات)' | 'استمارة ٦ (تأمينات)' | 'شهادات تدريب';
 
 export interface EmployeeDocument {
     id: string;
@@ -613,7 +615,7 @@ export type CandidateStage = 'Applied' | 'Screening' | 'Interview' | 'Offer' | '
 export interface JobOpening {
     id: string;
     title: string;
-    department: string;
+    departmentKey: string; // changed from department
     status: 'Open' | 'Closed';
     datePosted: string;
     description: string;
@@ -881,4 +883,35 @@ export interface ManagerPerformanceData {
         avgTeamGoalProgress: number;
     };
     teamPerformance: TeamMemberPerformanceData[];
+}
+
+// --- Help Center Types ---
+export interface BilingualText {
+    ar: string;
+    en: string;
+}
+
+export interface HelpArticle {
+    id: string;
+    categoryId: string;
+    title: BilingualText;
+    content: BilingualText;
+    keywords: string[];
+}
+
+export interface HelpCategory {
+    id: string;
+    name: BilingualText;
+    icon: React.FC<React.SVGProps<SVGSVGElement>>;
+}
+
+export interface HelpCenterContextType {
+    articles: HelpArticle[];
+    categories: HelpCategory[];
+    addArticle: (article: Omit<HelpArticle, 'id'>) => void;
+    updateArticle: (article: HelpArticle) => void;
+    deleteArticle: (articleId: string) => void;
+    addCategory: (category: Omit<HelpCategory, 'id' | 'icon'> & { name: BilingualText }) => void;
+    updateCategory: (category: Omit<HelpCategory, 'icon'>) => void;
+    deleteCategory: (categoryId: string) => void;
 }

@@ -440,4 +440,12 @@ export const ArrowsRightLeftIcon: React.FC<IconProps> = (props) => (
   </svg>
 );
 
+export const LifebuoyIcon: React.FC<IconProps> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9 9 0 100-18 9 9 0 000 18zm0 0a8.949 8.949 0 005.462-1.943 9.014 9.014 0 00-10.924 0A8.949 8.949 0 0012 21zm0-18a8.949 8.949 0 00-5.462 1.943 9.014 9.014 0 0010.924 0A8.949 8.949 0 0012 3zm0 18a9 9 0 006.364-2.636M12 3a9 9 0 00-6.364 2.636m12.728 12.728A9 9 0 0012 3m6.364 15.364A9 9 0 0012 3M3.636 6.364A9 9 0 0012 21" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+    </svg>
+);
+
+
 // ===== END OF MISSING ICONS =====

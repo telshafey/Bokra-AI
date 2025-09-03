@@ -18,7 +18,8 @@ export const CompanyStructureProvider: React.FC<CompanyStructureProviderProps> =
     const addBranch = (name: string): Branch => {
         const newBranch: Branch = {
             id: `branch-${name.toLowerCase().replace(/\s/g, '-')}-${Date.now()}`,
-            name,
+            // FIX: Changed property from `name` to `nameKey` to align with the `Branch` type definition.
+            nameKey: name,
             status: 'Active'
         };
         setBranches(prev => [...prev, newBranch]);
@@ -26,7 +27,8 @@ export const CompanyStructureProvider: React.FC<CompanyStructureProviderProps> =
     };
 
     const updateBranch = (id: string, name: string) => {
-        setBranches(prev => prev.map(b => b.id === id ? { ...b, name } : b));
+        // FIX: Changed property from `name` to `nameKey` to align with the `Branch` type definition.
+        setBranches(prev => prev.map(b => b.id === id ? { ...b, nameKey: name } : b));
     };
 
     const archiveBranch = (id: string) => {

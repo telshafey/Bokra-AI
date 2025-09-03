@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { AttendanceAdjustmentRequest, AttendanceAdjustmentType } from '../types';

@@ -4,6 +4,7 @@ import { EmployeeProfile, HRRequest, RequestStatus } from '../types';
 import { UserGroupIcon, BriefcaseIcon, DocumentTextIcon } from './icons/Icons';
 import PendingRequests from './PendingRequests';
 import BranchAttendancePieChart from './BranchAttendancePieChart';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface BranchAdminPageProps {
   branchEmployees: EmployeeProfile[];
@@ -26,6 +27,7 @@ const StatCard: React.FC<{ title: string; value: string | number; icon: React.FC
 
 const BranchAdminPage: React.FC<BranchAdminPageProps> = ({ branchEmployees, branchPendingRequests, onAction, currentUser }) => {
   
+    const { t } = useTranslation();
     // Dummy data for on leave count
     const onLeaveToday = branchEmployees.length > 5 ? 2 : 1;
     
@@ -95,7 +97,8 @@ const BranchAdminPage: React.FC<BranchAdminPageProps> = ({ branchEmployees, bran
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">{employee.title}</td>
-                                    <td className="px-6 py-4">{employee.department}</td>
+                                    {/* FIX: Replaced property access from `department` to `departmentKey` to match the type definition, and wrapped it in the translation function. */}
+                                    <td className="px-6 py-4">{t('departments.' + employee.departmentKey)}</td>
                                     <td className="px-6 py-4">{employee.manager || '-'}</td>
                                 </tr>
                             ))}
