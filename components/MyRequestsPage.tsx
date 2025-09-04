@@ -1,12 +1,14 @@
 
+
 import React, { useState, useMemo } from 'react';
-import type { HRRequest, RequestStatus, RequestType, EmployeeProfile, LeavePermitRequest } from '../types';
-import { BriefcaseIcon, DocumentTextIcon, IdentificationIcon, ClockIcon, ArrowsUpDownIcon, ChevronUpIcon, ChevronDownIcon, PlusCircleIcon } from './icons/Icons';
+import type { HRRequest, RequestStatus, RequestType, EmployeeProfile, LeavePermitRequest, PettyCashRequest } from '../types';
+import { BriefcaseIcon, DocumentTextIcon, IdentificationIcon, ClockIcon, ArrowsUpDownIcon, ChevronUpIcon, ChevronDownIcon, PlusCircleIcon, BanknotesIcon } from './icons/Icons';
 import Card from './Card';
 import ActionBar from './ActionBar';
 import RequestLeaveModal from './RequestLeaveModal';
 import AttendanceAdjustmentModal from './AttendanceAdjustmentModal';
 import LeavePermitModal from './LeavePermitModal';
+import PettyCashRequestModal from './PettyCashRequestModal';
 import { useRequestContext } from './contexts/RequestContext';
 import { usePoliciesContext } from './contexts/PoliciesContext';
 import { useTranslation } from './contexts/LanguageContext';
@@ -26,6 +28,7 @@ const REQUEST_TYPE_ICONS: Record<RequestType, { icon: React.FC<React.SVGProps<SV
     DataUpdate: { icon: IdentificationIcon, color: 'text-amber-500 dark:text-amber-400' },
     AttendanceAdjustment: { icon: ClockIcon, color: 'text-purple-500 dark:text-purple-400' },
     LeavePermit: { icon: ClockIcon, color: 'text-indigo-500 dark:text-indigo-400' },
+    PettyCash: { icon: BanknotesIcon, color: 'text-emerald-500 dark:text-emerald-400' },
 };
 
 const FilterButton: React.FC<{ label: string; isActive: boolean; onClick: () => void; count: number }> = ({ label, isActive, onClick, count }) => (
@@ -44,6 +47,16 @@ const FilterButton: React.FC<{ label: string; isActive: boolean; onClick: () => 
     </button>
 );
 
+const formatCurrency = (amount: number, lang: 'ar' | 'en') => {
+    const locale = lang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US';
+    return new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency: 'EGP',
+        minimumFractionDigits: 2,
+    }).format(amount);
+};
+
+
 const RequestDetails: React.FC<{ request: HRRequest; t: (key: string, replacements?: { [key: string]: any }) => string; lang: 'ar' | 'en' }> = ({ request, t, lang }) => {
     const locale = lang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US';
     const formatDate = (date: string) => new Date(date).toLocaleDateString(locale);
@@ -58,6 +71,8 @@ const RequestDetails: React.FC<{ request: HRRequest; t: (key: string, replacemen
             return <span>{t('myRequests.detailsFormat.permit', { date: formatDate(request.date), startTime: request.startTime, endTime: request.endTime, reason: request.reason })}</span>;
         case 'DataUpdate':
             return <span>{request.details}</span>;
+        case 'PettyCash':
+            return <span>{t('myRequests.detailsFormat.pettyCash', { amount: formatCurrency(request.amount, lang), description: request.description })}</span>;
         default:
             return <span>-</span>
     }
@@ -75,8 +90,10 @@ const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests, currentUser }
     const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
     const [isAdjustmentModalOpen, setIsAdjustmentModalOpen] = useState(false);
     const [isPermitModalOpen, setIsPermitModalOpen] = useState(false);
+    const [isPettyCashModalOpen, setIsPettyCashModalOpen] = useState(false);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     
-    const { handleNewLeaveRequest, handleNewAttendanceAdjustmentRequest, handleNewLeavePermitRequest } = useRequestContext();
+    const { handleNewLeaveRequest, handleNewAttendanceAdjustmentRequest, handleNewLeavePermitRequest, handleNewPettyCashRequest } = useRequestContext();
     const { attendancePolicies } = usePoliciesContext();
     const userAttendancePolicy = attendancePolicies.find(p => p.id === currentUser.attendancePolicyId);
 
@@ -87,7 +104,6 @@ const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests, currentUser }
         }
         
         if (sortConfig !== null) {
-            // FIX: Create a shallow copy to avoid mutating state, and explicitly type sort values to handle numbers from date conversion.
             return [...filtered].sort((a, b) => {
                 let aValue: string | number = a[sortConfig.key];
                 let bValue: string | number = b[sortConfig.key];
@@ -130,19 +146,30 @@ const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests, currentUser }
         return sortConfig.direction === 'asc' ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />;
     };
 
+    const openModal = (setter: React.Dispatch<React.SetStateAction<boolean>>) => {
+        setter(true);
+        setIsDropdownOpen(false);
+    };
+
     return (
         <div className="space-y-6">
             <ActionBar>
-                <div className="flex items-center gap-2 flex-wrap">
-                    <button onClick={() => setIsLeaveModalOpen(true)} className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-sm shadow-sm">
-                        <PlusCircleIcon className="w-5 h-5"/><span>{t('myRequests.newLeave')}</span>
+                 <div className="relative">
+                    <button 
+                        onClick={() => setIsDropdownOpen(prev => !prev)}
+                        className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-md hover:shadow-lg">
+                        <PlusCircleIcon className="w-6 h-6"/>
+                        <span>{t('myRequests.newRequest')}</span>
+                        <ChevronDownIcon className={`w-5 h-5 transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
                     </button>
-                    <button onClick={() => setIsPermitModalOpen(true)} className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-sm shadow-sm">
-                        <ClockIcon className="w-5 h-5"/><span>{t('myRequests.newPermit')}</span>
-                    </button>
-                    <button onClick={() => setIsAdjustmentModalOpen(true)} className="flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-semibold py-2 px-3 rounded-lg transition-colors text-sm shadow-sm">
-                        <PlusCircleIcon className="w-5 h-5"/><span>{t('myRequests.newExcuse')}</span>
-                    </button>
+                    {isDropdownOpen && (
+                        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-slate-700 rounded-md shadow-lg z-20">
+                            <a href="#" onClick={(e) => { e.preventDefault(); openModal(setIsLeaveModalOpen); }} className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600">{t('myRequests.newLeave')}</a>
+                            <a href="#" onClick={(e) => { e.preventDefault(); openModal(setIsPermitModalOpen); }} className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600">{t('myRequests.newPermit')}</a>
+                            <a href="#" onClick={(e) => { e.preventDefault(); openModal(setIsAdjustmentModalOpen); }} className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600">{t('myRequests.newExcuse')}</a>
+                            <a href="#" onClick={(e) => { e.preventDefault(); openModal(setIsPettyCashModalOpen); }} className="block px-4 py-2 text-sm text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600">{t('myRequests.newPettyCash')}</a>
+                        </div>
+                    )}
                 </div>
                  <div className="flex items-center gap-2 p-1 bg-slate-100 dark:bg-slate-900 rounded-full">
                     <FilterButton label={t('myRequests.filterAll')} isActive={activeFilter === 'All'} onClick={() => setActiveFilter('All')} count={requestCounts.All} />
@@ -152,7 +179,6 @@ const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests, currentUser }
                 </div>
             </ActionBar>
 
-            {/* Requests Table */}
             <Card paddingClass="p-0">
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
@@ -217,6 +243,11 @@ const MyRequestsPage: React.FC<MyRequestsPageProps> = ({ requests, currentUser }
                 onSubmit={(data) => handleNewLeavePermitRequest({...data, employeeId: currentUser.id})}
                 attendancePolicy={userAttendancePolicy}
                 permitRequests={requests.filter(r => r.type === 'LeavePermit') as LeavePermitRequest[]}
+            />
+            <PettyCashRequestModal
+                isOpen={isPettyCashModalOpen}
+                onClose={() => setIsPettyCashModalOpen(false)}
+                onSubmit={(data) => handleNewPettyCashRequest({ ...data, employeeId: currentUser.id })}
             />
         </div>
     );

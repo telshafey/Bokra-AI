@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { NAV_GROUPS, BOTTOM_NAV_ITEMS } from '../constants';
 import type { NavItem, EmployeeProfile, NavGroup, AppModule } from '../types';
-import { PencilSquareIcon, ChevronDownIcon, BriefcaseIcon, ChevronLeftIcon, ChevronRightIcon } from './icons/Icons';
+import { ChevronDownIcon, BriefcaseIcon, ChevronLeftIcon, ChevronRightIcon } from './icons/Icons';
 import { useTranslation } from './contexts/LanguageContext';
 
 
@@ -10,7 +9,6 @@ interface SidebarProps {
     activePage: string;
     setActivePage: (page: string) => void;
     companyName: string;
-    onCompanyNameChange: (newName: string) => void;
     currentUser: EmployeeProfile;
     hasOnboardingProcess: boolean;
     hasOffboardingProcess: boolean;
@@ -82,16 +80,10 @@ const NavGroup: React.FC<{
 );
 
 
-const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, companyName, onCompanyNameChange, currentUser, hasOnboardingProcess, hasOffboardingProcess, activeModules, isSidebarCollapsed, toggleSidebar }) => {
-  const [isEditingName, setIsEditingName] = useState(false);
-  const [editedName, setEditedName] = useState(companyName);
+const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, companyName, currentUser, hasOnboardingProcess, hasOffboardingProcess, activeModules, isSidebarCollapsed, toggleSidebar }) => {
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set());
   const { t } = useTranslation();
 
-  useEffect(() => {
-    setEditedName(companyName);
-  }, [companyName]);
-  
   const filterNavItem = (item: NavItem) => {
     if (item.module && !activeModules.has(item.module)) return false;
     if (item.nameKey === 'sidebar.myOnboarding' && !hasOnboardingProcess) return false;
@@ -121,11 +113,6 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, companyNam
           return newSet;
       });
   };
-
-  const handleNameSave = () => {
-    onCompanyNameChange(editedName);
-    setIsEditingName(false);
-  };
   
   const filteredBottomNavItems = BOTTOM_NAV_ITEMS.filter(filterNavItem);
   
@@ -136,26 +123,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, companyNam
           <BriefcaseIcon className="w-7 h-7 text-sky-600"/>
         </div>
         <div className={`flex-1 transition-opacity duration-200 ${isSidebarCollapsed ? 'opacity-0' : 'opacity-100'}`}>
-            {isEditingName ? (
-                <input
-                    type="text"
-                    value={editedName}
-                    onChange={(e) => setEditedName(e.target.value)}
-                    onBlur={handleNameSave}
-                    onKeyDown={(e) => e.key === 'Enter' && handleNameSave()}
-                    className="w-full bg-slate-100 dark:bg-slate-700 text-xl font-bold border-b-2 border-sky-500 focus:outline-none text-slate-800 dark:text-slate-100 p-1 rounded-t"
-                    autoFocus
-                />
-            ) : (
-                <div className="flex items-center group">
-                    <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100 whitespace-nowrap">{companyName}</h1>
-                    {currentUser.role === 'Super Admin' && (
-                        <button onClick={() => setIsEditingName(true)} className="mr-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                            <PencilSquareIcon className="w-5 h-5 text-slate-400 hover:text-slate-700 dark:text-slate-500 dark:hover:text-slate-300" />
-                        </button>
-                    )}
-                </div>
-            )}
+            <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100 whitespace-nowrap">{companyName}</h1>
         </div>
       </div>
       

@@ -11,6 +11,7 @@ import ProfilePage from './components/ProfilePage';
 import TeamDashboard from './components/TeamDashboard';
 import ManagerReportsPage from './components/ManagerReportsPage';
 import TeamAnalyticsPage from './components/TeamAnalyticsPage';
+// FIX: Changed import to default import as PerformancePage is now default exported.
 import PerformancePage from './components/PerformancePage';
 import MyDocumentsPage from './components/MyDocumentsPage';
 import SettingsPage from './components/SettingsPage';
@@ -144,10 +145,12 @@ const App: React.FC = () => {
     leaveRequests, 
     attendanceAdjustmentRequests, 
     leavePermitRequests,
+    pettyCashRequests,
     handleRequestAction,
     handleNewLeaveRequest,
     handleNewAttendanceAdjustmentRequest,
     handleNewLeavePermitRequest,
+    handleNewPettyCashRequest,
   } = useRequestContext();
 
   const { articles: helpArticles, categories: helpCategories } = useHelpCenterContext();
@@ -207,6 +210,17 @@ const App: React.FC = () => {
     }
   }, [activePage]);
   
+  const handleSavePerformanceReview = (review: PerformanceReview) => {
+    setPerformanceReviews(prev => {
+        const isNew = !prev.some(r => r.id === review.id);
+        if (isNew) {
+            // When a new review is saved, make sure its status is at least 'In Progress'
+            return [...prev, { ...review, status: 'In Progress' }];
+        }
+        return prev.map(r => r.id === review.id ? review : r);
+    });
+};
+
   // Handlers
   const handleClockIn = (coords: { latitude: number; longitude: number; }) => {
     const now = new Date();
@@ -312,15 +326,15 @@ const App: React.FC = () => {
     switch (currentPageInfo?.nameKey) {
         case 'sidebar.personalDashboard': return <Dashboard currentUser={currentUserProfile} dashboardData={employeeDashboardData} onClockIn={handleClockIn} setActivePage={setActivePage} activeModules={activeModules} />;
         case 'sidebar.myAttendance': return <AttendancePage records={attendanceRecords.filter(r => r.employeeId === currentUserId)} attendanceEvents={attendanceEvents.filter(e => e.employeeId === currentUserId)} infractions={employeeInfractions.filter(i => i.employeeId === currentUserId)} currentUser={currentUserProfile} externalTasks={externalTasks.filter(t => t.employeeId === currentUserId)} />;
-        case 'sidebar.payslip': return <PayslipPage payslips={generatePayslips(currentUserId, employees, attendanceRecords, attendancePolicies, overtimePolicies, salaryComponents, compensationPackages, attendanceAdjustmentRequests, leavePermitRequests, externalTasks, leaveRequests, t, language)} />;
+        case 'sidebar.payrollAndExpenses': return <PayslipPage currentUser={currentUserProfile} payslips={generatePayslips(currentUserId, employees, attendanceRecords, attendancePolicies, overtimePolicies, salaryComponents, compensationPackages, attendanceAdjustmentRequests, leavePermitRequests, externalTasks, leaveRequests, t, language)} />;
         case 'sidebar.leave': return <LeavePage currentUser={currentUserProfile} />;
         case 'sidebar.profile': return <ProfilePage currentUser={currentUserProfile} onUpdateProfile={updateProfile} branches={branches} attendancePolicies={attendancePolicies} overtimePolicies={overtimePolicies} leavePolicies={leavePolicies} jobTitles={jobTitles} />;
         case 'sidebar.teamDashboard': return isManagerialView ? <TeamDashboard currentUser={currentUserProfile} teamMembers={teamMembersProfiles} dashboardData={teamDashboardData} setActivePage={setActivePage} /> : null;
         case 'sidebar.reports': return isManagerialView ? <ManagerReportsPage reportsData={teamReportsData} teamMembers={teamMembersProfiles} teamGoals={teamGoals} attendanceRecords={attendanceRecords} requests={requests} externalTasks={externalTasks} /> : null;
-        case 'sidebar.teamAnalytics': return isManagerialView ? <TeamAnalyticsPage teamDetails={mockTeamMemberDetails} currentUser={currentUserProfile} onUpdateProfile={updateUser} branches={branches} attendancePolicies={attendancePolicies} overtimePolicies={overtimePolicies} leavePolicies={leavePolicies} jobTitles={jobTitles} onCourseApprovalAction={()=>{}} onSaveMonthlyCheckIn={()=>{}} performanceReviews={performanceReviews} onSavePerformanceReview={()=>{}} activeModules={activeModules} salaryComponents={salaryComponents} compensationPackages={compensationPackages} onSaveDocument={()=>{}} /> : null;
+        case 'sidebar.teamAnalytics': return isManagerialView ? <TeamAnalyticsPage teamDetails={mockTeamMemberDetails} currentUser={currentUserProfile} onUpdateProfile={updateUser} branches={branches} attendancePolicies={attendancePolicies} overtimePolicies={overtimePolicies} leavePolicies={leavePolicies} jobTitles={jobTitles} onCourseApprovalAction={()=>{}} onSaveMonthlyCheckIn={()=>{}} performanceReviews={performanceReviews} onSavePerformanceReview={handleSavePerformanceReview} activeModules={activeModules} salaryComponents={salaryComponents} compensationPackages={compensationPackages} onSaveDocument={()=>{}} /> : null;
         case 'sidebar.performance': return <PerformancePage reviews={performanceReviews.filter(r => r.employeeId === currentUserId)} monthlyCheckIns={monthlyCheckIns.filter(m => m.employeeId === currentUserId)} />;
         case 'sidebar.myDocuments': return <MyDocumentsPage documents={employeeDocuments.filter(d => d.employeeId === currentUserId)} onSaveDocument={handleSaveDocument} />;
-        case 'sidebar.settings': return <SettingsPage theme={theme} setTheme={setTheme} currentUser={currentUserProfile} setActivePage={setActivePage} />;
+        case 'sidebar.settings': return <SettingsPage theme={theme} setTheme={setTheme} currentUser={currentUserProfile} setActivePage={setActivePage} companyName={companyName} onCompanyNameChange={setCompanyName} />;
         case 'sidebar.employeeManagement': return isManagerialView ? <SystemAdminPage allUsers={employees} onUpdateUserRole={updateUserRole} onDeactivateUser={deactivateUser} onReactivateUser={reactivateUser} onAddNewUser={addNewUser} onUpdateUser={updateUser} onBulkDeactivateUsers={bulkDeactivateUsers} onBulkAssignAttendancePolicy={bulkAssignAttendancePolicy} onBulkAssignOvertimePolicy={bulkAssignOvertimePolicy} onBulkAssignLeavePolicy={bulkAssignLeavePolicy} branches={branches} attendancePolicies={attendancePolicies} overtimePolicies={overtimePolicies} leavePolicies={leavePolicies} jobTitles={jobTitles} compensationPackages={compensationPackages} /> : null;
         case 'sidebar.branchManagement': return isManagerialView ? <BranchManagementPage branches={branches} employees={employees} onAddBranch={(name, managerId) => { const newBranch = addBranch(name); if (managerId) updateBranchManager(newBranch.id, managerId);}} onUpdateBranch={(id, name, managerId) => { updateBranch(id, name); if (managerId) updateBranchManager(id, managerId); }} onArchiveBranch={archiveBranch} /> : null;
         case 'sidebar.learning': return <LearningPage currentUser={currentUserProfile} allCourses={courses} employeeCourses={employeeCourses.filter(ec => ec.employeeId === currentUserId)} onRegisterExternalCourse={()=>{}} onSubmitCourseUpdate={()=>{}} />;
@@ -344,56 +358,54 @@ const App: React.FC = () => {
         case 'sidebar.externalTasksManagement': return isManagerialView ? <ExternalTasksPage teamMembers={teamMembersProfiles} externalTasks={externalTasks.filter(t => teamMembersProfiles.some(m => m.id === t.employeeId))} onSaveTask={()=>{}} onRequestAction={()=>{}} /> : null;
         case 'sidebar.myRequests': return <MyRequestsPage requests={requests.filter(r => r.employeeId === currentUserId)} currentUser={currentUserProfile} />;
         case 'sidebar.turnoverAnalysis': return isManagerialView ? <TurnoverReportPage teamMembers={teamMembersProfiles} /> : null;
-        case 'sidebar.performanceManagement': return isManagerialView ? <ManagerPerformancePage data={managerPerformanceData} /> : null;
+        case 'sidebar.performanceManagement': return isManagerialView ? <ManagerPerformancePage data={managerPerformanceData} onSavePerformanceReview={handleSavePerformanceReview} performanceReviews={performanceReviews} currentUser={currentUserProfile} /> : null;
         case 'sidebar.assetsManagement': return isManagerialView ? <AssetsManagementPage employees={employees} /> : null;
         case 'sidebar.myAssets': return <MyAssetsPage currentUserId={currentUserId} />;
         case 'sidebar.contracts': return isManagerialView ? <ContractsPage /> : null;
         case 'sidebar.orgChart': return isManagerialView ? <OrgChartPage /> : null;
         case 'sidebar.helpCenter': return <HelpCenterPage isSuperAdmin={currentUserProfile.role === 'Super Admin'} />;
         case 'sidebar.employeeDirectory': return <EmployeeDirectoryPage />;
-
         default:
             return <Dashboard currentUser={currentUserProfile} dashboardData={employeeDashboardData} onClockIn={handleClockIn} setActivePage={setActivePage} activeModules={activeModules} />;
     }
   };
 
   return (
-    <div className={`flex h-screen bg-slate-100 dark:bg-slate-900 font-sans text-slate-800 dark:text-slate-200`}>
-        <Sidebar
-            activePage={activePage}
-            setActivePage={setActivePage}
-            companyName={companyName}
-            onCompanyNameChange={setCompanyName}
-            currentUser={currentUserProfile}
-            hasOnboardingProcess={onboardingProcesses.some(p => p.employeeId === currentUserId)}
-            hasOffboardingProcess={offboardingProcesses.some(p => p.employeeId === currentUserId)}
-            activeModules={activeModules}
-            isSidebarCollapsed={isSidebarCollapsed}
-            toggleSidebar={() => setIsSidebarCollapsed(p => !p)}
+    <div className={`flex h-screen bg-slate-100 dark:bg-slate-900`}>
+      <Sidebar 
+        activePage={activePage} 
+        setActivePage={setActivePage} 
+        companyName={companyName}
+        currentUser={currentUserProfile}
+        hasOnboardingProcess={onboardingProcesses.some(p => p.employeeId === currentUserId)}
+        hasOffboardingProcess={offboardingProcesses.some(p => p.employeeId === currentUserId)}
+        activeModules={activeModules}
+        isSidebarCollapsed={isSidebarCollapsed}
+        toggleSidebar={() => setIsSidebarCollapsed(p => !p)}
+      />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header 
+          pageTitle={pageTitle} 
+          currentUser={currentUserProfile} 
+          allEmployees={employees}
+          currentUserId={currentUserId}
+          setCurrentUserId={setCurrentUserId}
+          notifications={notifications}
+          unreadCount={notifications.filter(n => !n.isRead).length}
+          onMarkAsRead={handleMarkAsRead}
+          onMarkAllAsRead={handleMarkAllAsRead}
+          onClearAll={handleClearAll}
+          theme={theme}
+          setTheme={setTheme}
+          language={language}
+          setLanguage={setLanguage}
+          branches={branches}
         />
-        <div className="flex-1 flex flex-col overflow-hidden">
-            <Header
-                pageTitle={pageTitle}
-                currentUser={currentUserProfile}
-                allEmployees={employees}
-                currentUserId={currentUserId}
-                setCurrentUserId={setCurrentUserId}
-                notifications={notifications}
-                unreadCount={notifications.filter(n => !n.isRead).length}
-                onMarkAsRead={handleMarkAsRead}
-                onMarkAllAsRead={handleMarkAllAsRead}
-                onClearAll={handleClearAll}
-                theme={theme}
-                setTheme={setTheme}
-                language={language}
-                setLanguage={setLanguage}
-                branches={branches}
-            />
-            <main ref={mainContentRef} className="flex-1 overflow-x-hidden overflow-y-auto p-6 scroll-smooth">
-                {renderPage()}
-            </main>
-        </div>
-        <Chatbot currentUser={currentUserProfile} />
+        <main ref={mainContentRef} className="flex-1 overflow-y-auto p-6">
+          {renderPage()}
+        </main>
+      </div>
+       <Chatbot currentUser={currentUserProfile}/>
     </div>
   );
 };

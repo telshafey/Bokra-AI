@@ -1,10 +1,12 @@
 
+
 import React, { useState, useMemo, useEffect } from 'react';
-import type { TeamMemberDetails, EmployeeProfile, Branch, PerformanceReview, HRRequest, RequestType, RequestStatus, EmployeeInfraction, AttendancePolicy, LeavePolicy, JobTitle, Course, EmployeeCourse, MonthlyCheckIn, OvertimePolicy, NewUserPayload, AppModule, ExternalTask, TeamMemberStats, SalaryComponent, CompensationPackage, DocumentType, EmployeeDocument, AttendanceEvent } from '../types';
-import { UserCircleIcon, CalendarIcon, BriefcaseIcon, AcademicCapIcon, CheckCircleIcon, PresentationChartLineIcon, PencilSquareIcon, ClipboardDocumentListIcon, PlusCircleIcon, DocumentCheckIcon, ExclamationTriangleIcon, BookOpenIcon, CheckBadgeIcon, XCircleIcon, DocumentTextIcon, ClockIcon, BanknotesIcon, ArrowUpTrayIcon, ArrowDownTrayIcon, PencilIcon, TrashIcon, MapPinIcon } from './icons/Icons';
+// FIX: Add SalaryComponent, CompensationPackage, and EmployeeDocument to the type imports.
+import type { TeamMemberDetails, EmployeeProfile, PettyCashRequest, Asset, SalaryComponent, CompensationPackage, EmployeeDocument } from '../types';
+import { UserCircleIcon, CalendarIcon, BriefcaseIcon, CheckCircleIcon, DocumentTextIcon, ClockIcon, BanknotesIcon, DocumentCheckIcon, ExclamationTriangleIcon, ComputerDesktopIcon } from './icons/Icons';
 import { useTranslation } from './contexts/LanguageContext';
 
-type DetailTab = 'general' | 'history' | 'attendance_type' | 'grace_minutes' | 'work_calendar' | 'leave_profile' | 'salary' | 'documents' | 'petty_cash' | 'assets';
+type DetailTab = 'general' | 'leave_profile' | 'salary' | 'documents' | 'petty_cash' | 'assets';
 
 const NavItem: React.FC<{ label: string, icon: React.FC<React.SVGProps<SVGSVGElement>>, isActive: boolean, onClick: () => void }> = ({ label, icon: Icon, isActive, onClick }) => (
     <button
@@ -28,18 +30,18 @@ const StatInfoCard: React.FC<{ title: string, value: string | number, subtext: s
     </div>
 );
 
-// FIX: Removed non-existent 'Certificate' property to align with RequestType.
-const REQUEST_TYPE_INFO: Record<RequestType, { translation: string; icon: React.FC<React.SVGProps<SVGSVGElement>>; color: string }> = {
-    Leave: { translation: 'طلب إجازة', icon: BriefcaseIcon, color: 'text-sky-500' },
-    DataUpdate: { translation: 'تحديث بيانات', icon: UserCircleIcon, color: 'text-amber-500' },
-    AttendanceAdjustment: { translation: 'تعديل حضور', icon: ClockIcon, color: 'text-purple-500' },
-    LeavePermit: { translation: 'إذن انصراف', icon: ClockIcon, color: 'text-indigo-500' },
+const STATUS_BADGE: Record<PettyCashRequest['status'], string> = { Approved: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300', Pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300', Rejected: 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300' };
+
+const formatCurrency = (amount: number, lang: 'ar' | 'en') => {
+    const locale = lang === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US';
+    return new Intl.NumberFormat(locale, {
+        style: 'currency',
+        currency: 'EGP',
+        minimumFractionDigits: 2,
+    }).format(amount);
 };
 
-const STATUS_BADGE: Record<RequestStatus, string> = { Approved: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300', Pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900/60 dark:text-amber-300', Rejected: 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300' };
-const STATUS_TRANSLATION: Record<RequestStatus, string> = { Approved: 'موافق عليه', Pending: 'قيد الانتظار', Rejected: 'مرفوض' };
-
-
+// FIX: Add missing props to the interface to match its usage in TeamAnalyticsPage.
 interface TeamMemberDetailViewProps {
     memberDetails: TeamMemberDetails;
     currentUser: EmployeeProfile;
@@ -48,197 +50,180 @@ interface TeamMemberDetailViewProps {
     onSaveDocument: (document: EmployeeDocument) => void;
 }
 
-const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ memberDetails, currentUser, salaryComponents, compensationPackages, onSaveDocument }) => {
+const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ 
+    memberDetails, 
+    currentUser, 
+    salaryComponents, 
+    compensationPackages, 
+    onSaveDocument 
+}) => {
     const [activeTab, setActiveTab] = useState<DetailTab>('general');
-    const { profile, stats, dailyPunches } = memberDetails;
-    const { t } = useTranslation();
-
-    // State for salary tab editing
-    const [editedBaseSalary, setEditedBaseSalary] = useState(profile.baseSalary || 0);
-    const [editedPackageId, setEditedPackageId] = useState(profile.compensationPackageId || '');
-    
-    // State for document tab
-    const [newDocName, setNewDocName] = useState('');
-    const [newDocType, setNewDocType] = useState<DocumentType>('عقد عمل');
-    const [newDocExpiry, setNewDocExpiry] = useState('');
-    const [newDocFile, setNewDocFile] = useState<File | null>(null);
-
-    // Reset states when member changes
-    useEffect(() => {
-        setEditedBaseSalary(profile.baseSalary || 0);
-        setEditedPackageId(profile.compensationPackageId || '');
-        setNewDocName('');
-        setNewDocType('عقد عمل');
-        setNewDocExpiry('');
-        setNewDocFile(null);
-    }, [profile]);
-    
-    const allRequests = useMemo(() => {
-        const combined = [...memberDetails.leave, ...memberDetails.infractions.map(i => ({...i, type: 'DataUpdate', details: i.details, id: Math.random()}))]
-        const all: HRRequest[] = memberDetails.leave.map(r => r); 
-        return all.sort((a,b) => new Date(b.submissionDate).getTime() - new Date(a.submissionDate).getTime());
-    }, [memberDetails]);
-
-    const attendancePairs = useMemo(() => {
-        if (!dailyPunches) return [];
-        return dailyPunches.reduce((acc, event, index, array) => {
-            if (event.type === 'CheckIn') {
-                const checkOutEvent = array.find((e, i) => i > index && e.type === 'CheckOut' && !acc.flat().includes(e));
-                acc.push([event, checkOutEvent]);
-            }
-            return acc;
-        }, [] as [AttendanceEvent, AttendanceEvent | undefined][]);
-    }, [dailyPunches]);
-
-    const handleSaveNewDocument = (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!newDocName || !newDocFile) {
-            alert("يرجى إدخال اسم المستند وإرفاق الملف.");
-            return;
-        }
-        const newDocument: EmployeeDocument = {
-            id: `doc-${Date.now()}`,
-            employeeId: profile.id,
-            name: newDocName,
-            type: newDocType,
-            uploadDate: new Date().toISOString().split('T')[0],
-            expirationDate: newDocExpiry || null,
-            fileUrl: newDocFile.name, // Placeholder for actual upload
-        };
-        onSaveDocument(newDocument);
-        // Reset form
-        setNewDocName('');
-        setNewDocFile(null);
-        setNewDocExpiry('');
-    };
+    const { profile, stats } = memberDetails;
+    const { t, language } = useTranslation();
+    const locale = language === 'ar' ? 'ar-EG-u-nu-latn' : 'en-US';
 
     const renderContent = () => {
         switch (activeTab) {
             case 'general':
                 return (
-                    <div className="p-4">
-                        <div className="flex justify-between items-center mb-4">
-                             <h3 className="font-bold text-lg text-slate-700 dark:text-slate-200">الطلبات</h3>
-                             <div className="flex items-center gap-2">
-                                 <select className="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white"><option>Approved</option></select>
-                                 <input type="date" className="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white" />
-                                 <input type="date" className="p-2 border rounded-lg text-sm bg-white dark:bg-slate-700 dark:border-slate-600 dark:text-white" />
-                             </div>
-                        </div>
-                         <div className="overflow-x-auto">
-                            <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
-                                <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-100 dark:bg-slate-700">
-                                    <tr>
-                                        <th className="px-6 py-3">النوع</th>
-                                        <th className="px-6 py-3">تاريخ الطلب</th>
-                                        <th className="px-6 py-3">الحالة</th>
-                                        <th className="px-6 py-3">تعليقات</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {allRequests.map(req => {
-                                        const typeInfo = REQUEST_TYPE_INFO[req.type];
-                                        return (
-                                            <tr key={req.id} className="bg-white dark:bg-slate-800 border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700">
-                                                <td className="px-6 py-4 font-semibold text-slate-800 dark:text-slate-200">{typeInfo.translation}</td>
-                                                <td className="px-6 py-4">{new Date(req.submissionDate).toLocaleDateString('ar-EG-u-nu-latn')}</td>
-                                                <td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_BADGE[req.status]}`}>{STATUS_TRANSLATION[req.status]}</span></td>
-                                                <td className="px-6 py-4">{'reason' in req ? req.reason : ''}</td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
-                         </div>
+                    <div className="p-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <StatInfoCard title="ساعات الأذونات" value={stats.usedPermissionHours.toFixed(1)} subtext="ساعة" icon={ClockIcon} color="text-sky-500"/>
+                        <StatInfoCard title="الإجازات السنوية" value={stats.usedAnnualLeavesDays} subtext="يوم" icon={CalendarIcon} color="text-emerald-500"/>
+                        <StatInfoCard title="أيام العمل عن بعد" value={stats.usedRemoteDays} subtext="يوم" icon={BriefcaseIcon} color="text-purple-500"/>
+                        <StatInfoCard title="أيام الطوارئ" value={stats.emergencyDays} subtext="يوم" icon={ExclamationTriangleIcon} color="text-orange-500"/>
+                    </div>
+                );
+            case 'leave_profile':
+                return (
+                    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {profile.leaveBalances.map(balance => (
+                            <div key={balance.type} className="bg-slate-50 dark:bg-slate-700/50 p-4 rounded-lg border dark:border-slate-700">
+                                <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{balance.typeName}</p>
+                                <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">
+                                    {balance.balance - balance.used} <span className="text-base font-normal">/ {balance.balance} {t('general.day')}</span>
+                                </p>
+                                <div className="w-full bg-slate-200 dark:bg-slate-600 rounded-full h-2 mt-2">
+                                    <div className="bg-sky-500 h-2 rounded-full" style={{ width: `${((balance.balance - balance.used) / balance.balance) * 100}%` }}></div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 );
             case 'salary':
-                const selectedPackage = compensationPackages.find(p => p.id === editedPackageId);
+                const pkg = compensationPackages.find(p => p.id === profile.compensationPackageId);
+                const baseSalary = profile.baseSalary || 0;
+                
+                const getComponentValue = (c: { componentId: string; value: number }) => {
+                    const compDetails = salaryComponents.find(sc => sc.id === c.componentId);
+                    if (!compDetails) return 0;
+                    return compDetails.calculationType === 'FixedAmount' ? c.value : (baseSalary * c.value) / 100;
+                };
+                
+                const allowances = pkg?.components
+                    .map(c => ({ component: salaryComponents.find(sc => sc.id === c.componentId), value: getComponentValue(c) }))
+                    .filter(item => item.component?.type === 'Allowance') || [];
+                    
+                const deductions = pkg?.components
+                    .map(c => ({ component: salaryComponents.find(sc => sc.id === c.componentId), value: getComponentValue(c) }))
+                    .filter(item => item.component?.type === 'Deduction') || [];
+
                 return (
-                    <div className="p-6 space-y-6">
-                        <div className="p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm border dark:border-slate-700">
-                            <h3 className="font-bold text-slate-700 dark:text-slate-200 mb-4">الراتب الأساسي والحزمة</h3>
-                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">الراتب الأساسي (EGP)</label>
-                                    <input type="number" value={editedBaseSalary} onChange={(e) => setEditedBaseSalary(Number(e.target.value))} className="w-full p-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-slate-600 dark:text-slate-300 mb-1">حزمة التعويضات</label>
-                                     <select value={editedPackageId} onChange={(e) => setEditedPackageId(e.target.value)} className="w-full p-2 border rounded-lg bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
-                                        <option value="">-- بدون حزمة --</option>
-                                        {compensationPackages.map(pkg => <option key={pkg.id} value={pkg.id}>{pkg.name}</option>)}
-                                    </select>
-                                </div>
-                             </div>
-                             <div className="flex justify-end mt-4">
-                                <button className="bg-emerald-600 text-white font-semibold py-2 px-4 rounded-lg text-sm hover:bg-emerald-700">حفظ التعديلات</button>
-                             </div>
+                    <div className="p-6 space-y-4">
+                        <div className="p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg border dark:border-slate-700">
+                            <p className="text-sm text-slate-500 dark:text-slate-400">{t('payslip.baseSalary')}</p>
+                            <p className="text-2xl font-bold text-slate-800 dark:text-slate-100">{formatCurrency(baseSalary, language)}</p>
                         </div>
-                         {selectedPackage && (
-                            <div className="p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm border dark:border-slate-700">
-                                <h3 className="font-bold text-slate-700 dark:text-slate-200 mb-2">تفاصيل الحزمة: {selectedPackage.name}</h3>
-                                <div className="space-y-2">
-                                    {selectedPackage.components.map(comp => {
-                                        const details = salaryComponents.find(sc => sc.id === comp.componentId);
-                                        if (!details) return null;
-                                        return (
-                                            <div key={comp.componentId} className={`p-2 rounded-md flex justify-between items-center text-sm ${details.type === 'Allowance' ? 'bg-emerald-50 text-emerald-800' : 'bg-red-50 text-red-800'}`}>
-                                                <span>{details.name}</span>
-                                                <span className="font-semibold">{details.calculationType === 'FixedAmount' ? `${comp.value} EGP` : `${comp.value}%`}</span>
-                                            </div>
-                                        )
-                                    })}
+                        {pkg ? (
+                            <div>
+                                <h4 className="font-bold text-slate-700 dark:text-slate-200 mb-2">حزمة التعويضات: {pkg.name}</h4>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div className="p-3 bg-emerald-50 dark:bg-emerald-900/30 rounded-lg border border-emerald-200 dark:border-emerald-800">
+                                        <h5 className="font-semibold text-emerald-800 dark:text-emerald-300 mb-2">{t('payslip.earnings')}</h5>
+                                        <ul className="space-y-1">{allowances.map(a => a.component && <li key={a.component.id} className="flex justify-between text-sm"><span>{a.component.name}</span><span className="font-semibold">{formatCurrency(a.value, language)}</span></li>)}</ul>
+                                    </div>
+                                    <div className="p-3 bg-red-50 dark:bg-red-900/30 rounded-lg border border-red-200 dark:border-red-800">
+                                        <h5 className="font-semibold text-red-800 dark:text-red-300 mb-2">{t('payslip.deductions')}</h5>
+                                        <ul className="space-y-1">{deductions.map(d => d.component && <li key={d.component.id} className="flex justify-between text-sm"><span>{d.component.name}</span><span className="font-semibold">{formatCurrency(d.value, language)}</span></li>)}</ul>
+                                    </div>
                                 </div>
                             </div>
-                        )}
+                        ) : <p className="text-sm text-center text-slate-500 dark:text-slate-400 p-4">لم يتم تعيين حزمة تعويضات لهذا الموظف.</p>}
                     </div>
                 );
             case 'documents':
-                 const employeeDocs = memberDetails.documents;
                  return (
-                    <div className="p-6 space-y-6">
-                        <div className="p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm border dark:border-slate-700">
-                            <h3 className="font-bold text-slate-700 dark:text-slate-200 mb-4">مستندات الموظف</h3>
-                             <table className="w-full text-sm text-right">
-                                <thead className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700">
-                                    <tr><th className="p-2">الاسم</th><th className="p-2">النوع</th><th className="p-2">تاريخ الرفع</th><th className="p-2">الإجراء</th></tr>
+                    <div className="p-4">
+                        <div className="overflow-x-auto max-h-[calc(100vh-20rem)]">
+                            <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
+                                <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-100 dark:bg-slate-700 sticky top-0">
+                                    <tr>
+                                        <th className="px-6 py-3">{t('myDocuments.table.name')}</th>
+                                        <th className="px-6 py-3">{t('myDocuments.table.type')}</th>
+                                        <th className="px-6 py-3">{t('myDocuments.table.uploadDate')}</th>
+                                        <th className="px-6 py-3">{t('myDocuments.table.expiryDate')}</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                    {employeeDocs.map(doc => (
+                                    {memberDetails.documents.map(doc => (
                                         <tr key={doc.id} className="border-b dark:border-slate-700">
-                                            <td className="p-2 font-semibold dark:text-slate-200">{doc.name}</td>
-                                            <td className="p-2 dark:text-slate-300">{doc.type}</td>
-                                            <td className="p-2 dark:text-slate-300">{doc.uploadDate}</td>
-                                            <td className="p-2"><button className="text-sky-600 dark:text-sky-400"><ArrowDownTrayIcon className="w-5 h-5"/></button></td>
+                                            <td className="px-6 py-4 font-semibold text-slate-800 dark:text-slate-200">{doc.name}</td>
+                                            <td className="px-6 py-4">{t(`myDocuments.docTypes.${doc.type}`)}</td>
+                                            <td className="px-6 py-4">{new Date(doc.uploadDate).toLocaleDateString(locale)}</td>
+                                            <td className="px-6 py-4">{doc.expirationDate ? new Date(doc.expirationDate).toLocaleDateString(locale) : '-'}</td>
                                         </tr>
                                     ))}
-                                    {employeeDocs.length === 0 && <tr><td colSpan={4} className="text-center p-4 text-slate-500 dark:text-slate-400">لا توجد مستندات.</td></tr>}
+                                    {memberDetails.documents.length === 0 && (
+                                        <tr><td colSpan={4} className="text-center py-12 text-slate-500">لا توجد مستندات لهذا الموظف.</td></tr>
+                                    )}
                                 </tbody>
                             </table>
                         </div>
-                        <div className="p-4 bg-white dark:bg-slate-800 rounded-lg shadow-sm border dark:border-slate-700">
-                             <h3 className="font-bold text-slate-700 dark:text-slate-200 mb-4">إضافة مستند جديد</h3>
-                             <form onSubmit={handleSaveNewDocument} className="space-y-3">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                                    <input type="text" placeholder="اسم المستند" value={newDocName} onChange={e => setNewDocName(e.target.value)} className="w-full p-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600 dark:text-white" required />
-                                    <select value={newDocType} onChange={e => setNewDocType(e.target.value as DocumentType)} className="w-full p-2 border rounded-lg bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white">
-                                        <option value="عقد عمل">عقد عمل</option>
-                                        <option value="مسوغات تعيين">مسوغات تعيين</option>
-                                    </select>
-                                </div>
-                                <div>
-                                     <label className="cursor-pointer bg-slate-50 dark:bg-slate-700 border-2 border-dashed rounded-lg p-3 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 hover:border-sky-500">
-                                        <ArrowUpTrayIcon className="w-6 h-6 mb-1"/>
-                                        <span className="text-xs">{newDocFile ? newDocFile.name : 'اختر ملف'}</span>
-                                        <input type="file" className="hidden" onChange={(e) => setNewDocFile(e.target.files ? e.target.files[0] : null)} required/>
-                                    </label>
-                                </div>
-                                <button type="submit" className="w-full bg-emerald-600 text-white font-semibold py-2 px-4 rounded-lg text-sm hover:bg-emerald-700">إضافة وحفظ</button>
-                             </form>
+                    </div>
+                );
+            case 'petty_cash':
+                 return (
+                    <div className="p-4">
+                        <div className="overflow-x-auto max-h-[calc(100vh-20rem)]">
+                            <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
+                                <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-100 dark:bg-slate-700 sticky top-0">
+                                    <tr>
+                                        <th className="px-6 py-3">{t('expenses.table.date')}</th>
+                                        <th className="px-6 py-3">{t('expenses.table.category')}</th>
+                                        <th className="px-6 py-3">{t('expenses.table.amount')}</th>
+                                        <th className="px-6 py-3">{t('expenses.table.description')}</th>
+                                        <th className="px-6 py-3">{t('expenses.table.status')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {memberDetails.pettyCashRequests.map(req => (
+                                        <tr key={req.id} className="border-b dark:border-slate-700">
+                                            <td className="px-6 py-4">{new Date(req.date).toLocaleDateString(locale)}</td>
+                                            <td className="px-6 py-4">{t(`expenses.categories.${req.category}`)}</td>
+                                            <td className="px-6 py-4 font-semibold">{formatCurrency(req.amount, language)}</td>
+                                            <td className="px-6 py-4">{req.description}</td>
+                                            <td className="px-6 py-4">
+                                                <span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_BADGE[req.status]}`}>{t(`requestStatus.${req.status}`)}</span>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                    {memberDetails.pettyCashRequests.length === 0 && (
+                                        <tr><td colSpan={5} className="text-center py-12 text-slate-500">{t('expenses.noRequests')}</td></tr>
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
-                 );
+                );
+            case 'assets':
+                return (
+                    <div className="p-4">
+                        <div className="overflow-x-auto max-h-[calc(100vh-20rem)]">
+                            <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
+                                <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-100 dark:bg-slate-700 sticky top-0">
+                                    <tr>
+                                        <th className="px-6 py-3">{t('myAssets.assetName')}</th>
+                                        <th className="px-6 py-3">{t('myAssets.category')}</th>
+                                        <th className="px-6 py-3">{t('myAssets.serialNumber')}</th>
+                                        <th className="px-6 py-3">{t('myAssets.receivedDate')}</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {memberDetails.assets.map(asset => (
+                                        <tr key={asset.id} className="border-b dark:border-slate-700">
+                                            <td className="px-6 py-4 font-semibold text-slate-800 dark:text-slate-200">{asset.name}</td>
+                                            <td className="px-6 py-4">{t(`assets.categories.${asset.category}`)}</td>
+                                            <td className="px-6 py-4 font-mono">{asset.serialNumber}</td>
+                                            <td className="px-6 py-4">{new Date(asset.purchaseDate).toLocaleDateString(locale)}</td>
+                                        </tr>
+                                    ))}
+                                    {memberDetails.assets.length === 0 && (
+                                        <tr><td colSpan={4} className="text-center py-12 text-slate-500">{t('myAssets.noAssets')}</td></tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                );
             default:
                 return <div className="p-6 text-center text-slate-500 dark:text-slate-400">محتوى "{t(`teamMemberDetail.tabs.${activeTab}`)}" غير متاح بعد.</div>;
         }
@@ -246,73 +231,31 @@ const TeamMemberDetailView: React.FC<TeamMemberDetailViewProps> = ({ memberDetai
 
     const navItems: {id: DetailTab, label: string, icon: React.FC<React.SVGProps<SVGSVGElement>>}[] = [
         { id: 'general', label: t('teamMemberDetail.tabs.general'), icon: DocumentTextIcon },
-        { id: 'history', label: t('teamMemberDetail.tabs.history'), icon: ClockIcon },
-        { id: 'attendance_type', label: t('teamMemberDetail.tabs.attendance_type'), icon: CalendarIcon },
-        { id: 'grace_minutes', label: t('teamMemberDetail.tabs.grace_minutes'), icon: ClockIcon },
-        { id: 'work_calendar', label: t('teamMemberDetail.tabs.work_calendar'), icon: CalendarIcon },
         { id: 'leave_profile', label: t('teamMemberDetail.tabs.leave_profile'), icon: BriefcaseIcon },
         { id: 'salary', label: t('teamMemberDetail.tabs.salary'), icon: BanknotesIcon },
         { id: 'documents', label: t('teamMemberDetail.tabs.documents'), icon: DocumentCheckIcon },
         { id: 'petty_cash', label: t('teamMemberDetail.tabs.petty_cash'), icon: BanknotesIcon },
-        { id: 'assets', label: t('teamMemberDetail.tabs.assets'), icon: BriefcaseIcon },
+        { id: 'assets', label: t('teamMemberDetail.tabs.assets'), icon: ComputerDesktopIcon },
     ];
 
     return (
         <div className="bg-white dark:bg-slate-800 h-full rounded-xl shadow-md flex flex-col overflow-hidden">
             {/* Header */}
-            <div className="p-4 bg-slate-100 dark:bg-slate-700 border-b dark:border-slate-600">
+            <div className="p-4 bg-slate-100 dark:bg-slate-900/50 border-b border-slate-200 dark:border-slate-700">
                  <div className="flex justify-between items-start mb-4">
                     <div className="flex items-center gap-4">
                         <img src={profile.avatarUrl} alt={profile.name} className="w-16 h-16 rounded-full" />
                         <div>
                             <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{profile.name}</h2>
-                            {/* FIX: Replaced property access from `department` to `departmentKey` to match type definition, and wrapped it in the translation function. */}
                             <p className="text-md text-slate-500 dark:text-slate-400">{profile.title} • {t('departments.' + profile.departmentKey)}</p>
                         </div>
                     </div>
-                     <div className="flex items-center gap-2">
-                        <button className="bg-slate-800 text-white font-bold py-2 px-4 rounded-lg hover:bg-slate-900 dark:bg-slate-200 dark:text-slate-800 dark:hover:bg-white">+ New request</button>
-                        <button className="p-2 rounded-lg text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700"><PencilIcon className="w-5 h-5" /></button>
-                        <button className="p-2 rounded-lg text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700"><TrashIcon className="w-5 h-5" /></button>
-                        <button className="p-2 rounded-lg text-slate-500 hover:bg-slate-200 dark:text-slate-400 dark:hover:bg-slate-700"><DocumentTextIcon className="w-5 h-5" /></button>
-                    </div>
-                </div>
-
-                <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {attendancePairs.slice(0, 2).map(([checkIn, checkOut], index) => {
-                         const checkInTime = new Date(checkIn.timestamp);
-                         const checkOutTime = checkOut ? new Date(checkOut.timestamp) : null;
-                        return (
-                            <div key={checkIn.id} className="p-3 bg-white dark:bg-slate-800 border dark:border-slate-700 rounded-lg">
-                                <p className="text-xs font-bold text-slate-600 dark:text-slate-300 mb-1">{index === 0 ? '1st Sign in / Sign out' : '2nd Sign in / Sign out'}</p>
-                                <div className="flex items-center justify-between">
-                                    <span className="font-mono font-semibold text-slate-800 dark:text-slate-200">{checkInTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second:'2-digit' })}</span>
-                                    <span className="text-slate-400">→</span>
-                                     <span className="font-mono font-semibold text-slate-800 dark:text-slate-200">{checkOutTime ? checkOutTime.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second:'2-digit' }) : '--:--:--'}</span>
-                                </div>
-                                <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 mt-1">
-                                    <MapPinIcon className="w-3 h-3"/>
-                                    <span>{checkIn.isWithinGeofence ? 'Office' : 'Remote'}</span>
-                                </div>
-                            </div>
-                        )
-                    })}
-                </div>
-                
-                <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-3 mt-4">
-                    <StatInfoCard title="Used Permission" value={stats.usedPermissionHours.toFixed(1)} subtext="/ 4 Hours" icon={ClockIcon} color="text-sky-500"/>
-                    <StatInfoCard title="Used Annual Leaves" value={stats.usedAnnualLeavesDays} subtext="/ 21 Days" icon={CalendarIcon} color="text-emerald-500"/>
-                    <StatInfoCard title="Used Remote days" value={stats.usedRemoteDays} subtext="/ 12 Days" icon={BriefcaseIcon} color="text-purple-500"/>
-                    <StatInfoCard title="Emergency" value={stats.emergencyDays} subtext="/ 3 Days" icon={ExclamationTriangleIcon} color="text-orange-500"/>
-                    <StatInfoCard title="Used Grace Minutes" value={stats.usedGraceMinutes} subtext="/ 60 Mins" icon={ClockIcon} color="text-yellow-500"/>
-                    <StatInfoCard title="Absent" value={stats.absentDays} subtext="/ 2 Days" icon={XCircleIcon} color="text-red-500"/>
-                    <StatInfoCard title="Placeholder" value={0} subtext="" icon={DocumentTextIcon} color="text-slate-500"/>
                 </div>
             </div>
 
             {/* Body */}
             <div className="flex-1 flex min-h-0">
-                <aside className="w-56 border-l dark:border-slate-600 p-2 bg-slate-50 dark:bg-slate-700">
+                <aside className="w-56 border-l border-slate-200 dark:border-slate-700 p-2 bg-slate-50 dark:bg-slate-800/50">
                     <nav className="space-y-1">
                         {navItems.map(item => (
                             <NavItem

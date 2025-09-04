@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { BriefcaseIcon, BanknotesIcon, UserCircleIcon, DocumentTextIcon } from './icons/Icons';
 import { useTranslation } from './contexts/LanguageContext';
@@ -23,7 +24,7 @@ const QuickActions: React.FC<QuickActionsProps> = ({ setActivePage }) => {
       <h2 className="text-xl font-bold mb-4 text-slate-700">{t('quickActions.title')}</h2>
       <div className="grid grid-cols-2 gap-4">
         <ActionButton icon={BriefcaseIcon} label={t('quickActions.requestLeave')} onClick={() => setActivePage('sidebar.leave')}/>
-        <ActionButton icon={BanknotesIcon} label={t('quickActions.viewPayslip')} onClick={() => setActivePage('sidebar.payslip')}/>
+        <ActionButton icon={BanknotesIcon} label={t('quickActions.viewPayslip')} onClick={() => setActivePage('sidebar.payrollAndExpenses')}/>
         <ActionButton icon={UserCircleIcon} label={t('quickActions.updateProfile')} onClick={() => setActivePage('sidebar.profile')}/>
       </div>
     </div>

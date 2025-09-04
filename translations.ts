@@ -1,4 +1,3 @@
-
 // translations.ts
 export const translations = {
   ar: {
@@ -53,7 +52,7 @@ export const translations = {
       support: 'تذاكر الدعم',
       personalDashboard: 'لوحة التحكم الشخصية',
       myTasks: 'مهامي الخارجية',
-      payslip: 'كشف الراتب',
+      payrollAndExpenses: 'الرواتب والمصروفات', // Corrected from 'كشف الراتب'
       myAttendance: 'حضوري وانصرافي',
       leave: 'الإجازات',
       teamDashboard: 'لوحة تحكم الفريق',
@@ -110,7 +109,7 @@ export const translations = {
       support: 'تذاكر الدعم',
       personalDashboard: 'لوحة التحكم',
       myTasks: 'مهامي الخارجية',
-      payslip: 'كشف الراتب',
+      payrollAndExpenses: 'الرواتب والمصروفات', // Corrected from 'كشف الراتب'
       myAttendance: 'حضوري وانصرافي',
       leave: 'الإجازات',
       teamDashboard: 'لوحة تحكم الفريق',
@@ -125,7 +124,7 @@ export const translations = {
       offboarding: 'إدارة إنهاء الخدمة',
       employeeManagement: 'إدارة الموظفين',
       orgChart: 'الهيكل التنظيمي',
-      moduleManagement: 'إدارة الوحدات',
+      moduleManagement: 'إدارة الوحدات الاختيارية',
       branchManagement: 'إدارة الفروع',
       learningManagement: 'إدارة التدريب',
       documentManagement: 'إدارة المستندات',
@@ -175,6 +174,7 @@ export const translations = {
       searchPlaceholder: 'ابحث...',
       from: 'من',
       to: 'إلى',
+      change: 'تغيير',
     },
     app: {
         myOnboardingFallback: "لا توجد خطة تعيين لك.",
@@ -300,8 +300,6 @@ export const translations = {
       latenessDeduction: 'خصم التأخير',
       earlyDepartureDeduction: 'خصم الانصراف المبكر',
       sickLeaveDeduction: 'خصم إجازة مرضية ({{days}} أيام)',
-      pageTitle: 'كشف الراتب الخاص بي',
-      pageSubtitle: 'عرض وتحميل كشوف المرتبات الشهرية.',
       noPayslipsTitle: 'لا توجد كشوف رواتب',
       noPayslipsSubtitle: 'ستظهر كشوف رواتبك هنا بمجرد إنشائها.',
       grossSalary: 'إجمالي الراتب',
@@ -310,6 +308,39 @@ export const translations = {
       earnings: 'الاستحقاقات',
       deductions: 'الاستقطاعات',
       selectToView: 'يرجى اختيار كشف راتب لعرض التفاصيل.',
+      tabPayslips: 'كشوف المرتبات',
+      tabExpenses: 'المصروفات النثرية',
+    },
+    expenses: {
+        title: 'المصروفات النثرية',
+        subtitle: 'عرض وتقديم طلبات صرف المصروفات النثرية',
+        newRequestButton: 'طلب صرف جديد',
+        table: {
+            date: 'التاريخ',
+            category: 'الفئة',
+            amount: 'المبلغ',
+            description: 'الوصف',
+            status: 'الحالة',
+            attachment: 'المرفق',
+        },
+        categories: {
+            Transportation: 'مواصلات',
+            OfficeSupplies: 'أدوات مكتبية',
+            ClientMeeting: 'اجتماع عميل',
+            Other: 'أخرى',
+        },
+        noRequests: 'لا توجد طلبات مصروفات نثرية مسجلة.',
+        modal: {
+            title: 'طلب صرف مصروفات نثرية',
+            date: 'تاريخ الصرف',
+            category: 'فئة المصروف',
+            amount: 'المبلغ (ج.م)',
+            description: 'الوصف',
+            descriptionPlaceholder: 'يرجى كتابة وصف تفصيلي للمصروف...',
+            attachment: 'إرفاق فاتورة أو إيصال (اختياري)',
+            attachmentPrompt: 'انقر للتحميل أو اسحب الملف هنا',
+            submit: 'إرسال الطلب',
+        },
     },
     attendance: {
       yAxisLabel: 'ساعات العمل',
@@ -487,13 +518,30 @@ export const translations = {
         keyFactors: "العوامل الرئيسية المؤثرة",
         regenerateButton: "إعادة إنشاء التحليل",
     },
+    performanceCriteria: {
+      title: "معايير التقييم",
+      professionalPerformance: "الأداء المهني",
+      personalPerformance: "الأداء الشخصي والاجتماعي",
+      qualityOfWork: "جودة العمل",
+      productivity: "الإنتاجية وتحقيق الأهداف",
+      technicalSkills: "المهارات الفنية والتخصصية",
+      problemSolving: "حل المشكلات واتخاذ القرار",
+      communication: "التواصل الفعال",
+      teamwork: "العمل الجماعي والتعاون",
+      initiative: "المبادرة والتطوير الذاتي",
+      punctuality: "الالتزام بالمواعيد والحضور"
+    },
     performanceReview: {
       reviewDate: "تاريخ المراجعة",
       reviewer: "المراجع",
       overallRating: "التقييم العام",
+      average: "المتوسط",
+      professionalAvg: "متوسط الأداء المهني",
+      personalAvg: "متوسط الأداء الشخصي",
+      noRatings: "لا توجد تقييمات بعد",
       strengths: "نقاط القوة",
       areasForImprovement: "نقاط للتحسين",
-      finalComments: "التعليقات النهائية",
+      finalComments: "التعليقات النهائية والملاحظات",
       status: {
         Completed: "مكتملة",
         'In Progress': "قيد التنفيذ",
@@ -595,9 +643,11 @@ export const translations = {
       hasInfractions: 'لديه مخالفات حضور سابقة.',
     },
     myRequests: {
-      newLeave: 'إجازة جديدة',
-      newPermit: 'إذن جديد',
-      newExcuse: 'عذر جديد',
+      newLeave: 'إجازة',
+      newPermit: 'إذن',
+      newExcuse: 'عذر',
+      newPettyCash: 'مصروفات',
+      newRequest: 'طلب جديد',
       filterAll: 'الكل',
       filterPending: 'المعلقة',
       filterApproved: 'الموافق عليها',
@@ -615,6 +665,7 @@ export const translations = {
         DataUpdate: 'تحديث بيانات',
         AttendanceAdjustment: 'تعديل حضور',
         LeavePermit: 'إذن انصراف',
+        PettyCash: 'مصروفات نثرية',
       },
       detailsFormat: {
         leave: '{{startDate}} إلى {{endDate}} ({{duration}} أيام) - {{reason}}',
@@ -622,6 +673,7 @@ export const translations = {
         early: 'عذر انصراف مبكر',
         attendance: '{{type}} ليوم {{date}} - {{reason}}',
         permit: 'يوم {{date}} من {{startTime}} إلى {{endTime}} - {{reason}}',
+        pettyCash: 'صرف مبلغ {{amount}} لـ: {{description}}',
       },
     },
     myAssets: {
@@ -731,7 +783,7 @@ export const translations = {
     },
     teamMemberDetail: {
       tabs: {
-        general: 'عام',
+        general: 'نظرة عامة',
         history: 'السجل',
         attendance_type: 'نوع الحضور',
         grace_minutes: 'دقائق السماح',
@@ -744,50 +796,111 @@ export const translations = {
       }
     },
     modules: {
-      performance: {
-        name: 'إدارة الأداء',
-        description: 'يشمل تقييمات الأداء، الأهداف، المتابعة الشهرية، وتحليل المخاطر.'
+      main: {
+        title: 'الوحدات الأساسية',
+        subtitle: 'هذه الوحدات أساسية لعمل النظام وهي مفعلة دائماً.',
+        employees: {
+          name: 'الموظفون والهيكل التنظيمي',
+          description: 'إدارة ملفات الموظفين، الصلاحيات، والهيكل التنظيمي للشركة.',
+        },
+        attendance: {
+          name: 'الحضور والانصراف',
+          description: 'تتبع وإدارة سجلات الحضور والسياسات المتعلقة بها.',
+        },
+        leave: {
+          name: 'الإجازات والطلبات',
+          description: 'إدارة أرصدة الإجازات، الطلبات، وسير العمل للموافقات.',
+        },
+        job_titles: {
+          name: 'الهيكل الوظيفي',
+          description: 'بناء وإدارة شجرة المسميات الوظيفية للشركة.',
+        },
       },
-      learning: {
-        name: 'التطوير والتدريب',
-        description: 'إدارة الدورات التدريبية الداخلية والخارجية وخطط التطوير للموظفين.'
-      },
-      recruitment: {
-        name: 'التوظيف وإدارة المتقدمين',
-        description: 'إدارة الوظائف الشاغرة ومتابعة المتقدمين عبر مراحل التوظيف.'
-      },
-      onboarding: {
-        name: 'إجراءات التعيين',
-        description: 'إنشاء ومتابعة خطط ومهام الموظفين الجدد.'
-      },
-      offboarding: {
-        name: 'إجراءات إنهاء الخدمة',
-        description: 'إدارة ومتابعة مهام الموظفين المغادرين.'
-      },
-      support: {
-        name: 'تذاكر الدعم الفني',
-        description: 'نظام متكامل لتلقي ومعالجة استفسارات وشكاوى الموظفين.'
-      },
-      compensation: {
-        name: 'التعويضات والمزايا',
-        description: 'إدارة مكونات الرواتب وإنشاء حزم مالية مختلفة.'
-      },
-      job_titles: {
-        name: 'الهيكل الوظيفي',
-        description: 'بناء وإدارة شجرة المسميات الوظيفية للشركة.'
-      },
-      documents: {
-        name: 'المستندات والأوراق',
-        description: 'إدارة المستندات الرسمية للموظفين مثل العقود ومسوغات التعيين.'
-      },
-      assets: {
-        name: 'إدارة العهد',
-        description: 'تتبع أصول الشركة المسلمة للموظفين، مثل أجهزة اللابتوب والهواتف.'
-      },
-      help_center: {
-        name: 'مركز المساعدة',
-        description: 'إدارة قاعدة المعرفة الداخلية للشركة للإجابة على أسئلة الموظفين الشائعة.'
+      optional: {
+        title: 'الوحدات الاختيارية',
+        subtitle: 'قم بتفعيل أو تعطيل هذه الوحدات لتخصيص النظام حسب احتياجات شركتك.',
+        payroll: {
+          name: 'الرواتب والمصروفات',
+          description: 'إدارة مكونات الرواتب، حزم التعويضات، وطلبات المصروفات النثرية.'
+        },
+        documents: {
+          name: 'إدارة المستندات',
+          description: 'إدارة المستندات الرسمية للموظفين مثل العقود ومسوغات التعيين.'
+        },
+        recruitment: {
+          name: 'التوظيف (ATS)',
+          description: 'إدارة الوظائف الشاغرة ومتابعة المتقدمين عبر مراحل التوظيف.'
+        },
+        performance: {
+          name: 'إدارة الأداء',
+          description: 'يشمل تقييمات الأداء، الأهداف، وتحليل مخاطر التسرب الوظيفي.'
+        },
+        learning: {
+          name: 'التطوير والتدريب',
+          description: 'إدارة الدورات التدريبية وخطط تطوير الموظفين.'
+        },
+        onboardingOffboarding: {
+          name: 'إجراءات التعيين وإنهاء الخدمة',
+          description: 'إنشاء ومتابعة خطط ومهام الموظفين الجدد والمغادرين.'
+        },
+        assets: {
+          name: 'إدارة العهد',
+          description: 'تتبع أصول الشركة المسلمة للموظفين، مثل أجهزة اللابتوب والهواتف.'
+        },
+        support: {
+          name: 'تذاكر الدعم',
+          description: 'نظام متكامل لمعالجة استفسارات الموظفين.'
+        },
+        help_center: {
+            name: 'مركز المساعدة',
+            description: 'إدارة قاعدة المعرفة الداخلية للشركة للإجابة على أسئلة الموظفين الشائعة.'
+        }
       }
+    },
+    settingsPage: {
+        title: 'الإعدادات',
+        subtitle: 'إدارة حسابك، تفضيلات العرض، وإعدادات النظام.',
+        account: {
+            title: 'الحساب',
+            viewProfile: 'عرض الملف الشخصي',
+        },
+        security: {
+            title: 'الأمان',
+            changePassword: 'تغيير كلمة المرور',
+            passwordHint: 'آخر تحديث منذ أكثر من شهر',
+        },
+        notifications: {
+            title: 'الإشعارات',
+            approvals: 'الموافقات والطلبات',
+            reminders: 'التذكيرات والمواعيد النهائية',
+            announcements: 'الإعلانات العامة',
+        },
+        display: {
+            title: 'العرض واللغة',
+            language: 'اللغة',
+            arabic: 'العربية',
+            english: 'الإنجليزية (قريباً)',
+            theme: 'المظهر',
+            light: 'فاتح',
+            dark: 'داكن',
+        },
+        tabs: {
+            mySettings: 'ملفي الشخصي',
+            display: 'العرض واللغة',
+            system: 'إعدادات النظام',
+        },
+        company: {
+            title: 'ملف الشركة',
+            subtitle: 'إدارة المعلومات الأساسية للشركة.',
+            nameLabel: 'اسم الشركة',
+            logoLabel: 'شعار الشركة',
+            uploadLogo: 'رفع شعار جديد',
+        },
+        modules: {
+            title: 'إدارة الوحدات',
+            subtitle: 'تفعيل أو تعطيل الوحدات الاختيارية في النظام.',
+            button: 'الانتقال إلى إدارة الوحدات',
+        },
     }
   },
   en: {
@@ -842,7 +955,7 @@ export const translations = {
       support: 'Support Tickets',
       personalDashboard: 'Dashboard',
       myTasks: 'My External Tasks',
-      payslip: 'Payslip',
+      payrollAndExpenses: 'Payroll & Expenses',
       myAttendance: 'My Attendance',
       leave: 'Leave',
       teamDashboard: 'Team Dashboard',
@@ -899,7 +1012,7 @@ export const translations = {
       support: 'Support Tickets',
       personalDashboard: 'Dashboard',
       myTasks: 'My External Tasks',
-      payslip: 'Payslip',
+      payrollAndExpenses: 'Payroll & Expenses',
       myAttendance: 'My Attendance',
       leave: 'Leave',
       teamDashboard: 'Team Dashboard',
@@ -964,6 +1077,7 @@ export const translations = {
       searchPlaceholder: 'Search...',
       from: 'From',
       to: 'To',
+      change: 'Change',
     },
     app: {
       myOnboardingFallback: "You don't have an onboarding plan.",
@@ -1089,8 +1203,6 @@ export const translations = {
       latenessDeduction: 'Lateness Deduction',
       earlyDepartureDeduction: 'Early Departure Deduction',
       sickLeaveDeduction: 'Sick Leave Deduction ({{days}} days)',
-      pageTitle: 'My Payslip',
-      pageSubtitle: 'View and download your monthly payslips.',
       noPayslipsTitle: 'No Payslips Found',
       noPayslipsSubtitle: 'Your payslips will appear here once they are generated.',
       grossSalary: 'Gross Salary',
@@ -1099,6 +1211,39 @@ export const translations = {
       earnings: 'Earnings',
       deductions: 'Deductions',
       selectToView: 'Please select a payslip to view details.',
+      tabPayslips: 'Payslips',
+      tabExpenses: 'Petty Cash',
+    },
+    expenses: {
+        title: 'Petty Cash Expenses',
+        subtitle: 'View and submit your petty cash expense claims.',
+        newRequestButton: 'New Expense Claim',
+        table: {
+            date: 'Date',
+            category: 'Category',
+            amount: 'Amount',
+            description: 'Description',
+            status: 'Status',
+            attachment: 'Attachment',
+        },
+        categories: {
+            Transportation: 'Transportation',
+            OfficeSupplies: 'Office Supplies',
+            ClientMeeting: 'Client Meeting',
+            Other: 'Other',
+        },
+        noRequests: 'No petty cash requests recorded.',
+        modal: {
+            title: 'Request Petty Cash Reimbursement',
+            date: 'Expense Date',
+            category: 'Expense Category',
+            amount: 'Amount (EGP)',
+            description: 'Description',
+            descriptionPlaceholder: 'Please provide a detailed description of the expense...',
+            attachment: 'Attach receipt or invoice (optional)',
+            attachmentPrompt: 'Click to upload or drag & drop a file',
+            submit: 'Submit Request',
+        },
     },
     attendance: {
       yAxisLabel: 'Work Hours',
@@ -1276,13 +1421,30 @@ export const translations = {
         keyFactors: "Key Influencing Factors",
         regenerateButton: "Regenerate Analysis",
     },
+    performanceCriteria: {
+      title: "Evaluation Criteria",
+      professionalPerformance: "Professional Performance",
+      personalPerformance: "Personal & Social Performance",
+      qualityOfWork: "Quality of Work",
+      productivity: "Productivity & Goal Achievement",
+      technicalSkills: "Technical & Job-Specific Skills",
+      problemSolving: "Problem Solving & Decision Making",
+      communication: "Effective Communication",
+      teamwork: "Teamwork & Collaboration",
+      initiative: "Initiative & Self-Development",
+      punctuality: "Punctuality & Attendance"
+    },
     performanceReview: {
       reviewDate: "Review Date",
       reviewer: "Reviewer",
       overallRating: "Overall Rating",
+      average: "Average",
+      professionalAvg: "Professional Performance Average",
+      personalAvg: "Personal Performance Average",
+      noRatings: "No ratings yet",
       strengths: "Strengths",
       areasForImprovement: "Areas for Improvement",
-      finalComments: "Final Comments",
+      finalComments: "Final Comments & Remarks",
       status: {
         Completed: "Completed",
         'In Progress': "In Progress",
@@ -1384,9 +1546,11 @@ export const translations = {
       hasInfractions: 'Has previous attendance infractions.',
     },
     myRequests: {
-      newLeave: 'New Leave',
-      newPermit: 'New Permit',
-      newExcuse: 'New Excuse',
+      newLeave: 'Leave',
+      newPermit: 'Permit',
+      newExcuse: 'Excuse',
+      newPettyCash: 'Petty Cash',
+      newRequest: 'New Request',
       filterAll: 'All',
       filterPending: 'Pending',
       filterApproved: 'Approved',
@@ -1404,6 +1568,7 @@ export const translations = {
         DataUpdate: 'Data Update',
         AttendanceAdjustment: 'Attendance Adjustment',
         LeavePermit: 'Leave Permit',
+        PettyCash: 'Petty Cash',
       },
       detailsFormat: {
         leave: '{{startDate}} to {{endDate}} ({{duration}} days) - {{reason}}',
@@ -1411,6 +1576,7 @@ export const translations = {
         early: 'Early Departure Excuse',
         attendance: '{{type}} for {{date}} - {{reason}}',
         permit: 'On {{date}} from {{startTime}} to {{endTime}} - {{reason}}',
+        pettyCash: 'Reimbursement of {{amount}} for: {{description}}',
       },
     },
     myAssets: {
@@ -1520,7 +1686,7 @@ export const translations = {
     },
     teamMemberDetail: {
       tabs: {
-        general: 'General',
+        general: 'Overview',
         history: 'History',
         attendance_type: 'Attendance Type',
         grace_minutes: 'Grace Minutes',
@@ -1533,50 +1699,111 @@ export const translations = {
       }
     },
     modules: {
-      performance: {
-        name: 'Performance Management',
-        description: 'Includes performance reviews, goals, monthly check-ins, and turnover analysis.'
+      main: {
+        title: 'Main Modules',
+        subtitle: 'These core modules are essential for the system and are always active.',
+        employees: {
+          name: 'Employees & Organization',
+          description: 'Manage employee profiles, roles, and the company\'s organizational structure.',
+        },
+        attendance: {
+          name: 'Attendance',
+          description: 'Track and manage attendance records and related policies.',
+        },
+        leave: {
+          name: 'Leave & Requests',
+          description: 'Manage leave balances, requests, and approval workflows.',
+        },
+        job_titles: {
+            name: 'Job Titles Structure',
+            description: 'Build and manage the company\'s job title hierarchy.',
+        },
       },
-      learning: {
-        name: 'Learning & Development',
-        description: 'Manage internal and external training courses and development plans for employees.'
-      },
-      recruitment: {
-        name: 'Recruitment (ATS)',
-        description: 'Manage job openings and track applicants through the hiring pipeline.'
-      },
-      onboarding: {
-        name: 'Onboarding',
-        description: 'Create and track plans and tasks for new employees.'
-      },
-      offboarding: {
-        name: 'Offboarding',
-        description: 'Manage and track tasks for departing employees.'
-      },
-      support: {
-        name: 'Support Tickets',
-        description: 'An integrated system to receive and process employee inquiries and complaints.'
-      },
-      compensation: {
-        name: 'Compensation & Benefits',
-        description: 'Manage salary components and create different financial packages.'
-      },
-      job_titles: {
-        name: 'Job Titles Structure',
-        description: 'Build and manage the company\'s job title hierarchy.'
-      },
-      documents: {
-        name: 'Documents',
-        description: 'Manage official employee documents such as contracts and hiring paperwork.'
-      },
-      assets: {
-        name: 'Assets Management',
-        description: 'Track company assets assigned to employees, such as laptops and phones.'
-      },
-      help_center: {
-        name: 'Help Center',
-        description: 'Manage the company\'s internal knowledge base to answer common employee questions.'
+      optional: {
+        title: 'Optional Modules',
+        subtitle: 'Activate or deactivate these modules to customize the system to your company\'s needs.',
+        payroll: {
+          name: 'Payroll & Expense Claims',
+          description: 'Manage salary components, compensation packages, and petty cash requests.'
+        },
+        documents: {
+          name: 'Document Management',
+          description: 'Manage official employee documents like contracts and hiring paperwork.'
+        },
+        recruitment: {
+          name: 'Recruitment (ATS)',
+          description: 'Manage job openings and track applicants through the hiring pipeline.'
+        },
+        performance: {
+          name: 'Performance Management',
+          description: 'Includes performance reviews, goals, and turnover risk analysis.'
+        },
+        learning: {
+          name: 'Learning & Development',
+          description: 'Manage training courses and employee development plans.'
+        },
+        onboardingOffboarding: {
+          name: 'Onboarding & Offboarding',
+          description: 'Create and track plans and tasks for new and departing employees.'
+        },
+        assets: {
+          name: 'Assets Management',
+          description: 'Track company assets assigned to employees, such as laptops and phones.'
+        },
+        support: {
+          name: 'Support Tickets',
+          description: 'An integrated system to process employee inquiries.'
+        },
+        help_center: {
+            name: 'Help Center',
+            description: 'Manage the company\'s internal knowledge base to answer common employee questions.'
+        }
       }
+    },
+    settingsPage: {
+        title: 'Settings',
+        subtitle: 'Manage your account, display preferences, and system settings.',
+        account: {
+            title: 'Account',
+            viewProfile: 'View Profile',
+        },
+        security: {
+            title: 'Security',
+            changePassword: 'Change Password',
+            passwordHint: 'Last updated over a month ago',
+        },
+        notifications: {
+            title: 'Notifications',
+            approvals: 'Approvals & Requests',
+            reminders: 'Reminders & Deadlines',
+            announcements: 'General Announcements',
+        },
+        display: {
+            title: 'Display & Language',
+            language: 'Language',
+            arabic: 'Arabic',
+            english: 'English (Coming Soon)',
+            theme: 'Theme',
+            light: 'Light',
+            dark: 'Dark',
+        },
+        tabs: {
+            mySettings: 'My Settings',
+            display: 'Display & Language',
+            system: 'System Settings',
+        },
+        company: {
+            title: 'Company Profile',
+            subtitle: 'Manage basic company information.',
+            nameLabel: 'Company Name',
+            logoLabel: 'Company Logo',
+            uploadLogo: 'Upload new logo',
+        },
+        modules: {
+            title: 'Module Management',
+            subtitle: 'Enable or disable optional modules in the system.',
+            button: 'Go to Module Management',
+        },
     }
   },
 };

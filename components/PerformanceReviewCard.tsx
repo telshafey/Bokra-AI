@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import type { PerformanceReview, ReviewStatus } from '../types';
 import { SparklesIcon } from './icons/Icons';
@@ -102,11 +103,11 @@ const PerformanceReviewCard: React.FC<PerformanceReviewCardProps> = ({ review, i
     };
     const statusStyle = STATUS_STYLES[review.status];
     
-    const handleGenerate = async (field: keyof PerformanceReview) => {
-        if (typeof editedReview[field] !== 'string' || !editedReview[field]) return;
+    const handleGenerate = async (field: keyof PerformanceReview['comments'] | 'finalComments' | 'strengths' | 'areasForImprovement') => {
+        if (typeof (editedReview as any)[field] !== 'string' || !(editedReview as any)[field]) return;
         
         setAiLoading(prev => ({ ...prev, [field]: true }));
-        const improvedText = await generateFeedbackWithAI(editedReview[field] as string, language);
+        const improvedText = await generateFeedbackWithAI((editedReview as any)[field] as string, language);
         setEditedReview(prev => ({...prev, [field]: improvedText }));
         setAiLoading(prev => ({ ...prev, [field]: false }));
     };
@@ -136,6 +137,7 @@ const PerformanceReviewCard: React.FC<PerformanceReviewCardProps> = ({ review, i
                     {review.status === 'Completed' && (
                         <div className="text-center">
                             <p className="text-xs text-slate-500 dark:text-slate-400">{t('performanceReview.overallRating')}</p>
+                            {/* FIX: Corrected property access to `overallRating` which is now available on the PerformanceReview type. */}
                             <p className={`font-bold text-2xl ${RATING_STYLES[review.overallRating - 1]}`}>{review.overallRating}/5</p>
                         </div>
                     )}

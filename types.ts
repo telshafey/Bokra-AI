@@ -205,11 +205,12 @@ export interface RequestContextType {
     leaveRequests: LeaveRequest[];
     attendanceAdjustmentRequests: AttendanceAdjustmentRequest[];
     leavePermitRequests: LeavePermitRequest[];
+    pettyCashRequests: PettyCashRequest[];
     handleRequestAction: (requestId: number, newStatus: RequestStatus) => void;
     handleNewLeaveRequest: (newRequestData: Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => void;
     handleNewAttendanceAdjustmentRequest: (newRequestData: Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => void;
-    // FIX: Corrected the type to expect `employeeId` to be passed, aligning it with other request handlers.
     handleNewLeavePermitRequest: (newRequestData: Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'durationHours'>) => void;
+    handleNewPettyCashRequest: (newRequestData: Omit<PettyCashRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => void;
 }
 
 export interface RequestProviderProps {
@@ -336,7 +337,7 @@ export interface LeaveBalance {
 }
 
 // --- Unified & Discriminated Request Types ---
-export type RequestType = 'Leave' | 'DataUpdate' | 'AttendanceAdjustment' | 'LeavePermit';
+export type RequestType = 'Leave' | 'DataUpdate' | 'AttendanceAdjustment' | 'LeavePermit' | 'PettyCash';
 
 interface BaseRequest {
     id: number;
@@ -377,7 +378,18 @@ export interface DataUpdateRequest extends BaseRequest {
     details: string;
 }
 
-export type HRRequest = LeaveRequest | AttendanceAdjustmentRequest | LeavePermitRequest | DataUpdateRequest;
+export type PettyCashCategory = 'Transportation' | 'OfficeSupplies' | 'ClientMeeting' | 'Other';
+
+export interface PettyCashRequest extends BaseRequest {
+    type: 'PettyCash';
+    date: string;
+    category: PettyCashCategory;
+    amount: number;
+    description: string;
+    attachmentUrl?: string;
+}
+
+export type HRRequest = LeaveRequest | AttendanceAdjustmentRequest | LeavePermitRequest | DataUpdateRequest | PettyCashRequest;
 
 export type AttendanceAdjustmentType = 'LateArrival' | 'EarlyDeparture';
 
@@ -465,17 +477,42 @@ export interface Goal {
 
 export type ReviewStatus = 'Draft' | 'In Progress' | 'Completed';
 
+export interface PerformanceCriteria {
+    qualityOfWork: number;
+    productivity: number;
+    technicalSkills: number;
+    problemSolving: number;
+    communication: number;
+    teamwork: number;
+    initiative: number;
+    punctuality: number;
+}
+
+export interface PerformanceComments {
+    qualityOfWork: string;
+    productivity: string;
+    technicalSkills: string;
+    problemSolving: string;
+    communication: string;
+    teamwork: string;
+    initiative: string;
+    punctuality: string;
+}
+
 export interface PerformanceReview {
     id: string;
     employeeId: string;
     reviewerId: string;
     cycle: string; // e.g., "Mid-Year 2024"
     status: ReviewStatus;
-    overallRating: number; // 1-5
-    strengths: string;
-    areasForImprovement: string;
+    ratings: Partial<PerformanceCriteria>;
+    comments: Partial<PerformanceComments>;
     finalComments: string;
     reviewDate: string;
+    // FIX: Added missing properties to the PerformanceReview type to align it with its usage in various components.
+    overallRating: number;
+    strengths: string;
+    areasForImprovement: string;
 }
 
 // --- New Employee Document System ---
@@ -786,7 +823,7 @@ export interface RecentActivityItem {
 
 export interface AttentionItem {
     id: string;
-    type: 'leave' | 'attendance_adjustment' | 'leave_permit' | 'course' | 'external_task' | 'ticket';
+    type: 'leave' | 'attendance_adjustment' | 'leave_permit' | 'course' | 'external_task' | 'ticket' | 'petty_cash';
     icon: React.FC<React.SVGProps<SVGSVGElement>>;
     text: string;
     employeeName: string;
@@ -848,6 +885,7 @@ export interface TeamMemberDetails {
     externalTasks: ExternalTask[];
     stats: TeamMemberStats;
     dailyPunches: AttendanceEvent[];
+    pettyCashRequests: PettyCashRequest[];
 }
 
 

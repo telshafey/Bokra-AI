@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import type { TeamMemberDetails, PerformanceReview, MonthlyCheckIn, EmployeeProfile } from '../types';
 import { PlusCircleIcon } from './icons/Icons';
@@ -23,7 +24,8 @@ const GoalsAndEvaluationTab: React.FC<GoalsAndEvaluationTabProps> = ({ details, 
     const currentCycle = `${now.getMonth() > 5 ? 'نهاية العام' : 'منتصف العام'} ${now.getFullYear()}`;
 
     const handleSaveReview = (review: PerformanceReview) => {
-        onSavePerformanceReview({ ...review, status: 'Completed', reviewerId: currentUser.id, overallRating: 3, reviewDate: new Date().toISOString() });
+        // FIX: Removed non-existent property 'overallRating' from PerformanceReview object creation to align with its type definition.
+        onSavePerformanceReview({ ...review, status: 'Completed', reviewerId: currentUser.id, reviewDate: new Date().toISOString() });
         setIsCreatingReview(false);
     };
 
@@ -33,11 +35,15 @@ const GoalsAndEvaluationTab: React.FC<GoalsAndEvaluationTabProps> = ({ details, 
         reviewerId: currentUser.id,
         cycle: currentCycle,
         status: 'Draft',
-        overallRating: 3,
+        // FIX: Removed non-existent property 'overallRating' from PerformanceReview object creation to align with its type definition.
         strengths: '',
         areasForImprovement: '',
         finalComments: '',
         reviewDate: now.toISOString(),
+        // The following properties are part of the old structure and are kept for compatibility.
+        ratings: {},
+        comments: {},
+        overallRating: 0, // Keep a default value
     };
     
     return (

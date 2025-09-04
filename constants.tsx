@@ -1,25 +1,36 @@
-
 import React from 'react';
 import { HomeIcon, CalendarIcon, DocumentTextIcon, UserCircleIcon, CogIcon, ArrowLeftOnRectangleIcon, BriefcaseIcon, BanknotesIcon, ChartPieIcon, AcademicCapIcon, UserGroupIcon, ClipboardDocumentListIcon, DocumentCheckIcon, BuildingOfficeIcon, PresentationChartLineIcon, CheckCircleIcon, ShieldCheckIcon, ShieldExclamationIcon, BookOpenIcon, UsersIcon, DocumentDuplicateIcon, ClockIcon, QuestionMarkCircleIcon, CheckBadgeIcon, ArchiveBoxIcon, ClipboardDocumentCheckIcon, UserPlusIcon, UserMinusIcon, ChevronDownIcon, ExclamationTriangleIcon, ArrowsUpDownIcon, ChevronUpIcon, ComputerDesktopIcon, SitemapIcon, LifebuoyIcon, IdentificationIcon } from './components/icons/Icons';
-// FIX: Added all missing type imports.
-import type { NavItem, EmployeeProfile, AttendanceRecord, Payslip, PayslipItem, LeaveRequest, HRRequest, TeamMemberDetails, LeaveType, LeaveDistributionDataItem, TeamWeeklyAttendanceItem, Branch, Goal, PerformanceReview, Skill, DevelopmentSuggestion, AttendancePolicy, LeavePolicy, EmployeeInfraction, JobTitle, Course, EmployeeCourse, Notification, MonthlyCheckIn, SalaryComponent, CompensationPackage, SupportTicket, EmployeeDashboardData, TeamDashboardData, RecentActivityItem, AttentionItem, TeamLearningStat, OvertimePolicy, AttendanceAdjustmentRequest, LeavePermitRequest, TeamMember, JobOpening, Candidate, OnboardingTemplate, OnboardingProcess, OnboardingTaskCategory, OnboardingResponsible, OffboardingTemplate, OffboardingProcess, OffboardingTaskCategory, OffboardingResponsible, NavGroup, EmployeeDocument, WorkLocation, AttendanceEvent, ExternalTask, TeamReportsData, TeamMemberStats, RequestType, AttendanceStatus, ApprovalContext, OverlappingLeave, PerformanceCycle, TeamMemberPerformanceData, ManagerPerformanceData, Asset, HelpCategory, HelpArticle, AppModule } from './types';
+// FIX: Imported the missing 'ExternalTask' type to resolve reference errors.
+import type { NavItem, EmployeeProfile, AttendanceRecord, Payslip, PayslipItem, LeaveRequest, HRRequest, TeamMemberDetails, LeaveType, LeaveDistributionDataItem, TeamWeeklyAttendanceItem, Branch, Goal, PerformanceReview, Skill, DevelopmentSuggestion, AttendancePolicy, LeavePolicy, EmployeeInfraction, ExternalTask, JobTitle, Course, EmployeeCourse, Notification, MonthlyCheckIn, SalaryComponent, CompensationPackage, SupportTicket, EmployeeDashboardData, TeamDashboardData, RecentActivityItem, AttentionItem, TeamLearningStat, OvertimePolicy, AttendanceAdjustmentRequest, LeavePermitRequest, TeamMember, JobOpening, Candidate, OnboardingTemplate, OnboardingProcess, OnboardingTaskCategory, OnboardingResponsible, OffboardingTemplate, OffboardingProcess, OffboardingTaskCategory, OffboardingResponsible, NavGroup, EmployeeDocument, WorkLocation, AttendanceEvent, TeamReportsData, TeamMemberStats, RequestType, AttendanceStatus, ApprovalContext, OverlappingLeave, PerformanceCycle, TeamMemberPerformanceData, ManagerPerformanceData, Asset, HelpCategory, HelpArticle, AppModule, PerformanceCriteria, PettyCashRequest } from './types';
 
 // =================================================================================
 // ===== MODULE MANAGEMENT =====
 // =================================================================================
-export const ALL_MODULES_CONFIG: { key: AppModule; nameKey: string; descriptionKey: string }[] = [
-    { key: 'performance', nameKey: 'modules.performance.name', descriptionKey: 'modules.performance.description' },
-    { key: 'learning', nameKey: 'modules.learning.name', descriptionKey: 'modules.learning.description' },
-    { key: 'recruitment', nameKey: 'modules.recruitment.name', descriptionKey: 'modules.recruitment.description' },
-    { key: 'onboarding', nameKey: 'modules.onboarding.name', descriptionKey: 'modules.onboarding.description' },
-    { key: 'offboarding', nameKey: 'modules.offboarding.name', descriptionKey: 'modules.offboarding.description' },
-    { key: 'support', nameKey: 'modules.support.name', descriptionKey: 'modules.support.description' },
-    { key: 'compensation', nameKey: 'modules.compensation.name', descriptionKey: 'modules.compensation.description' },
-    { key: 'job_titles', nameKey: 'modules.job_titles.name', descriptionKey: 'modules.job_titles.description' },
-    { key: 'documents', nameKey: 'modules.documents.name', descriptionKey: 'modules.documents.description' },
-    { key: 'assets', nameKey: 'modules.assets.name', descriptionKey: 'modules.assets.description' },
-    { key: 'help_center', nameKey: 'modules.help_center.name', descriptionKey: 'modules.help_center.description' },
+export const MAIN_MODULES_CONFIG = [
+    { key: 'employees', nameKey: 'modules.main.employees.name', descriptionKey: 'modules.main.employees.description' },
+    { key: 'attendance', nameKey: 'modules.main.attendance.name', descriptionKey: 'modules.main.attendance.description' },
+    { key: 'leave', nameKey: 'modules.main.leave.name', descriptionKey: 'modules.main.leave.description' },
+    { key: 'job_titles', nameKey: 'modules.main.job_titles.name', descriptionKey: 'modules.main.job_titles.description' },
 ];
+
+export const OPTIONAL_MODULES_CONFIG: { key: AppModule | 'onboarding/offboarding'; nameKey: string; descriptionKey: string }[] = [
+    { key: 'compensation', nameKey: 'modules.optional.payroll.name', descriptionKey: 'modules.optional.payroll.description' },
+    { key: 'documents', nameKey: 'modules.optional.documents.name', descriptionKey: 'modules.optional.documents.description' },
+    { key: 'recruitment', nameKey: 'modules.optional.recruitment.name', descriptionKey: 'modules.optional.recruitment.description' },
+    { key: 'performance', nameKey: 'modules.optional.performance.name', descriptionKey: 'modules.optional.performance.description' },
+    { key: 'learning', nameKey: 'modules.optional.learning.name', descriptionKey: 'modules.optional.learning.description' },
+    { key: 'onboarding/offboarding', nameKey: 'modules.optional.onboardingOffboarding.name', descriptionKey: 'modules.optional.onboardingOffboarding.description' },
+    { key: 'assets', nameKey: 'modules.optional.assets.name', descriptionKey: 'modules.optional.assets.description' },
+    { key: 'support', nameKey: 'modules.optional.support.name', descriptionKey: 'modules.optional.support.description' },
+    { key: 'help_center', nameKey: 'modules.optional.help_center.name', descriptionKey: 'modules.optional.help_center.description' },
+];
+
+// =================================================================================
+// ===== PERFORMANCE MANAGEMENT =====
+// =================================================================================
+export const PROFESSIONAL_CRITERIA: (keyof PerformanceCriteria)[] = ['qualityOfWork', 'productivity', 'technicalSkills', 'problemSolving'];
+export const PERSONAL_CRITERIA: (keyof PerformanceCriteria)[] = ['communication', 'teamwork', 'initiative', 'punctuality'];
+
 
 // =================================================================================
 // ===== COMPANY STRUCTURE & HIERARCHY =====
@@ -221,6 +232,13 @@ export const MOCK_LEAVE_PERMIT_REQUESTS_INITIAL: LeavePermitRequest[] = [
     { id: 12, employeeId: 'emp-004', type: 'LeavePermit', submissionDate: '2025-08-12', date: '2025-08-12', startTime: '13:00', endTime: '15:00', durationHours: 2, reason: 'مشوار عائلي طارئ', status: 'Pending' },
 ];
 
+export const MOCK_PETTY_CASH_REQUESTS_INITIAL: PettyCashRequest[] = [
+    { id: 20, employeeId: 'emp-003', type: 'PettyCash', submissionDate: '2025-08-10', date: '2025-08-09', category: 'Transportation', amount: 150, description: 'أجرة مواصلات لزيارة العميل في وسط البلد', status: 'Approved', attachmentUrl: 'receipt-1.pdf' },
+    { id: 21, employeeId: 'emp-003', type: 'PettyCash', submissionDate: '2025-08-20', date: '2025-08-19', category: 'OfficeSupplies', amount: 85.50, description: 'شراء أدوات مكتبية وقلم حبر', status: 'Pending' },
+    { id: 22, employeeId: 'emp-004', type: 'PettyCash', submissionDate: '2025-08-15', date: '2025-08-15', category: 'ClientMeeting', amount: 320, description: 'غداء عمل مع ممثل شركة النيل', status: 'Approved' },
+];
+
+
 const nonLeaveRequests: HRRequest[] = [
     { id: 7, employeeId: 'emp-102', type: 'DataUpdate', submissionDate: '2025-05-18', details: 'تحديث عنوان السكن', status: 'Approved' },
 ];
@@ -230,6 +248,7 @@ export const MOCK_ALL_REQUESTS: HRRequest[] = [
     ...MOCK_LEAVE_REQUESTS_INITIAL,
     ...MOCK_ADJUSTMENT_REQUESTS_INITIAL,
     ...MOCK_LEAVE_PERMIT_REQUESTS_INITIAL,
+    ...MOCK_PETTY_CASH_REQUESTS_INITIAL,
     ...nonLeaveRequests,
 ].sort((a, b) => new Date(b.submissionDate).getTime() - new Date(a.submissionDate).getTime());
 
@@ -253,8 +272,52 @@ export const MOCK_GOALS: Goal[] = [
 ];
 
 export const MOCK_PERFORMANCE_REVIEWS: PerformanceReview[] = [
-    { id: 'r1', employeeId: 'emp-003', reviewerId: 'emp-002', cycle: 'منتصف العام 2025', status: 'Completed', overallRating: 4, strengths: 'مبادرة وتتعلم بسرعة. مهارات ممتازة في React.', areasForImprovement: 'تحتاج إلى تحسين إدارة الوقت في المهام الكبيرة.', finalComments: 'أداء جيد جداً ونتوقع المزيد من التطور.', reviewDate: '2025-07-15' },
-    { id: 'r2', employeeId: 'emp-004', reviewerId: 'emp-002', cycle: 'منتصف العام 2025', status: 'Completed', overallRating: 3, strengths: 'مهارات جيدة في حل المشكلات', areasForImprovement: 'يحتاج إلى تحسين التواصل مع الفريق.', finalComments: 'أداء مقبول بشكل عام.', reviewDate: '2025-07-16' },
+    {
+        id: 'r1', employeeId: 'emp-003', reviewerId: 'emp-002', cycle: 'منتصف العام 2025', status: 'Completed',
+        ratings: {
+            qualityOfWork: 5, productivity: 4, technicalSkills: 5, problemSolving: 4,
+            communication: 4, teamwork: 5, initiative: 5, punctuality: 5
+        },
+        comments: {
+            qualityOfWork: 'تقدم هدى باستمرار عملًا عالي الجودة يتجاوز التوقعات.',
+            productivity: 'تحافظ على إنتاجية عالية وتفي بالمواعيد النهائية باستمرار.',
+            technicalSkills: 'تظهر فهماً عميقاً لـ React والتقنيات الحديثة.',
+            problemSolving: 'تتعامل مع المشكلات المعقدة بشكل منهجي وفعال.',
+            communication: 'تتواصل بوضوح وفعالية مع أعضاء الفريق.',
+            teamwork: 'عضو فريق متعاون للغاية وداعم للزملاء.',
+            initiative: 'تبحث دائمًا عن طرق لتحسين العمليات وتتعلم تقنيات جديدة.',
+            punctuality: 'ملتزمة تمامًا بالمواعيد وساعات العمل.'
+        },
+        finalComments: 'أداء هدى ممتاز هذا العام. إنها رصيد قيم للفريق وتظهر إمكانات كبيرة للنمو في المستقبل. نوصي بتكليفها بمسؤوليات قيادية في المشاريع القادمة.',
+        reviewDate: '2025-07-15',
+        // FIX: Added missing properties to align with the updated PerformanceReview type.
+        overallRating: 5,
+        strengths: 'تقدم هدى باستمرار عملًا عالي الجودة يتجاوز التوقعات. تحافظ على إنتاجية عالية وتفي بالمواعيد النهائية باستمرار. تظهر فهماً عميقاً لـ React والتقنيات الحديثة وتتعامل مع المشكلات المعقدة بشكل منهجي وفعال. تتواصل بوضوح وفعالية وهي عضو فريق متعاون للغاية.',
+        areasForImprovement: ''
+    },
+    {
+        id: 'r2', employeeId: 'emp-004', reviewerId: 'emp-002', cycle: 'منتصف العام 2025', status: 'Completed',
+        ratings: {
+            qualityOfWork: 4, productivity: 3, technicalSkills: 3, problemSolving: 4,
+            communication: 2, teamwork: 3, initiative: 3, punctuality: 4
+        },
+        comments: {
+            qualityOfWork: 'العمل جيد بشكل عام، لكن يحتاج لمزيد من الاهتمام بالتفاصيل أحيانًا.',
+            productivity: 'في بعض الأحيان يتأخر في المهام المعقدة، ولكنه ينجز المهام الروتينية بكفاءة.',
+            technicalSkills: 'لديه معرفة جيدة بالأساسيات، ويحتاج إلى تطوير مهاراته في التقنيات المتقدمة.',
+            problemSolving: 'قادر على حل المشكلات بشكل مستقل.',
+            communication: 'يحتاج إلى تحسين التواصل مع الفريق وإبلاغهم بالتقدم المحرز بشكل استباقي.',
+            teamwork: 'يعمل بشكل جيد ضمن الفريق ولكنه يميل إلى العمل بمفرده.',
+            initiative: 'نادرًا ما يبادر بتقديم أفكار جديدة أو استكشاف حلول مبتكرة.',
+            punctuality: 'ملتزم بالمواعيد بشكل عام.'
+        },
+        finalComments: 'أداء طارق مقبول بشكل عام ولديه أساس جيد يمكن البناء عليه. التركيز على تحسين مهارات التواصل والعمل الجماعي سيساعده على تحقيق إمكاناته الكاملة.',
+        reviewDate: '2025-07-16',
+        // FIX: Added missing properties to align with the updated PerformanceReview type.
+        overallRating: 3,
+        strengths: 'يقدم عملًا جيدًا بشكل عام، وقادر على حل المشكلات بشكل مستقل، وملتزم بالمواعيد.',
+        areasForImprovement: 'يحتاج إلى تحسين مهارات التواصل، والاهتمام بالتفاصيل، وتطوير المهارات التقنية المتقدمة، وأخذ المزيد من المبادرة.'
+    },
 ];
 
 export const MOCK_EMPLOYEE_DOCUMENTS: EmployeeDocument[] = [
@@ -742,7 +805,7 @@ export const NAV_GROUPS: NavGroup[] = [
     items: [
       { nameKey: 'sidebar.personalDashboard', icon: HomeIcon, path: '/', requiresEmployee: true, pageTitleKey: 'pageTitles.personalDashboard' },
       { nameKey: 'sidebar.myTasks', icon: ClipboardDocumentListIcon, path: '/my-tasks', requiresEmployee: true, pageTitleKey: 'pageTitles.myTasks' },
-      { nameKey: 'sidebar.payslip', icon: BanknotesIcon, path: '/payslip', requiresEmployee: true, pageTitleKey: 'pageTitles.payslip' },
+      { nameKey: 'sidebar.payrollAndExpenses', icon: BanknotesIcon, path: '/payslip', requiresEmployee: true, pageTitleKey: 'pageTitles.payrollAndExpenses', module: 'compensation' },
       { nameKey: 'sidebar.myAttendance', icon: CalendarIcon, path: '/my-attendance', requiresEmployee: true, pageTitleKey: 'pageTitles.myAttendance' },
       { nameKey: 'sidebar.leave', icon: BriefcaseIcon, path: '/leave', requiresEmployee: true, pageTitleKey: 'pageTitles.leave' },
     ]
@@ -756,7 +819,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { nameKey: 'sidebar.reports', icon: PresentationChartLineIcon, path: '/reports', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitleKey: 'pageTitles.reports' },
       { nameKey: 'sidebar.performanceManagement', icon: PresentationChartLineIcon, path: '/manager-performance', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitleKey: 'pageTitles.performanceManagement', module: 'performance' },
       { nameKey: 'sidebar.turnoverAnalysis', icon: ExclamationTriangleIcon, path: '/turnover-analysis', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitleKey: 'pageTitles.turnoverAnalysis', module: 'performance' },
-      { nameKey: 'sidebar.teamAnalytics', icon: ChartPieIcon, path: '/team-analytics', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'], pageTitleKey: 'pageTitles.teamAnalytics' },
+      { nameKey: 'sidebar.teamAnalytics', icon: ChartPieIcon, path: '/team-analytics', roles: ['General Manager', 'HR Manager', 'Team Lead', 'Branch Admin', 'Super Admin'], pageTitleKey: 'pageTitles.teamAnalytics' },
     ]
   },
   {
@@ -782,7 +845,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { nameKey: 'sidebar.attendancePolicies', icon: ClockIcon, path: '/attendance-policy', roles: ['HR Manager', 'Admin', 'Super Admin', 'Branch Admin'], pageTitleKey: 'pageTitles.attendancePolicies' },
       { nameKey: 'sidebar.overtimePolicies', icon: ClockIcon, path: '/overtime-policy', roles: ['HR Manager', 'Admin', 'Super Admin', 'Branch Admin'], pageTitleKey: 'pageTitles.overtimePolicies' },
       { nameKey: 'sidebar.leavePolicies', icon: BriefcaseIcon, path: '/leave-policy', roles: ['HR Manager', 'Admin', 'Super Admin', 'Branch Admin'], pageTitleKey: 'pageTitles.leavePolicies' },
-      { nameKey: 'sidebar.jobTitles', icon: DocumentDuplicateIcon, path: '/job-titles', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitleKey: 'pageTitles.jobTitles', module: 'job_titles' },
+      { nameKey: 'sidebar.jobTitles', icon: DocumentDuplicateIcon, path: '/job-titles', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitleKey: 'pageTitles.jobTitles' },
       { nameKey: 'sidebar.compensation', icon: BanknotesIcon, path: '/compensation', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitleKey: 'pageTitles.compensation', module: 'compensation' },
       { nameKey: 'sidebar.contracts', icon: DocumentDuplicateIcon, path: '/contracts', roles: ['HR Manager', 'Admin', 'Super Admin'], pageTitleKey: 'pageTitles.contracts' },
     ]
@@ -886,7 +949,8 @@ export const MOCK_EXTERNAL_TASKS: ExternalTask[] = [
 // =================================================================================
 export const MOCK_HELP_CATEGORIES: HelpCategory[] = [
     { id: 'cat-leave', name: { ar: 'الإجازات', en: 'Leave Policies' }, icon: BriefcaseIcon },
-    { id: 'cat-attendance', name: { ar: 'الحضور والانصراف', en: 'Attendance' }, icon: ClockIcon },
+    // FIX: Added the missing 'en' property to the 'name' object to match the 'BilingualText' type.
+    { id: 'cat-attendance', name: { ar: 'الحصص', en: 'Attendance' }, icon: ClockIcon },
     { id: 'cat-work-hours', name: { ar: 'ساعات العمل والإضافي', en: 'Work Hours & Overtime' }, icon: ClockIcon },
     { id: 'cat-contracts', name: { ar: 'العقود وإنهاء الخدمة', en: 'Contracts & Termination' }, icon: DocumentDuplicateIcon },
     { id: 'cat-payroll', name: { ar: 'الرواتب', en: 'Payroll' }, icon: BanknotesIcon },
@@ -1226,6 +1290,7 @@ export const getDerivedData = (
   assets: Asset[],
   t: (key: string, replacements?: { [key: string]: any }) => string
 ) => {
+  const pettyCashRequests = requests.filter(r => r.type === 'PettyCash') as PettyCashRequest[];
 
 // FIX: Explicitly type the return value of the map function to ensure type safety.
   const assetsWithDepreciation = assets.map((asset): Asset => {
@@ -1423,9 +1488,13 @@ export const getDerivedData = (
                 case 'DataUpdate':
                     // Not handled as attention items for now
                     return;
+                case 'PettyCash':
+                    itemType = 'petty_cash';
+                    icon = BanknotesIcon;
+                    break;
               }
 
-              if (r.type === 'Leave' || r.type === 'AttendanceAdjustment' || r.type === 'LeavePermit') {
+              if (r.type === 'Leave' || r.type === 'AttendanceAdjustment' || r.type === 'LeavePermit' || r.type === 'PettyCash') {
                 attentionItems.push({
                     id: `req-${r.id}`,
                     type: itemType,
@@ -1596,6 +1665,7 @@ export const getDerivedData = (
       };
 
       const dailyPunches = attendanceEvents.filter(e => e.employeeId === profile.id && e.timestamp.startsWith(todayStr));
+      const memberPettyCash = pettyCashRequests.filter(req => req.employeeId === profile.id);
 
       return {
           profile: profile,
@@ -1622,6 +1692,7 @@ export const getDerivedData = (
           externalTasks: externalTasks.filter(t => t.employeeId === profile.id),
           stats: stats,
           dailyPunches: dailyPunches,
+          pettyCashRequests: memberPettyCash,
       };
   });
   

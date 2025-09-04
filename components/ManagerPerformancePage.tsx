@@ -1,10 +1,13 @@
-import React from 'react';
-import { ManagerPerformanceData, MonthlyCheckInRating, TeamMemberPerformanceData } from '../types';
+
+
+import React, { useState } from 'react';
+import { ManagerPerformanceData, MonthlyCheckInRating, TeamMemberPerformanceData, PerformanceReview, EmployeeProfile } from '../types';
 import PageHeader from './PageHeader';
 import Card from './Card';
 import StatCard from './StatCard';
 import { PresentationChartLineIcon, CheckCircleIcon, UserGroupIcon, StarIcon } from './icons/Icons';
 import { useTranslation } from './contexts/LanguageContext';
+import PerformanceReviewCard from './PerformanceReviewCard';
 
 const ProgressBar: React.FC<{ progress: number }> = ({ progress }) => {
     let bgColor = 'bg-sky-500';
@@ -36,11 +39,30 @@ const REVIEW_STATUS_STYLES: Record<TeamMemberPerformanceData['reviewStatus'], { 
 
 interface ManagerPerformancePageProps {
     data: ManagerPerformanceData;
+    onSavePerformanceReview: (review: PerformanceReview) => void;
+    performanceReviews: PerformanceReview[];
+    currentUser: EmployeeProfile;
 }
 
-const ManagerPerformancePage: React.FC<ManagerPerformancePageProps> = ({ data }) => {
+const ManagerPerformancePage: React.FC<ManagerPerformancePageProps> = ({ data, onSavePerformanceReview, performanceReviews, currentUser }) => {
     const { t } = useTranslation();
     const { cycle, cycleStats, teamPerformance } = data;
+    const [editingReviewFor, setEditingReviewFor] = useState<string | null>(null);
+
+    const handleActionClick = (item: TeamMemberPerformanceData) => {
+        if (item.reviewStatus === 'Not Started' || item.reviewStatus === 'In Progress') {
+            setEditingReviewFor(item.member.id);
+        }
+    };
+
+    const handleSaveReview = (review: PerformanceReview) => {
+        onSavePerformanceReview({ ...review, status: 'In Progress' });
+        setEditingReviewFor(null);
+    };
+
+    const handleCancelReview = () => {
+        setEditingReviewFor(null);
+    };
 
     return (
         <div className="space-y-6">
@@ -64,49 +86,90 @@ const ManagerPerformancePage: React.FC<ManagerPerformancePageProps> = ({ data })
                                 <th className="px-6 py-3">{t('managerPerformance.goalProgress')}</th>
                                 <th className="px-6 py-3">{t('managerPerformance.latestCheckIn')}</th>
                                 <th className="px-6 py-3">{t('managerPerformance.reviewStatus')}</th>
-                                <th className="px-6 py-3">{t('general.actions')}</th>
+                                <th className="px-6 py-3">{t('managerPerformance.actions')}</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            {teamPerformance.map(item => (
-                                <tr key={item.member.id} className="bg-white dark:bg-slate-800 border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                                    <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-200">
-                                        <div className="flex items-center gap-3">
-                                            <img src={item.member.avatarUrl} alt={item.member.name} className="w-10 h-10 rounded-full"/>
-                                            <div>
-                                                <p>{item.member.name}</p>
-                                                <p className="text-xs text-slate-500 dark:text-slate-400">{item.member.title}</p>
+                        <tbody className="divide-y divide-slate-200 dark:divide-slate-700">
+                            {teamPerformance.map(item => {
+                                const isEditingThisRow = editingReviewFor === item.member.id;
+                                const reviewForEmployee = performanceReviews.find(r => r.employeeId === item.member.id && r.cycle === cycle.name);
+
+                                let reviewToShow: PerformanceReview;
+                                if (reviewForEmployee) {
+                                    reviewToShow = reviewForEmployee;
+                                } else {
+                                    const now = new Date();
+                                    reviewToShow = {
+                                        id: `rev-${item.member.id}-${Date.now()}`,
+                                        employeeId: item.member.id,
+                                        reviewerId: currentUser.id,
+                                        cycle: cycle.name,
+                                        status: 'Draft',
+                                        // FIX: Removed non-existent property 'overallRating' from PerformanceReview object creation to align with its type definition.
+                                        ratings: {},
+                                        comments: {},
+                                        finalComments: '',
+                                        reviewDate: now.toISOString(),
+                                        overallRating: 0,
+                                        strengths: '',
+                                        areasForImprovement: ''
+                                    };
+                                }
+                                
+                                return (
+                                <React.Fragment key={item.member.id}>
+                                    <tr className="hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                                        <td className="px-6 py-4 font-medium text-slate-900 dark:text-slate-200 whitespace-nowrap">
+                                            <div className="flex items-center gap-3">
+                                                <img src={item.member.avatarUrl} alt={item.member.name} className="w-10 h-10 rounded-full" />
+                                                <div>
+                                                    <p>{item.member.name}</p>
+                                                    <p className="text-xs text-slate-500 dark:text-slate-400">{item.member.title}</p>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-24"><ProgressBar progress={item.goalProgress} /></div>
-                                            <span className="font-semibold">{item.goalProgress}%</span>
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        {item.latestCheckIn ? (
-                                            <span className={`px-2 py-1 rounded-full text-xs font-semibold ${RATING_STYLES[item.latestCheckIn.rating].bg} ${RATING_STYLES[item.latestCheckIn.rating].text}`}>
-                                                <StarIcon className="w-3 h-3 inline-block ml-1"/>
-                                                {t(`performanceReview.ratings.${item.latestCheckIn.rating}`)}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <div className="flex items-center gap-2">
+                                                <ProgressBar progress={item.goalProgress} />
+                                                <span className="font-semibold">{item.goalProgress}%</span>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            {item.latestCheckIn ? (
+                                                <span className={`px-2 py-1 text-xs font-bold rounded-full ${RATING_STYLES[item.latestCheckIn.rating].bg} ${RATING_STYLES[item.latestCheckIn.rating].text}`}>
+                                                    {t(`performanceReview.ratings.${item.latestCheckIn.rating}`)}
+                                                </span>
+                                            ) : '-'}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <span className={`px-2 py-1 text-xs font-semibold rounded-full ${REVIEW_STATUS_STYLES[item.reviewStatus].bg} ${REVIEW_STATUS_STYLES[item.reviewStatus].text}`}>
+                                                {t(`performanceReview.teamStatus.${item.reviewStatus}`)}
                                             </span>
-                                        ) : (
-                                            <span className="text-slate-400">-</span>
-                                        )}
-                                    </td>
-                                    <td className="px-6 py-4">
-                                         <span className={`px-2 py-1 rounded-full text-xs font-semibold ${REVIEW_STATUS_STYLES[item.reviewStatus].bg} ${REVIEW_STATUS_STYLES[item.reviewStatus].text}`}>
-                                            {t(`performanceReview.teamStatus.${item.reviewStatus}`)}
-                                        </span>
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <button className="font-medium text-sky-600 dark:text-sky-400 hover:underline">
-                                            {t(`managerPerformance.action.${item.reviewStatus}`)}
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <button 
+                                                onClick={() => handleActionClick(item)}
+                                                disabled={item.reviewStatus === 'Completed'}
+                                                className="font-semibold text-sky-600 hover:text-sky-800 disabled:text-slate-400 disabled:cursor-not-allowed">
+                                                {t(`managerPerformance.action.${item.reviewStatus}`)}
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    {isEditingThisRow && (
+                                        <tr>
+                                            <td colSpan={5} className="p-4 bg-slate-50 dark:bg-slate-900/50">
+                                                <PerformanceReviewCard 
+                                                    review={reviewToShow}
+                                                    isManagerView={true}
+                                                    isEditing={true}
+                                                    onSave={handleSaveReview}
+                                                    onCancel={handleCancelReview}
+                                                />
+                                            </td>
+                                        </tr>
+                                    )}
+                                </React.Fragment>
+                            )})}
                         </tbody>
                     </table>
                 </div>

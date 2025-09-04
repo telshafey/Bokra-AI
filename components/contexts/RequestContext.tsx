@@ -1,10 +1,12 @@
 
+
 import React, { createContext, useContext, useState } from 'react';
 import {
     HRRequest,
     LeaveRequest,
     AttendanceAdjustmentRequest,
     LeavePermitRequest,
+    PettyCashRequest,
     RequestStatus,
     RequestContextType,
     RequestProviderProps
@@ -13,7 +15,8 @@ import {
     MOCK_ALL_REQUESTS,
     MOCK_LEAVE_REQUESTS_INITIAL,
     MOCK_ADJUSTMENT_REQUESTS_INITIAL,
-    MOCK_LEAVE_PERMIT_REQUESTS_INITIAL
+    MOCK_LEAVE_PERMIT_REQUESTS_INITIAL,
+    MOCK_PETTY_CASH_REQUESTS_INITIAL
 } from '../../constants';
 import { useUserContext } from './UserContext';
 import { usePoliciesContext } from './PoliciesContext';
@@ -36,6 +39,7 @@ export const RequestProvider: React.FC<RequestProviderProps> = ({ children }) =>
     const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(MOCK_LEAVE_REQUESTS_INITIAL);
     const [attendanceAdjustmentRequests, setAttendanceAdjustmentRequests] = useState<AttendanceAdjustmentRequest[]>(MOCK_ADJUSTMENT_REQUESTS_INITIAL);
     const [leavePermitRequests, setLeavePermitRequests] = useState<LeavePermitRequest[]>(MOCK_LEAVE_PERMIT_REQUESTS_INITIAL);
+    const [pettyCashRequests, setPettyCashRequests] = useState<PettyCashRequest[]>(MOCK_PETTY_CASH_REQUESTS_INITIAL);
 
     const handleRequestAction = (requestId: number, newStatus: RequestStatus) => {
         setRequests(prev => prev.map(req => req.id === requestId ? { ...req, status: newStatus } : req));
@@ -66,6 +70,10 @@ export const RequestProvider: React.FC<RequestProviderProps> = ({ children }) =>
 
         if (leavePermitRequests.some(pr => pr.id === requestId)) {
             setLeavePermitRequests(prev => prev.map(pr => pr.id === requestId ? { ...pr, status: newStatus } : pr));
+        }
+
+        if (pettyCashRequests.some(pc => pc.id === requestId)) {
+            setPettyCashRequests(prev => prev.map(pc => pc.id === requestId ? { ...pc, status: newStatus } : pc));
         }
     };
 
@@ -154,15 +162,30 @@ export const RequestProvider: React.FC<RequestProviderProps> = ({ children }) =>
         setRequests(prev => [...prev, newPermitRequest]);
     };
 
+    const handleNewPettyCashRequest = (newRequestData: Omit<PettyCashRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => {
+        const newId = Math.max(...requests.map(r => r.id), 0) + 1;
+        const newPettyCashRequest: PettyCashRequest = {
+            id: newId,
+            status: 'Pending',
+            type: 'PettyCash',
+            submissionDate: newRequestData.date,
+            ...newRequestData
+        };
+        setPettyCashRequests(prev => [...prev, newPettyCashRequest]);
+        setRequests(prev => [...prev, newPettyCashRequest]);
+    };
+
     const value = {
         requests,
         leaveRequests,
         attendanceAdjustmentRequests,
         leavePermitRequests,
+        pettyCashRequests,
         handleRequestAction,
         handleNewLeaveRequest,
         handleNewAttendanceAdjustmentRequest,
         handleNewLeavePermitRequest,
+        handleNewPettyCashRequest,
     };
 
     return <RequestContext.Provider value={value}>{children}</RequestContext.Provider>;
