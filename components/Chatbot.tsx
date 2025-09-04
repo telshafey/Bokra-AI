@@ -106,6 +106,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ currentUser }) => {
               placeholder={t('chatbot.placeholder')}
               className="flex-1 p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
               disabled={isLoading}
+              spellCheck="true"
             />
             <button type="submit" disabled={isLoading} className="bg-sky-600 text-white p-2 rounded-lg disabled:bg-slate-400 hover:bg-sky-700 transition-colors">
               <PaperAirplaneIcon className="w-6 h-6" />

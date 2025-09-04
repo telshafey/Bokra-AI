@@ -72,18 +72,18 @@ const CourseCreationModal: React.FC<CourseCreationModalProps> = ({ isOpen, onClo
                 </div>
                 <div className="space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="عنوان الدورة" className="w-full p-2 border border-slate-300 rounded-lg md:col-span-2" required />
-                        <input type="text" value={provider} onChange={e => setProvider(e.target.value)} placeholder="مقدم الدورة (Coursera, Udemy, etc.)" className="w-full p-2 border border-slate-300 rounded-lg" />
+                        <input type="text" value={title} onChange={e => setTitle(e.target.value)} placeholder="عنوان الدورة" className="w-full p-2 border border-slate-300 rounded-lg md:col-span-2" required spellCheck="true" />
+                        <input type="text" value={provider} onChange={e => setProvider(e.target.value)} placeholder="مقدم الدورة (Coursera, Udemy, etc.)" className="w-full p-2 border border-slate-300 rounded-lg" spellCheck="true" />
                         <input type="number" value={duration} onChange={e => setDuration(Number(e.target.value))} placeholder="المدة (ساعات)" className="w-full p-2 border border-slate-300 rounded-lg"/>
                         <select value={venue} onChange={e => setVenue(e.target.value as ExternalCourseVenue)} className="w-full p-2 border rounded-lg bg-white">
                             <option value="Online">عبر الإنترنت</option>
                             <option value="Training Center">مركز تدريب</option>
                             <option value="On-site">في موقع العميل</option>
                         </select>
-                         <input type="text" value={locationDetails} onChange={e => setLocationDetails(e.target.value)} placeholder="تفاصيل المكان (رابط، اسم المعهد، ...)" className="w-full p-2 border border-slate-300 rounded-lg"/>
-                        <input type="url" value={url} onChange={e => setUrl(e.target.value)} placeholder="رابط الدورة" className="w-full p-2 border border-slate-300 rounded-lg md:col-span-2" />
+                         <input type="text" value={locationDetails} onChange={e => setLocationDetails(e.target.value)} placeholder="تفاصيل المكان (رابط، اسم المعهد، ...)" className="w-full p-2 border border-slate-300 rounded-lg" spellCheck="true"/>
+                        <input type="url" value={url} onChange={e => setUrl(e.target.value)} placeholder="رابط الدورة" className="w-full p-2 border border-slate-300 rounded-lg md:col-span-2" spellCheck="false" />
                     </div>
-                    <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="وصف موجز للدورة" rows={4} className="w-full p-2 border border-slate-300 rounded-lg" />
+                    <textarea value={description} onChange={e => setDescription(e.target.value)} placeholder="وصف موجز للدورة" rows={4} className="w-full p-2 border border-slate-300 rounded-lg" spellCheck="true" />
                 </div>
                 <div className="flex justify-end gap-4 pt-6 mt-6 border-t">
                     <button type="button" onClick={handleClose} className="py-2 px-6 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200">إلغاء</button>

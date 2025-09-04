@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, PlusCircleIcon, TrashIcon } from './icons/Icons';
 import type { LeavePolicy, EmployeeProfile, Branch, AnnualLeaveTier } from '../types';
@@ -100,7 +101,7 @@ const LeavePolicyModal: React.FC<LeavePolicyModalProps> = ({ isOpen, onClose, on
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-6">
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input type="text" value={policy.name} onChange={e => handleChange('name', e.target.value)} className="w-full p-2 border rounded-lg col-span-2" placeholder="اسم السياسة" required />
+                        <input type="text" value={policy.name} onChange={e => handleChange('name', e.target.value)} className="w-full p-2 border rounded-lg col-span-2" placeholder="اسم السياسة" required spellCheck="true" />
                         {currentUser.role !== 'Branch Admin' && currentUser.role !== 'Admin' ? (
                             <select value={policy.scope} onChange={e => handleChange('scope', e.target.value)} className="w-full p-2 border rounded-lg bg-slate-50">
                                 <option value="company">عام للشركة</option><option value="branch">خاص بفرع</option>

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
     PhoneIcon, EnvelopeIcon, CakeIcon, FlagIcon, IdentificationIcon, HeartIcon,
@@ -15,9 +16,10 @@ interface InfoItemProps {
     fieldType?: 'text' | 'date' | 'select';
     options?: { value: string; label: string }[];
     onChange?: (field: string, value: string) => void;
+    spellCheck?: boolean;
 }
 
-const InfoItem: React.FC<InfoItemProps> = ({ icon: Icon, label, value, isEditing = false, fieldName = '', fieldType='text', options=[], onChange = () => {} }) => {
+const InfoItem: React.FC<InfoItemProps> = ({ icon: Icon, label, value, isEditing = false, fieldName = '', fieldType='text', options=[], onChange = () => {}, spellCheck }) => {
     const renderValue = () => {
         if (!isEditing) {
             return <p className="font-semibold text-slate-800 dark:text-slate-200 break-words">{value || '-'}</p>;
@@ -37,7 +39,7 @@ const InfoItem: React.FC<InfoItemProps> = ({ icon: Icon, label, value, isEditing
             case 'date':
                  return <input type="date" value={value} onChange={(e) => onChange(fieldName, e.target.value)} className="w-full p-1 border border-slate-300 rounded-md bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold" />;
             default: // text
-                 return <input type="text" value={value} onChange={(e) => onChange(fieldName, e.target.value)} className="w-full p-1 border border-slate-300 rounded-md bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold" />;
+                 return <input type="text" value={value} onChange={(e) => onChange(fieldName, e.target.value)} className="w-full p-1 border border-slate-300 rounded-md bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white focus:outline-none focus:ring-1 focus:ring-sky-500 text-sm font-semibold" spellCheck={spellCheck} />;
         }
     };
     
@@ -109,15 +111,15 @@ const ProfileDetailCard: React.FC<ProfileDetailCardProps> = ({
         <>
             <div className="space-y-6">
                 <InfoCard title={t('profilePage.contactInfo')}>
-                    <InfoItem icon={PhoneIcon} label={t('profilePage.phone')} value={profile.contact.phone} isEditing={isEditing} fieldName="contact.phone" onChange={onProfileChange} />
-                    <InfoItem icon={EnvelopeIcon} label={t('profilePage.workEmail')} value={profile.contact.workEmail} isEditing={isEditing} fieldName="contact.workEmail" onChange={onProfileChange} />
-                    <InfoItem icon={EnvelopeIcon} label={t('profilePage.personalEmail')} value={profile.contact.personalEmail} isEditing={isEditing} fieldName="contact.personalEmail" onChange={onProfileChange} />
+                    <InfoItem icon={PhoneIcon} label={t('profilePage.phone')} value={profile.contact.phone} isEditing={isEditing} fieldName="contact.phone" onChange={onProfileChange} spellCheck={false} />
+                    <InfoItem icon={EnvelopeIcon} label={t('profilePage.workEmail')} value={profile.contact.workEmail} isEditing={isEditing} fieldName="contact.workEmail" onChange={onProfileChange} spellCheck={false} />
+                    <InfoItem icon={EnvelopeIcon} label={t('profilePage.personalEmail')} value={profile.contact.personalEmail} isEditing={isEditing} fieldName="contact.personalEmail" onChange={onProfileChange} spellCheck={false} />
                 </InfoCard>
                 
                 <InfoCard title={t('profilePage.personalInfo')}>
                     <InfoItem icon={CakeIcon} label={t('profilePage.dob')} value={profile.personal.dateOfBirth} isEditing={isEditing} fieldName="personal.dateOfBirth" fieldType="date" onChange={onProfileChange} />
-                    <InfoItem icon={FlagIcon} label={t('profilePage.nationality')} value={profile.personal.nationality} isEditing={isEditing} fieldName="personal.nationality" onChange={onProfileChange} />
-                    <InfoItem icon={IdentificationIcon} label={t('profilePage.nationalId')} value={profile.personal.nationalId} />
+                    <InfoItem icon={FlagIcon} label={t('profilePage.nationality')} value={profile.personal.nationality} isEditing={isEditing} fieldName="personal.nationality" onChange={onProfileChange} spellCheck={true} />
+                    <InfoItem icon={IdentificationIcon} label={t('profilePage.nationalId')} value={profile.personal.nationalId} spellCheck={false} />
                     <InfoItem icon={HeartIcon} label={t('profilePage.maritalStatus')} value={profile.personal.maritalStatus} isEditing={isEditing} fieldName="personal.maritalStatus" fieldType="select" options={[{value: 'أعزب', label: t('profilePage.maritalStatuses.single')}, {value: 'متزوج', label: t('profilePage.maritalStatuses.married')}]} onChange={onProfileChange} />
                     <InfoItem icon={UserCircleIcon} label={t('profilePage.gender')} value={profile.personal.gender} isEditing={isEditing} fieldName="personal.gender" fieldType="select" options={[{value: 'Male', label: t('profilePage.genders.male')}, {value: 'Female', label: t('profilePage.genders.female')}]} onChange={onProfileChange} />
                     <InfoItem icon={BriefcaseIcon} label={t('profilePage.religion')} value={profile.personal.religion} isEditing={isEditing} fieldName="personal.religion" fieldType="select" options={[{value: 'Muslim', label: t('profilePage.religions.muslim')}, {value: 'Christian', label: t('profilePage.religions.christian')}]} onChange={onProfileChange} />

@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import { HelpArticle, HelpCategory, BilingualText } from '../types';
@@ -78,19 +79,19 @@ const HelpArticleModal: React.FC<HelpArticleModalProps> = ({ isOpen, onClose, ar
                 <form onSubmit={handleSubmit} className="flex-1 flex flex-col gap-4 overflow-hidden">
                     <div className="flex-1 overflow-y-auto pr-2 space-y-4">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <input type="text" value={articleData.title.ar} onChange={e => handleTextChange('title', 'ar', e.target.value)} placeholder={t('helpCenter.articleModal.titleAr')} className="w-full p-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600" required />
-                            <input type="text" value={articleData.title.en} onChange={e => handleTextChange('title', 'en', e.target.value)} placeholder={t('helpCenter.articleModal.titleEn')} className="w-full p-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600" required />
+                            <input type="text" value={articleData.title.ar} onChange={e => handleTextChange('title', 'ar', e.target.value)} placeholder={t('helpCenter.articleModal.titleAr')} className="w-full p-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600" required spellCheck="true" />
+                            <input type="text" value={articleData.title.en} onChange={e => handleTextChange('title', 'en', e.target.value)} placeholder={t('helpCenter.articleModal.titleEn')} className="w-full p-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600" required spellCheck="true" />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                             <textarea value={articleData.content.ar} onChange={e => handleTextChange('content', 'ar', e.target.value)} placeholder={t('helpCenter.articleModal.contentAr')} rows={6} className="w-full p-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600" required />
-                             <textarea value={articleData.content.en} onChange={e => handleTextChange('content', 'en', e.target.value)} placeholder={t('helpCenter.articleModal.contentEn')} rows={6} className="w-full p-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600" required />
+                             <textarea value={articleData.content.ar} onChange={e => handleTextChange('content', 'ar', e.target.value)} placeholder={t('helpCenter.articleModal.contentAr')} rows={6} className="w-full p-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600" required spellCheck="true" />
+                             <textarea value={articleData.content.en} onChange={e => handleTextChange('content', 'en', e.target.value)} placeholder={t('helpCenter.articleModal.contentEn')} rows={6} className="w-full p-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600" required spellCheck="true" />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                              <select value={articleData.categoryId} onChange={handleSelectChange} className="w-full p-2 border rounded-lg bg-white dark:bg-slate-700 dark:border-slate-600" required>
                                 <option value="" disabled>-- {t('helpCenter.articleModal.category')} --</option>
                                 {categories.map(cat => <option key={cat.id} value={cat.id}>{cat.name.ar} / {cat.name.en}</option>)}
                             </select>
-                             <input type="text" value={keywordsStr} onChange={handleKeywordsChange} placeholder={t('helpCenter.articleModal.keywords')} className="w-full p-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600" />
+                             <input type="text" value={keywordsStr} onChange={handleKeywordsChange} placeholder={t('helpCenter.articleModal.keywords')} className="w-full p-2 border rounded-lg dark:bg-slate-700 dark:border-slate-600" spellCheck="true" />
                         </div>
                     </div>
                     <div className="flex justify-end gap-4 pt-4 border-t dark:border-slate-700">

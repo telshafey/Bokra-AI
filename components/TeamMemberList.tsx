@@ -27,6 +27,7 @@ const TeamMemberList: React.FC<TeamMemberListProps> = ({ members, selectedMember
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full p-2 pr-10 border border-slate-300 rounded-lg bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
+            spellCheck="true"
           />
           <MagnifyingGlassIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
         </div>

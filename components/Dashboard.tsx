@@ -25,7 +25,7 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, dashboardData, onClo
   const statCards = stats ? [
     { title: t('dashboard.remainingAnnualLeave'), value: `${stats.remainingAnnualLeave} ${t('general.day')}`, icon: BriefcaseIcon, color: "bg-sky-500" },
     { title: t('dashboard.pendingRequests'), value: `${stats.pendingRequestsCount}`, icon: DocumentTextIcon, color: "bg-amber-500" },
-    { title: t('dashboard.overtimeThisMonth'), value: `${stats.overtimeHoursThisMonth} ${t('general.hour')}`, icon: ClockIcon, color: "bg-emerald-500" },
+    { title: t('dashboard.overtimeThisMonth'), value: `${stats.overtimeHoursThisMonth} ${t('general.hour')}`, icon: ClockIcon, color: "bg-emerald-500", chartData: stats.overtimeTrend, chartColor: '#10b981' },
   ] : [];
 
 

@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { HelpArticle, HelpCategory } from '../types';
 import { useTranslation } from './contexts/LanguageContext';
@@ -90,6 +91,7 @@ const HelpCenterPage: React.FC<HelpCenterPageProps> = ({ isSuperAdmin }) => {
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder={t('helpCenter.searchPlaceholder')}
           className="w-full p-4 pl-12 text-lg border border-slate-300 dark:border-slate-600 rounded-xl bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-sky-500"
+          spellCheck="true"
         />
         <MagnifyingGlassIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-6 h-6 text-slate-400" />
       </div>

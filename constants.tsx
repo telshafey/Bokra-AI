@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { HomeIcon, CalendarIcon, DocumentTextIcon, UserCircleIcon, CogIcon, ArrowLeftOnRectangleIcon, BriefcaseIcon, BanknotesIcon, ChartPieIcon, AcademicCapIcon, UserGroupIcon, ClipboardDocumentListIcon, DocumentCheckIcon, BuildingOfficeIcon, PresentationChartLineIcon, CheckCircleIcon, ShieldCheckIcon, ShieldExclamationIcon, BookOpenIcon, UsersIcon, DocumentDuplicateIcon, ClockIcon, QuestionMarkCircleIcon, CheckBadgeIcon, ArchiveBoxIcon, ClipboardDocumentCheckIcon, UserPlusIcon, UserMinusIcon, ChevronDownIcon, ExclamationTriangleIcon, ArrowsUpDownIcon, ChevronUpIcon, ComputerDesktopIcon, SitemapIcon, LifebuoyIcon, IdentificationIcon } from './components/icons/Icons';
 // FIX: Imported the missing 'ExternalTask' type to resolve reference errors.
@@ -1389,6 +1390,19 @@ export const getDerivedData = (
           return recordDate.getMonth() === currentMonth && recordDate.getFullYear() === currentYear;
       })
       .reduce((sum, record) => sum + (record.overtime || 0), 0);
+      
+  const overtimeTrend = Array.from({ length: 7 }).map((_, i) => {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dayStr = d.toISOString().split('T')[0];
+      const dayName = d.toLocaleDateString('ar-EG', { weekday: 'short' });
+      
+      const overtimeForDay = userAttendanceRecords
+          .filter(r => r.date === dayStr)
+          .reduce((sum, r) => sum + (r.overtime || 0), 0);
+          
+      return { name: dayName, value: parseFloat(overtimeForDay.toFixed(1)) };
+  }).reverse();
 
   const annualLeaveBalance = currentUserProfile.leaveBalances.find(b => b.type === 'Annual');
   const remainingAnnualLeave = annualLeaveBalance ? annualLeaveBalance.balance - annualLeaveBalance.used : 0;
@@ -1408,25 +1422,42 @@ export const getDerivedData = (
           .filter(n => n.recipientId === currentUserId)
           .sort((a,b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
           .slice(0, 4)
-// FIX: Changed `page` property to `pageKey` and used translation keys for values to match the `RecentActivityItem` type.
           .map((n): RecentActivityItem => {
               let pageKey = 'sidebar.personalDashboard'; // Default
-              if (n.relatedEntity?.type === 'course') pageKey = 'sidebar.learning';
-              else if (n.relatedEntity?.type === 'leave_request') pageKey = 'sidebar.leave';
-              else if (n.relatedEntity?.type === 'attendance_adjustment') pageKey = 'sidebar.myAttendance';
-              else if (n.message.includes('متابعة شهرية')) pageKey = 'sidebar.performance';
+              let details: string | undefined = undefined;
+
+              const request = requests.find(r => r.id.toString() === n.relatedEntity?.id);
+
+              if (n.relatedEntity?.type === 'course') {
+                   pageKey = 'sidebar.learning';
+                   const course = courses.find(c => c.id === n.relatedEntity?.id);
+                   if (course) details = `${t('learning.courseTitle')}:\n${course.title}`;
+              } else if (request) {
+                  if(request.type === 'Leave') {
+                      pageKey = 'sidebar.leave';
+                      details = `${t('general.type')}: ${t(`leaveTypes.${request.leaveType}`)}\n${t('general.duration')}: ${request.duration} ${t('general.days')}`;
+                  } else if (request.type === 'AttendanceAdjustment') {
+                      pageKey = 'sidebar.myAttendance';
+                      details = `${t('general.date')}: ${request.date}`;
+                  }
+              } else if (n.message.includes('متابعة شهرية') || n.message.includes('monthly check-in')) {
+                  pageKey = 'sidebar.performance';
+                  details = t('performancePage.monthlyCheckinsTitle');
+              }
               return {
                   id: n.id,
                   icon: CheckCircleIcon, // Placeholder
                   text: n.message,
                   timestamp: timeSince(n.timestamp, t),
                   pageKey,
+                  details,
               };
           }),
       stats: {
         remainingAnnualLeave,
         pendingRequestsCount,
         overtimeHoursThisMonth: parseFloat(overtimeHoursThisMonth.toFixed(1)),
+        overtimeTrend,
       }
   };
 

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { XMarkIcon } from './icons/Icons';
 
@@ -51,6 +52,7 @@ const RegisterExternalCourseModal: React.FC<RegisterExternalCourseModalProps> = 
                             className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                             placeholder="مثال: Python for Everybody"
                             required
+                            spellCheck="true"
                         />
                     </div>
                      <div>
@@ -63,6 +65,7 @@ const RegisterExternalCourseModal: React.FC<RegisterExternalCourseModalProps> = 
                             className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                             placeholder="مثال: Coursera, Udemy"
                             required
+                            spellCheck="true"
                         />
                     </div>
                      <div>
@@ -74,6 +77,7 @@ const RegisterExternalCourseModal: React.FC<RegisterExternalCourseModalProps> = 
                             onChange={(e) => setUrl(e.target.value)}
                             className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                             placeholder="https://..."
+                            spellCheck="false"
                         />
                     </div>
                     <div className="flex justify-end gap-4 pt-4">

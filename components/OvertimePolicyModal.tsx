@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { OvertimePolicy, EmployeeProfile, Branch } from '../types';
@@ -77,6 +78,7 @@ const OvertimePolicyModal: React.FC<OvertimePolicyModalProps> = ({ isOpen, onClo
                                 onChange={e => handleChange('name', e.target.value)}
                                 className="w-full p-2 border border-slate-300 rounded-lg"
                                 required
+                                spellCheck="true"
                             />
                         </div>
                          {currentUser.role !== 'Branch Admin' && currentUser.role !== 'Admin' ? (

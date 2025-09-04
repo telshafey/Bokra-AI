@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, PlusCircleIcon, TrashIcon } from './icons/Icons';
 import type { OnboardingTemplate, OnboardingTask, OnboardingTaskCategory, OnboardingResponsible } from '../types';
@@ -82,6 +83,7 @@ const OnboardingTemplateModal: React.FC<OnboardingTemplateModalProps> = ({ isOpe
                             placeholder="اسم القالب (مثال: خطة تعيين للمطورين)"
                             className="w-full p-2 border border-slate-300 rounded-lg"
                             required
+                            spellCheck="true"
                         />
                         <textarea
                             name="description"
@@ -90,6 +92,7 @@ const OnboardingTemplateModal: React.FC<OnboardingTemplateModalProps> = ({ isOpe
                             placeholder="وصف موجز للقالب"
                             rows={2}
                             className="w-full p-2 border border-slate-300 rounded-lg"
+                            spellCheck="true"
                         />
                     </div>
 
@@ -104,6 +107,7 @@ const OnboardingTemplateModal: React.FC<OnboardingTemplateModalProps> = ({ isOpe
                                     placeholder={`عنوان المهمة ${index + 1}`}
                                     className="w-full p-1.5 border rounded"
                                     required
+                                    spellCheck="true"
                                 />
                                 <select value={task.category} onChange={e => handleTaskChange(index, 'category', e.target.value)} className="w-full md:w-48 p-1.5 border rounded bg-white text-sm">
                                     {ONBOARDING_TASK_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}

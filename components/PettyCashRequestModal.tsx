@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { XMarkIcon, ArrowUpTrayIcon } from './icons/Icons';
 import type { PettyCashRequest, PettyCashCategory } from '../types';
@@ -94,6 +95,7 @@ const PettyCashRequestModal: React.FC<PettyCashRequestModalProps> = ({ isOpen, o
                             className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-700 dark:text-white"
                             placeholder={t('expenses.modal.descriptionPlaceholder')}
                             required
+                            spellCheck="true"
                         ></textarea>
                     </div>
 

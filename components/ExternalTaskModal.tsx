@@ -89,11 +89,11 @@ const ExternalTaskModal: React.FC<ExternalTaskModalProps> = ({ isOpen, onClose, 
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">عنوان المهمة</label>
-                        <input type="text" name="title" value={taskData.title} onChange={handleChange} className="w-full p-2 border rounded-lg" required />
+                        <input type="text" name="title" value={taskData.title} onChange={handleChange} className="w-full p-2 border rounded-lg" required spellCheck="true" />
                     </div>
                      <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">الوصف</label>
-                        <textarea name="description" value={taskData.description} onChange={handleChange} rows={4} className="w-full p-2 border rounded-lg" />
+                        <textarea name="description" value={taskData.description} onChange={handleChange} rows={4} className="w-full p-2 border rounded-lg" spellCheck="true" />
                     </div>
                     <div className="flex justify-end gap-4 pt-4">
                         <button type="button" onClick={onClose} className="py-2 px-6 bg-slate-100 rounded-lg">إلغاء</button>

@@ -1,5 +1,6 @@
 
 
+
 import React, { useState } from 'react';
 import { SparklesIcon, DocumentDuplicateIcon, PrinterIcon } from './icons/Icons';
 import { generateContractWithAI } from '../services/geminiService';
@@ -94,6 +95,7 @@ const ContractsPage: React.FC = () => {
                             onChange={(e) => setPrompt(e.target.value)}
                             className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors bg-white dark:bg-slate-700 dark:text-white"
                             placeholder={t('contracts.promptPlaceholder')}
+                            spellCheck="true"
                         />
                          {error && <p className="text-sm text-red-600 text-center">{error}</p>}
                         <button

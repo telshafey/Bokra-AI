@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { Branch, EmployeeProfile, NewUserPayload, UserRole, AttendancePolicy, LeavePolicy, JobTitle, CompensationPackage, OvertimePolicy } from '../types';
@@ -25,13 +26,14 @@ const FormField: React.FC<{
     type?: string;
     required?: boolean;
     children?: React.ReactNode;
-}> = ({ label, name, value, onChange, type = 'text', required = true, children }) => (
+    spellCheck?: boolean;
+}> = ({ label, name, value, onChange, type = 'text', required = true, children, spellCheck }) => (
     <div>
-        <label htmlFor={name} className="block text-sm font-medium text-slate-700 mb-1">{label}</label>
+        <label htmlFor={name as string} className="block text-sm font-medium text-slate-700 mb-1">{label}</label>
         {children ? (
-            React.cloneElement(children as React.ReactElement<any>, { name, id: name, value, onChange, required, className: "w-full p-2 border border-slate-300 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500" })
+            React.cloneElement(children as React.ReactElement<any>, { name, id: name, value, onChange, required, spellCheck, className: "w-full p-2 border border-slate-300 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500" })
         ) : (
-            <input type={type} name={name} id={name} value={value} onChange={onChange} required={required} className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500" />
+            <input type={type} name={name as string} id={name as string} value={value} onChange={onChange} required={required} className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500" spellCheck={spellCheck} />
         )}
     </div>
 );
@@ -121,110 +123,115 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSave, userToEd
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4" onClick={onClose}>
-            <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                <div className="flex justify-between items-center mb-6 sticky top-0 bg-white pt-0 pb-4 z-10">
-                    <h2 className="text-2xl font-bold text-slate-800">{modalTitle}</h2>
-                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600"><XMarkIcon className="w-7 h-7" /></button>
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{modalTitle}</h2>
+                    <button onClick={onClose}><XMarkIcon className="w-7 h-7 text-slate-400" /></button>
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        {/* Left Column */}
+                        <div className="space-y-4">
+                            <h3 className="font-semibold text-lg border-b dark:border-slate-600 pb-2 text-slate-700 dark:text-slate-200">المعلومات الأساسية</h3>
+                            <FormField label="الاسم الكامل" name="name" value={formData.name} onChange={handleChange} spellCheck={true} />
+                            <FormField label="البريد الإلكتروني للعمل" name="workEmail" value={formData.workEmail} onChange={handleChange} type="email" spellCheck={false} />
+                            <FormField label="رقم الهاتف" name="phone" value={formData.phone} onChange={handleChange} spellCheck={false} />
 
-                    {/* Job Information Section */}
-                    <section>
-                        <h3 className="text-lg font-semibold text-slate-700 mb-4 col-span-full border-b pb-2">المعلومات الوظيفية</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <FormField label="الاسم الكامل" name="name" value={formData.name} onChange={handleChange} />
+                            <h3 className="font-semibold text-lg border-b dark:border-slate-600 pb-2 mt-4 text-slate-700 dark:text-slate-200">المعلومات الوظيفية</h3>
                             <FormField label="المسمى الوظيفي" name="jobTitleId" value={formData.jobTitleId} onChange={handleChange}>
-                                <select><option value="">-- اختر --</option>{jobTitles.map(jt => <option key={jt.id} value={jt.id}>{t(jt.nameKey)}</option>)}</select>
-                            </FormField>
-                             <FormField label="القسم" name="departmentKey" value={formData.departmentKey} onChange={handleChange}>
                                 <select>
-                                    {departmentKeys.map(key => <option key={key} value={key}>{t(`departments.${key}`)}</option>)}
+                                    <option value="">-- اختر --</option>
+                                    {jobTitles.map(jt => <option key={jt.id} value={jt.id}>{t(jt.nameKey)}</option>)}
                                 </select>
                             </FormField>
-                            <FormField label="تاريخ التعيين" name="hireDate" value={formData.hireDate} onChange={handleChange} type="date" />
-                             <FormField label="الراتب الأساسي" name="baseSalary" value={String(formData.baseSalary || '')} onChange={handleChange} type="number" />
-                            <FormField label="الفرع" name="branchId" value={formData.branchId} onChange={handleChange}>
-                                <select>{branches.map(b => <option key={b.id} value={b.id}>{t(b.nameKey)}</option>)}</select>
-                            </FormField>
-                             <FormField label="المدير المباشر" name="managerId" value={formData.managerId} onChange={handleChange} required={false}>
-                                <select><option value="">لا يوجد</option>{managers.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}</select>
-                            </FormField>
-                            <FormField label="الدور (Role)" name="role" value={formData.role} onChange={handleChange}>
-                                <select>{roles.map(r => <option key={r} value={r}>{r}</option>)}</select>
-                            </FormField>
-                             <FormField label="حزمة التعويضات" name="compensationPackageId" value={formData.compensationPackageId} onChange={handleChange} required={false}>
+                            <FormField label="القسم" name="departmentKey" value={formData.departmentKey} onChange={handleChange}>
                                 <select>
-                                    <option value="">-- اختر حزمة --</option>
-                                    {compensationPackages.map(pkg => <option key={pkg.id} value={pkg.id}>{pkg.name}</option>)}
+                                    {departmentKeys.map(d => <option key={d} value={d}>{t(`departments.${d}`)}</option>)}
+                                </select>
+                            </FormField>
+                            <FormField label="الفرع" name="branchId" value={formData.branchId} onChange={handleChange}>
+                                <select>
+                                    {branches.map(b => <option key={b.id} value={b.id}>{t(b.nameKey)}</option>)}
+                                </select>
+                            </FormField>
+                            <FormField label="المدير المباشر" name="managerId" value={formData.managerId} onChange={handleChange} required={false}>
+                                <select>
+                                    <option value="">-- لا يوجد --</option>
+                                    {managers.map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
+                                </select>
+                            </FormField>
+                            <FormField label="تاريخ التعيين" name="hireDate" value={formData.hireDate} onChange={handleChange} type="date"/>
+                            <FormField label="صلاحية النظام (Role)" name="role" value={formData.role} onChange={handleChange}>
+                                <select>
+                                    {roles.map(r => <option key={r} value={r}>{r}</option>)}
+                                </select>
+                            </FormField>
+                        </div>
+
+                        {/* Right Column */}
+                        <div className="space-y-4">
+                            <h3 className="font-semibold text-lg border-b dark:border-slate-600 pb-2 text-slate-700 dark:text-slate-200">التعويضات والسياسات</h3>
+                            <FormField label="الراتب الأساسي" name="baseSalary" value={String(formData.baseSalary || '')} onChange={handleChange} type="number" required={false}/>
+                            <FormField label="حزمة التعويضات" name="compensationPackageId" value={formData.compensationPackageId} onChange={handleChange} required={false}>
+                                <select>
+                                    <option value="">-- لا يوجد --</option>
+                                    {compensationPackages.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                                 </select>
                             </FormField>
                             <FormField label="سياسة الحضور" name="attendancePolicyId" value={formData.attendancePolicyId} onChange={handleChange} required={false}>
                                 <select>
-                                    <option value="">بدون سياسة</option>
-                                    {attendancePolicies
-                                        .filter(p => p.status === 'Active')
-                                        .map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                                    <option value="">-- لا يوجد --</option>
+                                    {attendancePolicies.filter(p => p.status === 'Active').map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                                 </select>
                             </FormField>
                             <FormField label="سياسة الوقت الإضافي" name="overtimePolicyId" value={formData.overtimePolicyId} onChange={handleChange} required={false}>
                                 <select>
-                                    <option value="">بدون سياسة</option>
-                                    {overtimePolicies
-                                        .filter(p => p.status === 'Active')
-                                        .map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                                    <option value="">-- لا يوجد --</option>
+                                    {overtimePolicies.filter(p => p.status === 'Active').map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
                                 </select>
                             </FormField>
-                             <FormField label="سياسة الإجازات" name="leavePolicyId" value={formData.leavePolicyId} onChange={handleChange} required={false}>
-                                 <select>
-                                    <option value="">بدون سياسة</option>
-                                    {leavePolicies
-                                        .filter(p => p.status === 'Active')
-                                        .map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
-                                 </select>
+                            <FormField label="سياسة الإجازات" name="leavePolicyId" value={formData.leavePolicyId} onChange={handleChange} required={false}>
+                                <select>
+                                    <option value="">-- لا يوجد --</option>
+                                    {leavePolicies.filter(p => p.status === 'Active').map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+                                </select>
+                            </FormField>
+                            <h3 className="font-semibold text-lg border-b dark:border-slate-600 pb-2 mt-4 text-slate-700 dark:text-slate-200">المعلومات الشخصية</h3>
+                            <FormField label="البريد الإلكتروني الشخصي" name="personalEmail" value={formData.personalEmail} onChange={handleChange} type="email" required={false} spellCheck={false}/>
+                            <FormField label="تاريخ الميلاد" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} type="date" required={false}/>
+                            <FormField label="الجنسية" name="nationality" value={formData.nationality} onChange={handleChange} required={false} spellCheck={true}/>
+                            <FormField label="الرقم القومي" name="nationalId" value={formData.nationalId} onChange={handleChange} required={false} spellCheck={false}/>
+                            <FormField label="الحالة الاجتماعية" name="maritalStatus" value={formData.maritalStatus} onChange={handleChange} required={false}>
+                                <select>
+                                    <option value="أعزب">أعزب</option>
+                                    <option value="متزوج">متزوج</option>
+                                </select>
+                            </FormField>
+                            <FormField label="الجنس" name="gender" value={formData.gender} onChange={handleChange} required={false}>
+                                <select>
+                                    <option value="Male">ذكر</option>
+                                    <option value="Female">أنثى</option>
+                                </select>
+                            </FormField>
+                            <FormField label="الديانة" name="religion" value={formData.religion} onChange={handleChange} required={false}>
+                                <select>
+                                    <option value="Muslim">مسلم</option>
+                                    <option value="Christian">مسيحي</option>
+                                </select>
+                            </FormField>
+                            <FormField label="العنوان" name="address" value={formData.address} onChange={handleChange} required={false} spellCheck={true}>
+                                <textarea rows={2} />
                             </FormField>
                         </div>
-                    </section>
+                    </div>
 
-                    {/* Contact Information Section */}
-                    <section>
-                        <h3 className="text-lg font-semibold text-slate-700 mb-4 col-span-full border-b pb-2">معلومات الاتصال</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <FormField label="البريد الإلكتروني للعمل" name="workEmail" value={formData.workEmail} onChange={handleChange} type="email" />
-                            <FormField label="رقم الهاتف" name="phone" value={formData.phone} onChange={handleChange} type="tel" />
-                            <FormField label="البريد الإلكتروني الشخصي" name="personalEmail" value={formData.personalEmail} onChange={handleChange} type="email" required={false} />
-                        </div>
-                    </section>
-                    
-                    {/* Personal Information Section */}
-                    <section>
-                        <h3 className="text-lg font-semibold text-slate-700 mb-4 col-span-full border-b pb-2">المعلومات الشخصية</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <FormField label="تاريخ الميلاد" name="dateOfBirth" value={formData.dateOfBirth} onChange={handleChange} type="date" />
-                            <FormField label="الجنسية" name="nationality" value={formData.nationality} onChange={handleChange} />
-                            <FormField label="الرقم القومي" name="nationalId" value={formData.nationalId} onChange={handleChange} />
-                             <FormField label="الحالة الاجتماعية" name="maritalStatus" value={formData.maritalStatus} onChange={handleChange}>
-                                <select><option value="أعزب">أعزب</option><option value="متزوج">متزوج</option></select>
-                            </FormField>
-                            <FormField label="الجنس" name="gender" value={formData.gender} onChange={handleChange}>
-                                <select><option value="Male">ذكر</option><option value="Female">أنثى</option></select>
-                            </FormField>
-                            <FormField label="الديانة" name="religion" value={formData.religion} onChange={handleChange}>
-                                <select><option value="Muslim">مسلم</option><option value="Christian">مسيحي</option></select>
-                            </FormField>
-                        </div>
-                    </section>
-
-                     {/* Address Section */}
-                    <section>
-                        <h3 className="text-lg font-semibold text-slate-700 mb-4 col-span-full border-b pb-2">العنوان</h3>
-                        <FormField label="العنوان بالتفصيل" name="address" value={formData.address} onChange={handleChange}>
-                           <textarea rows={3}></textarea>
-                        </FormField>
-                    </section>
-
-                     <div className="flex justify-end gap-4 pt-6">
-                        <button type="button" onClick={onClose} className="py-2 px-6 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200">إلغاء</button>
-                        <button type="submit" className="py-2 px-6 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 shadow-sm">{saveButtonText}</button>
+                    <div className="flex justify-end gap-4 pt-6 border-t dark:border-slate-600 mt-6">
+                        <button type="button" onClick={onClose} className="py-2 px-6 bg-slate-100 dark:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg font-semibold hover:bg-slate-200 dark:hover:bg-slate-500">
+                            إلغاء
+                        </button>
+                        <button type="submit" className="py-2 px-6 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 shadow-sm">
+                            {saveButtonText}
+                        </button>
                     </div>
                 </form>
             </div>

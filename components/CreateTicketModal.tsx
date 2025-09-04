@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import { SupportTicket, TicketCategory, TicketPriority } from '../types';
@@ -64,6 +65,7 @@ const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ isOpen, onClose, 
                             className="w-full p-2 border border-slate-300 rounded-lg"
                             placeholder={t('supportTickets.createModal.subjectPlaceholder')}
                             required
+                            spellCheck="true"
                         />
                     </div>
                     <div>
@@ -75,6 +77,7 @@ const CreateTicketModal: React.FC<CreateTicketModalProps> = ({ isOpen, onClose, 
                             className="w-full p-2 border border-slate-300 rounded-lg"
                             placeholder={t('supportTickets.createModal.descriptionPlaceholder')}
                             required
+                            spellCheck="true"
                         ></textarea>
                     </div>
                     <div className="flex justify-end gap-4 pt-4">

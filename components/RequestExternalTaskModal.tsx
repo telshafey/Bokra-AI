@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import { useTranslation } from './contexts/LanguageContext';
@@ -46,7 +47,7 @@ const RequestExternalTaskModal: React.FC<RequestExternalTaskModalProps> = ({ isO
                 <form onSubmit={handleSubmit} className="space-y-4">
                      <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">{t('myTasks.modal.taskTitle')}</label>
-                        <input type="text" value={title} onChange={e => setTitle(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg" required />
+                        <input type="text" value={title} onChange={e => setTitle(e.target.value)} className="w-full p-2 border border-slate-300 rounded-lg" required spellCheck="true" />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                          <div>
@@ -64,7 +65,7 @@ const RequestExternalTaskModal: React.FC<RequestExternalTaskModalProps> = ({ isO
                     </div>
                      <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">{t('myTasks.modal.description')}</label>
-                        <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3} className="w-full p-2 border border-slate-300 rounded-lg" />
+                        <textarea value={description} onChange={e => setDescription(e.target.value)} rows={3} className="w-full p-2 border border-slate-300 rounded-lg" spellCheck="true" />
                     </div>
                      <div className="flex justify-end gap-4 pt-4">
                         <button type="button" onClick={onClose} className="py-2 px-6 bg-slate-100 rounded-lg font-semibold hover:bg-slate-200">{t('general.cancel')}</button>

@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useEffect } from 'react';
 import type { PerformanceReview, ReviewStatus } from '../types';
 import { SparklesIcon } from './icons/Icons';
@@ -65,6 +66,7 @@ const ReviewField: React.FC<ReviewFieldProps> = ({ label, value, isEditing, onCh
                     onChange={(e) => onChange(e.target.value)}
                     className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm dark:bg-slate-900 dark:border-slate-600 dark:text-white"
                     placeholder={t('performanceReview.notesPlaceholder')}
+                    spellCheck="true"
                 />
                 <AIFeedbackButton onClick={onGenerate} isLoading={isLoading} />
             </div>

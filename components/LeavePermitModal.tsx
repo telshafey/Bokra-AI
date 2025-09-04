@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { LeavePermitRequest, AttendancePolicy } from '../types';
@@ -119,6 +120,7 @@ const LeavePermitModal: React.FC<LeavePermitModalProps> = ({ isOpen, onClose, on
                             className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-700 dark:text-white"
                             placeholder={t('leave.permitReasonPlaceholder')}
                             required
+                            spellCheck="true"
                         ></textarea>
                     </div>
 

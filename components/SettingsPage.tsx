@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { BellIcon, LanguageIcon, SunIcon, MoonIcon, LockClosedIcon, UserCircleIcon, KeyIcon, CogIcon, BuildingOfficeIcon, ArrowUpTrayIcon } from './icons/Icons';
 import ChangePasswordModal from './ChangePasswordModal';
@@ -164,6 +165,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ theme, setTheme, currentUse
                             onBlur={handleCompanyNameSave}
                             onKeyDown={(e) => e.key === 'Enter' && handleCompanyNameSave()}
                             className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white"
+                            spellCheck="true"
                         />
                      </div>
                      <div>

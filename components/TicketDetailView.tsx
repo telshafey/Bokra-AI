@@ -1,4 +1,5 @@
 
+
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { EmployeeProfile, SupportTicket, TicketStatus } from '../types';
 import { ArrowRightIcon, PaperAirplaneIcon } from './icons/Icons';
@@ -99,6 +100,7 @@ const TicketDetailView: React.FC<TicketDetailViewProps> = ({ ticket, currentUser
                             onChange={e => setNewMessage(e.target.value)}
                             placeholder="اكتب ردك هنا..."
                             className="flex-1 p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
+                            spellCheck="true"
                         />
                         <button type="submit" className="bg-sky-600 text-white p-3 rounded-lg hover:bg-sky-700 self-stretch">
                             <PaperAirplaneIcon className="w-6 h-6" />

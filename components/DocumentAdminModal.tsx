@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { EmployeeDocument, EmployeeProfile, DocumentType } from '../types';
@@ -84,7 +85,7 @@ const DocumentAdminModal: React.FC<DocumentAdminModalProps> = ({ isOpen, onClose
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">اسم/عنوان المستند</label>
-                        <input type="text" name="name" value={doc.name} onChange={handleChange} placeholder="مثال: عقد عمل 2024" className="w-full p-2 border rounded-lg" required />
+                        <input type="text" name="name" value={doc.name} onChange={handleChange} placeholder="مثال: عقد عمل 2024" className="w-full p-2 border rounded-lg" required spellCheck="true" />
                     </div>
                      <div>
                         <label className="block text-sm font-medium text-slate-700 mb-1">تاريخ انتهاء الصلاحية (إن وجد)</label>

@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { XMarkIcon, ArrowUpTrayIcon } from './icons/Icons';
 import type { Course, EmployeeCourse, CourseStatus } from '../types';
@@ -65,7 +66,7 @@ const SubmitCourseReportModal: React.FC<SubmitCourseReportModalProps> = ({ isOpe
                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                            <label htmlFor="result" className="block text-sm font-medium text-slate-700 mb-1">النتيجة</label>
-                           <input type="text" id="result" value={result} onChange={e => setResult(e.target.value)} placeholder="مثال: ناجح، 95/100" className="w-full p-2 border rounded-lg"/>
+                           <input type="text" id="result" value={result} onChange={e => setResult(e.target.value)} placeholder="مثال: ناجح، 95/100" className="w-full p-2 border rounded-lg" spellCheck="true"/>
                         </div>
                         <div>
                            <label htmlFor="performanceRating" className="block text-sm font-medium text-slate-700 mb-1">تقييم الأداء (1-5)</label>
@@ -82,6 +83,7 @@ const SubmitCourseReportModal: React.FC<SubmitCourseReportModalProps> = ({ isOpe
                             className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                             placeholder="مثال: أكملت الوحدة الثانية، وأرفقت شهادة الحضور..."
                             required
+                            spellCheck="true"
                         ></textarea>
                     </div>
                      <div>

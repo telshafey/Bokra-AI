@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { JobTitle } from '../types';
@@ -66,6 +67,7 @@ const JobTitleModal: React.FC<JobTitleModalProps> = ({ isOpen, onClose, onSave, 
                             placeholder="مثال: مهندس برمجيات"
                             required
                             autoFocus
+                            spellCheck="true"
                         />
                     </div>
                     <div className="flex justify-end gap-4 pt-6">

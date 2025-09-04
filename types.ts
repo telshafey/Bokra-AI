@@ -274,6 +274,8 @@ export interface Stat {
   value: string;
   icon: React.FC<React.SVGProps<SVGSVGElement>>;
   color: string;
+  chartData?: { name: string; value: number }[];
+  chartColor?: string;
 }
 
 export interface Activity {
@@ -819,6 +821,7 @@ export interface RecentActivityItem {
     text: string;
     timestamp: string;
     pageKey: string;
+    details?: string;
 }
 
 export interface AttentionItem {
@@ -841,6 +844,7 @@ export interface EmployeeDashboardData {
         remainingAnnualLeave: number;
         pendingRequestsCount: number;
         overtimeHoursThisMonth: number;
+        overtimeTrend: { name: string; value: number }[];
     };
 }
 

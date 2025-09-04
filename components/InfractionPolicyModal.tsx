@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, PlusCircleIcon, TrashIcon } from './icons/Icons';
 import type { AttendancePolicy, LatenessTier } from '../types';
@@ -85,6 +86,7 @@ const InfractionPolicyModal: React.FC<InfractionPolicyModalProps> = ({ isOpen, o
                             onChange={e => handlePolicyChange('name', e.target.value)}
                             className="w-full p-2 border border-slate-300 rounded-lg"
                             required
+                            spellCheck="true"
                         />
                     </div>
 

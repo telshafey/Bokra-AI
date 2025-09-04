@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { XMarkIcon, ArrowUpTrayIcon } from './icons/Icons';
 import type { EmployeeDocument, DocumentType } from '../types';
@@ -75,7 +76,7 @@ const DocumentUploadModal: React.FC<DocumentUploadModalProps> = ({ isOpen, onClo
                     </div>
                      <div>
                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('myDocuments.uploadModal.docName')}</label>
-                        <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder={t('myDocuments.uploadModal.docNamePlaceholder')} className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg" required/>
+                        <input type="text" value={name} onChange={e => setName(e.target.value)} placeholder={t('myDocuments.uploadModal.docNamePlaceholder')} className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg" required spellCheck="true"/>
                     </div>
                     <div>
                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('myDocuments.uploadModal.attachFile')}</label>

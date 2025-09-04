@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { useUserContext } from './contexts/UserContext';
 import { useCompanyStructureContext } from './contexts/CompanyStructureContext';
@@ -49,6 +50,7 @@ const EmployeeDirectoryPage: React.FC = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder={t('employeeDirectory.searchPlaceholder')}
                         className="w-full p-3 pl-10 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                        spellCheck="true"
                     />
                     <MagnifyingGlassIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 </div>

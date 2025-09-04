@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import { MonthlyCheckIn, MonthlyCheckInRating } from '../types';
@@ -78,6 +79,7 @@ const MonthlyCheckInModal: React.FC<MonthlyCheckInModalProps> = ({ isOpen, onClo
                             className="w-full p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                             placeholder="اكتب ملاحظاتك حول أداء الموظف خلال هذا الشهر..."
                             required
+                            spellCheck="true"
                         ></textarea>
                     </div>
 
