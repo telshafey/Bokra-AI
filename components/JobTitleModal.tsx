@@ -13,12 +13,12 @@ interface JobTitleModalProps {
 }
 
 const JobTitleModal: React.FC<JobTitleModalProps> = ({ isOpen, onClose, onSave, jobTitleToEdit, parentId }) => {
-    const [name, setName] = useState('');
+    const [nameKey, setNameKey] = useState('');
 
     useEffect(() => {
         if (isOpen) {
             // FIX: Changed property access from `name` to `nameKey` to match the `JobTitle` type definition.
-            setName(jobTitleToEdit?.nameKey || '');
+            setNameKey(jobTitleToEdit?.nameKey || '');
         }
     }, [isOpen, jobTitleToEdit]);
 
@@ -26,11 +26,11 @@ const JobTitleModal: React.FC<JobTitleModalProps> = ({ isOpen, onClose, onSave, 
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (name.trim()) {
+        if (nameKey.trim()) {
             const jobTitleData: JobTitle = {
                 id: jobTitleToEdit?.id || `jt-${Date.now()}`,
                 // FIX: Changed property from `name` to `nameKey` to align with the `JobTitle` type definition.
-                nameKey: name.trim(),
+                nameKey: nameKey.trim(),
                 parentId: jobTitleToEdit?.parentId ?? parentId,
             };
             onSave(jobTitleData);
@@ -57,14 +57,14 @@ const JobTitleModal: React.FC<JobTitleModalProps> = ({ isOpen, onClose, onSave, 
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label htmlFor="jobTitleName" className="block text-sm font-medium text-slate-700 mb-1">اسم المنصب</label>
+                        <label htmlFor="jobTitleName" className="block text-sm font-medium text-slate-700 mb-1">اسم المنصب (أو مفتاح الترجمة)</label>
                         <input
                             id="jobTitleName"
                             type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={nameKey}
+                            onChange={(e) => setNameKey(e.target.value)}
                             className="w-full p-2 border border-slate-300 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                            placeholder="مثال: مهندس برمجيات"
+                            placeholder="مثال: مهندس برمجيات أو jobTitles.se"
                             required
                             autoFocus
                             spellCheck="true"

@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import { HomeIcon, CalendarIcon, DocumentTextIcon, UserCircleIcon, CogIcon, ArrowLeftOnRectangleIcon, BriefcaseIcon, BanknotesIcon, ChartPieIcon, AcademicCapIcon, UserGroupIcon, ClipboardDocumentListIcon, DocumentCheckIcon, BuildingOfficeIcon, PresentationChartLineIcon, CheckCircleIcon, ShieldCheckIcon, ShieldExclamationIcon, BookOpenIcon, UsersIcon, DocumentDuplicateIcon, ClockIcon, QuestionMarkCircleIcon, CheckBadgeIcon, ArchiveBoxIcon, ClipboardDocumentCheckIcon, UserPlusIcon, UserMinusIcon, ChevronDownIcon, ExclamationTriangleIcon, ArrowsUpDownIcon, ChevronUpIcon, ComputerDesktopIcon, SitemapIcon, LifebuoyIcon, IdentificationIcon } from './components/icons/Icons';
 // FIX: Imported the missing 'ExternalTask' type to resolve reference errors.
@@ -951,7 +952,7 @@ export const MOCK_EXTERNAL_TASKS: ExternalTask[] = [
 export const MOCK_HELP_CATEGORIES: HelpCategory[] = [
     { id: 'cat-leave', name: { ar: 'الإجازات', en: 'Leave Policies' }, icon: BriefcaseIcon },
     // FIX: Added the missing 'en' property to the 'name' object to match the 'BilingualText' type.
-    { id: 'cat-attendance', name: { ar: 'الحصص', en: 'Attendance' }, icon: ClockIcon },
+    { id: 'cat-attendance', name: { ar: 'الحضور', en: 'Attendance' }, icon: ClockIcon },
     { id: 'cat-work-hours', name: { ar: 'ساعات العمل والإضافي', en: 'Work Hours & Overtime' }, icon: ClockIcon },
     { id: 'cat-contracts', name: { ar: 'العقود وإنهاء الخدمة', en: 'Contracts & Termination' }, icon: DocumentDuplicateIcon },
     { id: 'cat-payroll', name: { ar: 'الرواتب', en: 'Payroll' }, icon: BanknotesIcon },

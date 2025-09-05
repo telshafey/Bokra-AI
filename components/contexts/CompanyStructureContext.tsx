@@ -1,4 +1,5 @@
 
+
 import React, { createContext, useContext, useState } from 'react';
 import { Branch, JobTitle, CompanyStructureContextType, CompanyStructureProviderProps } from '../../types';
 import { COMPANY_BRANCHES, MOCK_JOB_TITLES } from '../../constants';
@@ -15,20 +16,20 @@ export const CompanyStructureProvider: React.FC<CompanyStructureProviderProps> =
     const [branches, setBranches] = useState<Branch[]>(COMPANY_BRANCHES);
     const [jobTitles, setJobTitles] = useState<JobTitle[]>(MOCK_JOB_TITLES);
 
-    const addBranch = (name: string): Branch => {
+    const addBranch = (nameKey: string): Branch => {
         const newBranch: Branch = {
-            id: `branch-${name.toLowerCase().replace(/\s/g, '-')}-${Date.now()}`,
+            id: `branch-${nameKey.toLowerCase().replace(/\s/g, '-')}-${Date.now()}`,
             // FIX: Changed property from `name` to `nameKey` to align with the `Branch` type definition.
-            nameKey: name,
+            nameKey: nameKey,
             status: 'Active'
         };
         setBranches(prev => [...prev, newBranch]);
         return newBranch;
     };
 
-    const updateBranch = (id: string, name: string) => {
+    const updateBranch = (id: string, nameKey: string) => {
         // FIX: Changed property from `name` to `nameKey` to align with the `Branch` type definition.
-        setBranches(prev => prev.map(b => b.id === id ? { ...b, nameKey: name } : b));
+        setBranches(prev => prev.map(b => b.id === id ? { ...b, nameKey: nameKey } : b));
     };
 
     const archiveBranch = (id: string) => {

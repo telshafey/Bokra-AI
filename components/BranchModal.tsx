@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { Branch, EmployeeProfile } from '../types';
@@ -6,24 +7,24 @@ import type { Branch, EmployeeProfile } from '../types';
 interface BranchModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (name: string, managerId: string) => void;
+    onSave: (nameKey: string, managerId: string) => void;
     branchToEdit: Branch | null;
     employees: EmployeeProfile[];
 }
 
 const BranchModal: React.FC<BranchModalProps> = ({ isOpen, onClose, onSave, branchToEdit, employees }) => {
-    const [name, setName] = useState('');
+    const [nameKey, setNameKey] = useState('');
     const [selectedManagerId, setSelectedManagerId] = useState('');
 
     useEffect(() => {
         if (isOpen) {
             if (branchToEdit) {
                 // FIX: Changed property access from `name` to `nameKey` to match the `Branch` type definition.
-                setName(branchToEdit.nameKey);
+                setNameKey(branchToEdit.nameKey);
                 const currentManager = employees.find(e => e.branchId === branchToEdit.id && e.role === 'Branch Admin');
                 setSelectedManagerId(currentManager?.id || '');
             } else {
-                setName('');
+                setNameKey('');
                 setSelectedManagerId('');
             }
         }
@@ -33,8 +34,8 @@ const BranchModal: React.FC<BranchModalProps> = ({ isOpen, onClose, onSave, bran
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (name.trim()) {
-            onSave(name.trim(), selectedManagerId);
+        if (nameKey.trim()) {
+            onSave(nameKey.trim(), selectedManagerId);
         }
     };
 
@@ -58,14 +59,14 @@ const BranchModal: React.FC<BranchModalProps> = ({ isOpen, onClose, onSave, bran
                 </div>
                 <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label htmlFor="branchName" className="block text-sm font-medium text-slate-700 mb-1">اسم الفرع</label>
+                        <label htmlFor="branchName" className="block text-sm font-medium text-slate-700 mb-1">اسم الفرع (أو مفتاح الترجمة)</label>
                         <input
                             id="branchName"
                             type="text"
-                            value={name}
-                            onChange={(e) => setName(e.target.value)}
+                            value={nameKey}
+                            onChange={(e) => setNameKey(e.target.value)}
                             className="w-full p-2 border border-slate-300 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                            placeholder="مثال: فرع المعادي"
+                            placeholder="مثال: فرع المعادي أو branches.maadi"
                             required
                             autoFocus
                         />

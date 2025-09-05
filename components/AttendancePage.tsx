@@ -1,4 +1,5 @@
 
+
 import React, { useState, useMemo } from 'react';
 import { AttendanceRecord, EmployeeInfraction, EmployeeProfile, AttendancePolicy, AttendanceAdjustmentRequest, LeavePermitRequest, RequestStatus, AttendanceEvent, ExternalTask, AttendanceStatus, Branch } from '../types';
 import AttendanceSummary from './AttendanceSummary';
@@ -27,7 +28,8 @@ interface AttendancePageProps {
   externalTasks: ExternalTask[];
 }
 
-const EmployeeAttendanceView: React.FC<AttendancePageProps> = ({ records, attendanceEvents, infractions, currentUser, externalTasks }) => {
+// FIX: Renamed component from EmployeeAttendanceView to AttendancePage to match default import in App.tsx.
+const AttendancePage: React.FC<AttendancePageProps> = ({ records, attendanceEvents, infractions, currentUser, externalTasks }) => {
   const { t } = useTranslation();
   const [isExcuseModalOpen, setIsExcuseModalOpen] = useState(false);
   const [isPermitModalOpen, setIsPermitModalOpen] = useState(false);
@@ -94,146 +96,50 @@ const EmployeeAttendanceView: React.FC<AttendancePageProps> = ({ records, attend
       </div>
       <div className="bg-white p-6 rounded-xl shadow-md transition-shadow hover:shadow-lg">
             <h2 className="text-xl font-bold mb-4 text-slate-700">{t('attendance.requestsLog')}</h2>
-            <div className="overflow-x-auto max-h-[60vh] overflow-y-auto">
-                <table className="w-full text-sm text-right text-slate-500">
-                    <thead className="text-xs text-slate-700 uppercase bg-slate-100 sticky top-0">
-                        <tr>
-                            <th scope="col" className="px-6 py-3">{t('general.type')}</th><th scope="col" className="px-6 py-3">{t('general.date')}</th><th scope="col" className="px-6 py-3">{t('general.details')}</th><th scope="col" className="px-6 py-3">{t('general.status')}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {combinedRequests.map(req => (
-                            <tr key={req.id} className="bg-white border-b hover:bg-slate-50">
-                                <td className="px-6 py-4 font-medium text-slate-900">{req.type}</td>
-                                <td className="px-6 py-4">{new Date(req.date).toLocaleDateString('ar-EG-u-nu-latn')}</td>
-                                <td className="px-6 py-4">{req.details}</td>
-                                <td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_BADGE[req.status]}`}>{t(`requestStatus.${req.status}`)}</span></td>
+            {combinedRequests.length > 0 ? (
+                 <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-right text-slate-500">
+                        <thead className="text-xs text-slate-700 uppercase bg-slate-100">
+                            <tr>
+                                <th className="px-6 py-3">التاريخ</th>
+                                <th className="px-6 py-3">النوع</th>
+                                <th className="px-6 py-3">التفاصيل</th>
+                                <th className="px-6 py-3">الحالة</th>
                             </tr>
-                        ))}
-                         {combinedRequests.length === 0 && (<tr><td colSpan={4} className="text-center py-12 text-slate-500"><p className="font-semibold text-lg">{t('attendance.noRequests')}</p></td></tr>)}
-                    </tbody>
-                </table>
-            </div>
+                        </thead>
+                        <tbody>
+                            {combinedRequests.map(req => (
+                                <tr key={req.id} className="border-b">
+                                    <td className="px-6 py-4">{new Date(req.date).toLocaleDateString('ar-EG-u-nu-latn')}</td>
+                                    <td className="px-6 py-4">{req.type}</td>
+                                    <td className="px-6 py-4">{req.details}</td>
+                                    <td className="px-6 py-4"><span className={`px-2 py-1 rounded-full text-xs font-semibold ${STATUS_BADGE[req.status]}`}>{t(`requestStatus.${req.status}`)}</span></td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            ) : (
+                <div className="text-center py-8 text-slate-500">
+                    <p>{t('attendance.noRequests')}</p>
+                </div>
+            )}
         </div>
-       <AttendanceAdjustmentModal isOpen={isExcuseModalOpen} onClose={() => setIsExcuseModalOpen(false)} onSubmit={(data) => handleNewAttendanceAdjustmentRequest({...data, employeeId: currentUser.id})} />
-       {/* FIX: Correctly pass the employeeId inside the new request object to resolve the type error. */}
-       <LeavePermitModal isOpen={isPermitModalOpen} onClose={() => setIsPermitModalOpen(false)} onSubmit={(data) => handleNewLeavePermitRequest({...data, employeeId: currentUser.id})} attendancePolicy={attendancePolicy} permitRequests={userPermitRequests} />
+      
+      <AttendanceAdjustmentModal 
+        isOpen={isExcuseModalOpen}
+        onClose={() => setIsExcuseModalOpen(false)}
+        onSubmit={(data) => handleNewAttendanceAdjustmentRequest({ ...data, employeeId: currentUser.id })}
+      />
+      <LeavePermitModal
+        isOpen={isPermitModalOpen}
+        onClose={() => setIsPermitModalOpen(false)}
+        onSubmit={(data) => handleNewLeavePermitRequest({ ...data, employeeId: currentUser.id })}
+        attendancePolicy={attendancePolicy}
+        permitRequests={userPermitRequests}
+      />
     </div>
   );
-};
-
-
-const ManagerAttendanceView: React.FC<AttendancePageProps> = ({ records, attendanceEvents, currentUser }) => {
-    const { t } = useTranslation();
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
-    const [statusFilter, setStatusFilter] = useState<AttendanceStatus | 'all'>('all');
-    const [departmentFilter, setDepartmentFilter] = useState('all');
-    const [branchFilter, setBranchFilter] = useState('all');
-    const { attendancePolicies } = usePoliciesContext();
-
-    const { teamMembers, departments, branches } = useMemo(() => {
-        const teamMemberIds = new Set(
-            ALL_EMPLOYEES.filter(e => e.managerId === currentUser.id).map(e => e.id)
-        );
-        if (currentUser.role === 'HR Manager' || currentUser.role === 'General Manager') {
-            ALL_EMPLOYEES.forEach(e => teamMemberIds.add(e.id));
-        }
-        const members = ALL_EMPLOYEES.filter(emp => teamMemberIds.has(emp.id));
-        // FIX: Replaced property access from `department` to `departmentKey` to match the type definition.
-        const depts = [...new Set(members.map(e => e.departmentKey))];
-        const branchIds = [...new Set(members.map(e => e.branchId))];
-        const brnchs = COMPANY_BRANCHES.filter(b => branchIds.includes(b.id));
-        return { teamMembers: members, departments: depts, branches: brnchs };
-    }, [currentUser]);
-
-    const filteredEmployees = useMemo(() => {
-        const dailyStatuses = new Map<string, AttendanceStatus>();
-        records.forEach(r => {
-            if (r.date === selectedDate) {
-                dailyStatuses.set(r.employeeId, r.status);
-            }
-        });
-
-        return teamMembers.filter(emp => {
-            const searchTermMatch = emp.name.toLowerCase().includes(searchTerm.toLowerCase());
-            const branchMatch = branchFilter === 'all' || emp.branchId === branchFilter;
-            // FIX: Replaced property access from `department` to `departmentKey` to match the type definition.
-            const deptMatch = departmentFilter === 'all' || emp.departmentKey === departmentFilter;
-            
-            const empStatusForDay = dailyStatuses.get(emp.id) || 'Absent';
-            const statusMatch = statusFilter === 'all' || empStatusForDay === statusFilter;
-            
-            return searchTermMatch && branchMatch && deptMatch && statusMatch;
-        });
-    }, [teamMembers, searchTerm, selectedDate, statusFilter, departmentFilter, branchFilter, records]);
-
-    return (
-        <div className="space-y-6">
-            <div className="bg-white p-4 rounded-xl shadow-md space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-                    <div className="relative lg:col-span-2">
-                        <input
-                            type="text"
-                            placeholder={t('attendance.searchEmployee')}
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full p-2 pr-10 border border-slate-300 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                        />
-                         <MagnifyingGlassIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
-                    </div>
-                    <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} className="p-2 border border-slate-300 rounded-lg bg-slate-50"/>
-                    <select value={statusFilter} onChange={e => setStatusFilter(e.target.value as any)} className="p-2 border border-slate-300 rounded-lg bg-slate-50">
-                        <option value="all">{t('attendance.allStatuses')}</option>
-                        <option value="Present">{t('attendance.statuses.Present')}</option>
-                        <option value="Absent">{t('attendance.statuses.Absent')}</option>
-                        <option value="Leave">{t('attendance.statuses.Leave')}</option>
-                    </select>
-                    <select value={departmentFilter} onChange={e => setDepartmentFilter(e.target.value)} className="p-2 border border-slate-300 rounded-lg bg-slate-50">
-                        <option value="all">{t('attendance.allDepartments')}</option>
-                        {departments.map(d => <option key={d} value={d}>{t(`departments.${d}`)}</option>)}
-                    </select>
-                     <select value={branchFilter} onChange={e => setBranchFilter(e.target.value)} className="p-2 border border-slate-300 rounded-lg bg-slate-50">
-                        <option value="all">{t('attendance.allBranches')}</option>
-                         {/* FIX: Replaced property access from `name` to `nameKey` and wrapped it in the translation function to match the type definition. */}
-                         {branches.map(b => <option key={b.id} value={b.id}>{t(b.nameKey)}</option>)}
-                    </select>
-                </div>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-                {filteredEmployees.map(employee => {
-                     const recordsForDay = records.filter(r => r.employeeId === employee.id && r.date === selectedDate);
-                     const eventsForDay = attendanceEvents.filter(e => e.employeeId === employee.id && e.timestamp.startsWith(selectedDate));
-                     const policy = attendancePolicies.find(p => p.id === employee.attendancePolicyId);
-                     return (
-                        <EmployeeAttendanceCard
-                            key={employee.id}
-                            employee={employee}
-                            recordsForDay={recordsForDay}
-                            eventsForDay={eventsForDay}
-                            policy={policy}
-                        />
-                     )
-                })}
-            </div>
-        </div>
-    )
-};
-
-const AttendancePage: React.FC<AttendancePageProps> = (props) => {
-  const isManagerView = useMemo(() => 
-    ['Super Admin', 'Admin', 'General Manager', 'HR Manager', 'Team Lead', 'Branch Admin'].includes(props.currentUser.role),
-    [props.currentUser.role]
-  );
-  
-  const uniqueEmployeeIds = useMemo(() => new Set(props.records.map(r => r.employeeId)), [props.records]);
-  
-  // A more robust check: is it a manager role AND are they looking at records for more than just themself?
-  if (isManagerView && (uniqueEmployeeIds.size > 1 || (uniqueEmployeeIds.size === 1 && !uniqueEmployeeIds.has(props.currentUser.id)))) {
-     return <ManagerAttendanceView {...props} />;
-  }
-  
-  return <EmployeeAttendanceView {...props} />;
 };
 
 export default AttendancePage;

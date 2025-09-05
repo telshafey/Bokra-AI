@@ -1,3 +1,5 @@
+
+
 import React, { useState, useMemo } from 'react';
 import type { Branch, EmployeeProfile } from '../types';
 import { PencilIcon, ArchiveBoxIcon, PlusCircleIcon } from './icons/Icons';
@@ -39,11 +41,11 @@ const BranchManagementPage: React.FC<BranchManagementPageProps> = ({ branches, e
         setEditingBranch(null);
     };
 
-    const handleSaveBranch = (name: string, managerId: string) => {
+    const handleSaveBranch = (nameKey: string, managerId: string) => {
         if (editingBranch) {
-            onUpdateBranch(editingBranch.id, name, managerId);
+            onUpdateBranch(editingBranch.id, nameKey, managerId);
         } else {
-            onAddBranch(name, managerId);
+            onAddBranch(nameKey, managerId);
         }
         handleCloseModal();
     };
