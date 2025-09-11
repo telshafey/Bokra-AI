@@ -1,4 +1,4 @@
-import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
+import { GoogleGenAI, Chat, GenerateContentResponse, Type } from "@google/genai";
 import type { EmployeeProfile } from '../types';
 import { Language } from '../components/contexts/LanguageContext';
 
@@ -136,39 +136,53 @@ export const generateContractWithAI = async (prompt: string, language: Language)
     }
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
+    const responseSchema = {
+        type: Type.OBJECT,
+        properties: {
+            contractText: {
+                type: Type.STRING,
+                description: "The full, legally sound employment contract text, formatted as a single string."
+            }
+        },
+        required: ["contractText"]
+    };
+
     const fullPrompt = language === 'ar' 
         ? `
-        You are an expert HR legal consultant specializing in Egyptian labor law. Your task is to generate a formal and complete employment contract in Arabic based on the provided key points.
-        The contract should be well-structured with clear clauses (e.g., parties, position, salary, duration, termination, governing law).
-        The output must be a single block of text representing the full contract, ready to be copied and pasted. Do not use markdown formatting.
-
-        Key Points provided by the user:
+        أنت خبير استشارات قانونية في الموارد البشرية متخصص في قانون العمل المصري. مهمتك هي إنشاء عقد عمل رسمي وكامل باللغة العربية بناءً على النقاط الرئيسية المقدمة.
+        يجب أن يكون العقد منظمًا بشكل جيد مع بنود واضحة (مثل، الأطراف، المنصب، الراتب، المدة، الإنهاء، القانون الحاكم).
+        
+        النقاط الرئيسية المقدمة من المستخدم:
         ---
         ${prompt}
         ---
 
-        Generate a comprehensive and legally sound employment contract in Arabic based on these points and compliant with Egyptian labor law.
+        أنشئ عقد عمل شامل وسليم قانونيًا باللغة العربية بناءً على هذه النقاط ومتوافق مع قانون العمل المصري. قم بإرجاع العقد في كائن JSON.
     `
         : `
         You are an expert HR legal consultant specializing in Egyptian labor law. Your task is to generate a formal and complete employment contract in English based on the provided key points.
         The contract should be well-structured with clear clauses (e.g., Parties, Position, Salary, Duration, Termination, Governing Law).
-        The output must be a single block of text representing the full contract, ready to be copied and pasted. Do not use markdown formatting.
 
         Key Points provided by the user:
         ---
         ${prompt}
         ---
 
-        Generate a comprehensive and legally sound employment contract in English based on these points and compliant with Egyptian labor law.
+        Generate a comprehensive and legally sound employment contract in English based on these points and compliant with Egyptian labor law. Return the contract in a JSON object.
     `;
     
     try {
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
             contents: fullPrompt,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema
+            }
         });
 
-        return response.text.trim();
+        const result = JSON.parse(response.text.trim());
+        return result.contractText || '';
 
     } catch (error) {
         console.error("Error generating contract with Gemini:", error);

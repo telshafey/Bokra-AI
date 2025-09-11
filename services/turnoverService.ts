@@ -1,4 +1,4 @@
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Type } from "@google/genai";
 import type { EmployeeProfile, TurnoverAnalysisResult } from '../types';
 import { Language } from "../components/contexts/LanguageContext";
 
@@ -29,10 +29,23 @@ export const getTurnoverPrediction = async (employee: EmployeeProfile, language:
         departmentKey: employee.departmentKey,
         title: employee.title,
     };
+    
+    const responseSchema = {
+        type: Type.OBJECT,
+        properties: {
+            riskLevel: { type: Type.STRING, enum: ["Low", "Medium", "High", "Unknown"] },
+            riskScore: { type: Type.NUMBER },
+            keyFactors: {
+                type: Type.ARRAY,
+                items: { type: Type.STRING }
+            }
+        },
+        required: ["riskLevel", "riskScore", "keyFactors"]
+    };
 
     const prompt = language === 'ar' ? `
         أنت خبير تحليل موارد بشرية. مهمتك هي توقع مخاطر تسرب الموظفين بناءً على البيانات المقدمة.
-        حلل بيانات الموظف المجهولة التالية وأرجع توقعاتك فقط ككائن JSON صالح بالهيكل التالي: { "riskLevel": "Low" | "Medium" | "High", "riskScore": number, "keyFactors": string[] }. لا تقم بتضمين أي نصوص أو شروحات أخرى أو تنسيق ماركداون مثل \`\`\`json.
+        حلل بيانات الموظف المجهولة التالية وأرجع توقعاتك ككائن JSON صالح بالهيكل المحدد.
         
         البيانات:
         ${JSON.stringify(employeeData, null, 2)}
@@ -40,7 +53,7 @@ export const getTurnoverPrediction = async (employee: EmployeeProfile, language:
         اعتبر عوامل مثل الرضا المنخفض، والأداء المنخفض، والوقت الطويل دون ترقية، والراتب الأقل من متوسط السوق كمؤشرات لمخاطر عالية. الأداء المرتفع المقترن بالرضا المنخفض والراتب الأقل من السوق هو عامل خطر عالٍ جدًا. الخدمة الطويلة مع الترقيات المستمرة والتقييمات الجيدة هي مخاطر منخفضة.
     ` : `
         You are an expert HR analyst. Your task is to predict the employee turnover risk based on the provided data.
-        Analyze the following anonymous employee data and return your prediction ONLY as a valid JSON object with the following structure: { "riskLevel": "Low" | "Medium" | "High", "riskScore": number, "keyFactors": string[] }. Do not include any other text, explanations, or markdown formatting like \`\`\`json.
+        Analyze the following anonymous employee data and return your prediction as a valid JSON object with the specified structure.
         
         Data:
         ${JSON.stringify(employeeData, null, 2)}
@@ -52,9 +65,13 @@ export const getTurnoverPrediction = async (employee: EmployeeProfile, language:
         const response = await ai.models.generateContent({
             model: "gemini-2.5-flash",
             contents: prompt,
+            config: {
+                responseMimeType: "application/json",
+                responseSchema,
+            },
         });
         
-        const jsonString = response.text.trim().replace(/^```json\s*|```\s*$/g, '');
+        const jsonString = response.text.trim();
         const result = JSON.parse(jsonString);
         return result as TurnoverAnalysisResult;
 
