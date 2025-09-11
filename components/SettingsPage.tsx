@@ -11,8 +11,8 @@ const ToggleSwitch: React.FC<{ label: string; enabled: boolean; setEnabled: (ena
         <span className="text-slate-700 dark:text-slate-300 font-medium">{label}</span>
         <button
             onClick={() => setEnabled(!enabled)}
-            className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500 ${
-                enabled ? 'bg-sky-600' : 'bg-slate-300 dark:bg-slate-600'
+            className={`relative inline-flex items-center h-6 rounded-full w-11 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 ${
+                enabled ? 'bg-primary-600' : 'bg-slate-300 dark:bg-slate-600'
             }`}
         >
             <span
@@ -40,7 +40,7 @@ const TabButton: React.FC<{ label: string, isActive: boolean, onClick: () => voi
         onClick={onClick}
         className={`px-4 py-2 text-sm font-semibold rounded-t-lg border-b-2 transition-colors ${
             isActive
-                ? 'border-sky-500 text-sky-600 dark:text-sky-400'
+                ? 'border-primary-500 text-primary-600 dark:text-primary-400'
                 : 'border-transparent text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200'
         }`}
     >
@@ -63,7 +63,6 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ theme, setTheme, currentUse
         setNotifications(prev => ({ ...prev, [key]: value }));
     };
 
-    // FIX: Added the missing `handleCompanyNameSave` function to resolve `Cannot find name 'handleCompanyNameSave'` error. This function saves the updated company name when the input field loses focus or when Enter is pressed.
     const handleCompanyNameSave = () => {
         if (editedCompanyName.trim() && editedCompanyName.trim() !== companyName) {
             onCompanyNameChange(editedCompanyName.trim());
@@ -127,12 +126,12 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ theme, setTheme, currentUse
             <div className="py-3">
                 <p className="text-slate-700 dark:text-slate-300 font-medium mb-2">{t('settingsPage.display.theme')}</p>
                 <div className="grid grid-cols-2 gap-4">
-                    <button onClick={() => setTheme('light')} className={`p-4 border-2 rounded-lg ${theme === 'light' ? 'border-sky-500' : 'border-slate-300 dark:border-slate-600'}`}>
+                    <button onClick={() => setTheme('light')} className={`p-4 border-2 rounded-lg ${theme === 'light' ? 'border-primary-500' : 'border-slate-300 dark:border-slate-600'}`}>
                         <div className="w-full h-16 bg-slate-100 rounded-md mb-2 flex items-center justify-center"><SunIcon className="w-8 h-8 text-amber-500" /></div>
                         <span className="font-semibold text-slate-800 dark:text-slate-200">{t('settingsPage.display.light')}</span>
                     </button>
-                     <button onClick={() => setTheme('dark')} className={`p-4 border-2 rounded-lg ${theme === 'dark' ? 'border-sky-500' : 'border-slate-300 dark:border-slate-600'}`}>
-                        <div className="w-full h-16 bg-slate-800 rounded-md mb-2 flex items-center justify-center"><MoonIcon className="w-8 h-8 text-sky-400" /></div>
+                     <button onClick={() => setTheme('dark')} className={`p-4 border-2 rounded-lg ${theme === 'dark' ? 'border-primary-500' : 'border-slate-300 dark:border-slate-600'}`}>
+                        <div className="w-full h-16 bg-slate-800 rounded-md mb-2 flex items-center justify-center"><MoonIcon className="w-8 h-8 text-primary-400" /></div>
                         <span className="font-semibold text-slate-800 dark:text-slate-200">{t('settingsPage.display.dark')}</span>
                     </button>
                 </div>
@@ -170,7 +169,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ theme, setTheme, currentUse
                      </div>
                      <div>
                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('settingsPage.company.logoLabel')}</label>
-                         <button className="w-full flex items-center justify-center gap-2 p-2 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg text-slate-500 dark:text-slate-400 hover:border-sky-500 hover:text-sky-600">
+                         <button className="w-full flex items-center justify-center gap-2 p-2 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg text-slate-500 dark:text-slate-400 hover:border-primary-500 hover:text-primary-600">
                             <ArrowUpTrayIcon className="w-5 h-5" />
                             <span>{t('settingsPage.company.uploadLogo')}</span>
                         </button>
@@ -181,7 +180,7 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ theme, setTheme, currentUse
                  <p className="text-sm text-slate-500 dark:text-slate-400 mb-4">{t('settingsPage.modules.subtitle')}</p>
                  <button 
                     onClick={() => setActivePage('sidebar.moduleManagement')}
-                    className="w-full flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors shadow-md">
+                    className="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-4 rounded-lg transition-colors shadow-md">
                     <CogIcon className="w-5 h-5"/>
                     <span>{t('settingsPage.modules.button')}</span>
                 </button>

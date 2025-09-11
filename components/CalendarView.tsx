@@ -1,5 +1,7 @@
 
+
 import React from 'react';
+// FIX: Changed import path to be relative.
 import { AttendanceRecord, AttendanceStatus } from '../types';
 import { useTranslation } from './contexts/LanguageContext';
 
@@ -7,7 +9,7 @@ const STATUS_STYLES: Record<AttendanceStatus, string> = {
     Present: 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200 border-emerald-200',
     Absent: 'bg-red-100 text-red-800 hover:bg-red-200 border-red-200',
     Leave: 'bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-200',
-    Holiday: 'bg-sky-100 text-sky-800 hover:bg-sky-200 border-sky-200',
+    Holiday: 'bg-primary-100 text-primary-800 hover:bg-primary-200 border-primary-200',
     Weekend: 'bg-slate-100 text-slate-500',
 };
 
@@ -58,7 +60,7 @@ const CalendarView: React.FC<CalendarViewProps> = ({ records, year, month }) => 
                     }
 
                     if (isToday) {
-                        dayClasses += ' ring-2 ring-sky-500';
+                        dayClasses += ' ring-2 ring-primary-500';
                     }
 
                     return (

@@ -1,7 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
+// FIX: Changed import path to be relative.
 import { NAV_GROUPS, BOTTOM_NAV_ITEMS } from '../constants';
+// FIX: Changed import path to be relative.
 import type { NavItem, EmployeeProfile, NavGroup, AppModule } from '../types';
-import { ChevronDownIcon, BriefcaseIcon, ChevronLeftIcon, ChevronRightIcon } from './icons/Icons';
+import { ChevronDownIcon, BuildingOfficeIcon, ChevronLeftIcon, ChevronRightIcon } from './icons/Icons';
 import { useTranslation } from './contexts/LanguageContext';
 
 
@@ -27,12 +30,12 @@ const NavLink: React.FC<{ item: NavItem, isActive: boolean, onClick: () => void,
       }}
       className={`group relative flex items-center p-3 my-1 rounded-lg transition-colors duration-200 cursor-pointer ${
         isActive
-          ? 'bg-sky-100 text-sky-700 font-bold dark:bg-slate-700 dark:text-sky-400'
+          ? 'bg-primary-100 text-primary-700 font-bold dark:bg-slate-700 dark:text-primary-400'
           : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200'
       } ${isCollapsed ? 'justify-center' : ''}`}
     >
-      {isActive && !isCollapsed && <div className="absolute right-0 top-2 bottom-2 w-1 bg-sky-500 rounded-r-lg"></div>}
-      <item.icon className={`w-6 h-6 flex-shrink-0 ${isActive ? 'text-sky-600 dark:text-sky-400' : 'text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300'}`} />
+      {isActive && !isCollapsed && <div className="absolute right-0 top-2 bottom-2 w-1 bg-primary-500 rounded-r-lg"></div>}
+      <item.icon className={`w-6 h-6 flex-shrink-0 ${isActive ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300'}`} />
       <span className={`mr-4 whitespace-nowrap transition-all duration-200 ${isCollapsed ? 'opacity-0 w-0 pointer-events-none' : 'opacity-100'}`}>{t(item.nameKey)}</span>
       {isCollapsed && (
         <div className="absolute left-full ml-4 px-2 py-1 bg-slate-800 text-white text-xs rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none dark:bg-slate-900 dark:text-slate-200">
@@ -119,8 +122,8 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, companyNam
   return (
     <aside className={`bg-white dark:bg-slate-800 h-screen flex flex-col p-4 sticky top-0 transition-all duration-300 border-l border-slate-200 dark:border-slate-700 ${isSidebarCollapsed ? 'w-20' : 'w-72'} overflow-y-auto`}>
       <div className="flex items-center gap-3 mb-8 px-2 flex-shrink-0">
-        <div className="bg-sky-100 p-3 rounded-lg">
-          <BriefcaseIcon className="w-7 h-7 text-sky-600"/>
+        <div className="bg-primary-100 p-3 rounded-lg">
+          <BuildingOfficeIcon className="w-7 h-7 text-primary-600"/>
         </div>
         <div className={`flex-1 transition-opacity duration-200 ${isSidebarCollapsed ? 'opacity-0' : 'opacity-100'}`}>
             <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100 whitespace-nowrap">{companyName}</h1>

@@ -1,5 +1,7 @@
 
+
 import React from 'react';
+// FIX: Changed import path to be relative.
 import type { Stat } from '../types';
 import { ResponsiveContainer, BarChart, Bar, Tooltip } from 'recharts';
 

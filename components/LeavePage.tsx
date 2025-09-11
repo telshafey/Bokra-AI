@@ -1,9 +1,12 @@
+
 import React, { useState } from 'react';
+// FIX: Changed import path to be relative.
 import type { LeaveBalance, LeaveRequest, RequestStatus, LeaveType, EmployeeProfile } from '../types';
 import { CalendarIcon, BriefcaseIcon, ClockIcon, XCircleIcon, PlusCircleIcon, UserPlusIcon, AcademicCapIcon, ArrowDownTrayIcon } from './icons/Icons';
 import RequestLeaveModal from './RequestLeaveModal';
 import Card from './Card';
 import ActionBar from './ActionBar';
+// FIX: Changed import path to be relative.
 import { useRequestContext } from './contexts/RequestContext';
 import { useTranslation } from './contexts/LanguageContext';
 
@@ -18,7 +21,7 @@ const LEAVE_TYPE_ICONS: Record<LeaveType, React.FC<React.SVGProps<SVGSVGElement>
 }
 
 const LEAVE_TYPE_COLORS: Record<LeaveType, string> = {
-    'Annual': 'bg-sky-500',
+    'Annual': 'bg-primary-500',
     'Sick': 'bg-emerald-500',
     'Casual': 'bg-amber-500',
     'Unpaid': 'bg-slate-500',
@@ -73,7 +76,7 @@ const LeavePage: React.FC<LeavePageProps> = ({ currentUser }) => {
                 <div /> 
                 <button 
                     onClick={() => setIsModalOpen(true)}
-                    className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-md hover:shadow-lg">
+                    className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-md hover:shadow-lg">
                     <PlusCircleIcon className="w-6 h-6"/>
                     <span>{t('leave.newRequest')}</span>
                 </button>
@@ -112,7 +115,7 @@ const LeavePage: React.FC<LeavePageProps> = ({ currentUser }) => {
                                     </td>
                                      <td className="px-6 py-4">
                                         {request.attachmentUrl ? (
-                                            <a href="#" className="text-sky-600 dark:text-sky-400 hover:underline" title={request.attachmentUrl}>
+                                            <a href="#" className="text-primary-600 dark:text-primary-400 hover:underline" title={request.attachmentUrl}>
                                                 <ArrowDownTrayIcon className="w-5 h-5 mx-auto" />
                                             </a>
                                         ) : (

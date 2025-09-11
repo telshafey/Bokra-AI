@@ -1,8 +1,10 @@
 
 
+
 import React, { useState, useMemo } from 'react';
 import LeaveDistributionChart from './LeaveDistributionChart';
 import TeamAttendanceBarChart from './TeamAttendanceBarChart';
+// FIX: Changed import path to be relative.
 import { EmployeeProfile, Goal, TeamReportsData, AttendanceRecord, HRRequest, ExternalTask, LeaveRequest } from '../types';
 import ProductivityAnalysis from './ProductivityAnalysis';
 import SentimentAnalysis from './SentimentAnalysis';

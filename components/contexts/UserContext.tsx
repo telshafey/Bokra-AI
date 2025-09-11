@@ -1,5 +1,4 @@
 
-
 import React, { createContext, useContext, useState } from 'react';
 import { EmployeeProfile, UserContextType, UserProviderProps, NewUserPayload, UserRole } from '../../types';
 import { ALL_EMPLOYEES } from '../../constants';
@@ -68,7 +67,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           role: newUserPayload.role,
           isEmployee: true,
           avatarUrl: `https://i.pravatar.cc/100?u=${newId}`,
-          // FIX: Changed property from `department` to `departmentKey` to match type definitions.
+// FIX: Changed property from `department` to `departmentKey` to match type definitions.
           departmentKey: newUserPayload.departmentKey,
           hireDate: newUserPayload.hireDate,
           employmentStatus: 'دوام كامل',
@@ -113,7 +112,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
                     name: updatedData.name,
                     jobTitleId: updatedData.jobTitleId,
                     title: jobTitle ? t(jobTitle.nameKey) : emp.title,
-                    // FIX: Changed property from `department` to `departmentKey` to match type definitions.
+// FIX: Changed property from `department` to `departmentKey` to match type definitions.
                     departmentKey: updatedData.departmentKey,
                     hireDate: updatedData.hireDate,
                     branchId: updatedData.branchId,

@@ -1,6 +1,10 @@
 
 
+
+
+
 import React, { useState, useMemo } from 'react';
+// FIX: Changed import path to be relative.
 import { AttendanceRecord, EmployeeInfraction, EmployeeProfile, AttendancePolicy, AttendanceAdjustmentRequest, LeavePermitRequest, RequestStatus, AttendanceEvent, ExternalTask, AttendanceStatus, Branch } from '../types';
 import AttendanceSummary from './AttendanceSummary';
 import CalendarView from './CalendarView';
@@ -9,8 +13,11 @@ import { PlusCircleIcon, ClockIcon, MagnifyingGlassIcon, FunnelIcon } from './ic
 import AttendanceAdjustmentModal from './AttendanceAdjustmentModal';
 import LeavePermitModal from './LeavePermitModal';
 import EmployeeAttendanceCard from './EmployeeAttendanceCard';
+// FIX: Changed import path to be relative.
 import { ALL_EMPLOYEES, COMPANY_BRANCHES } from '../constants';
+// FIX: Changed import path to be relative.
 import { useRequestContext } from './contexts/RequestContext';
+// FIX: Changed import path to be relative.
 import { usePoliciesContext } from './contexts/PoliciesContext';
 import { useTranslation } from './contexts/LanguageContext';
 
@@ -78,7 +85,7 @@ const AttendancePage: React.FC<AttendancePageProps> = ({ records, attendanceEven
             <button onClick={() => setIsPermitModalOpen(true)} className="flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-md hover:shadow-lg">
                 <ClockIcon className="w-6 h-6"/><span>{t('attendance.requestPermit')}</span>
             </button>
-            <button onClick={() => setIsExcuseModalOpen(true)} className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-md hover:shadow-lg">
+            <button onClick={() => setIsExcuseModalOpen(true)} className="flex items-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-semibold py-2 px-4 rounded-lg transition-colors shadow-md hover:shadow-lg">
                 <PlusCircleIcon className="w-6 h-6"/><span>{t('attendance.submitExcuse')}</span>
             </button>
         </div>

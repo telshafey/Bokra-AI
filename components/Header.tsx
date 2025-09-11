@@ -1,5 +1,7 @@
+
 import React, { useState } from 'react';
 import { BellIcon, SunIcon, MoonIcon, LanguageIcon } from './icons/Icons';
+// FIX: Changed import path to be relative.
 import { EmployeeProfile, Notification, Branch } from '../types';
 import NotificationPanel from './NotificationPanel';
 import { useTranslation, Language } from './contexts/LanguageContext';
@@ -77,7 +79,7 @@ const Header: React.FC<HeaderProps> = ({
     <header className="bg-white dark:bg-slate-800 shadow-sm p-4">
       <div className="max-w-7xl mx-auto flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{pageTitle}</h1>
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{t(pageTitle.replace('sidebar.', 'pageTitles.'))}</h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
               {getWelcomeMessage()}
           </p>
@@ -89,7 +91,7 @@ const Header: React.FC<HeaderProps> = ({
                   id="user-switcher"
                   value={currentUserId}
                   onChange={(e) => setCurrentUserId(e.target.value)}
-                  className="p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
+                  className="p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
               >
                   {allEmployees.map(emp => (
                       <option key={emp.id} value={emp.id}>{emp.name} - {getDisplayTitle(emp)}</option>
@@ -115,7 +117,7 @@ const Header: React.FC<HeaderProps> = ({
           </button>
 
           <div className="relative">
-            <button onClick={() => setIsPanelOpen(prev => !prev)} className="relative text-slate-500 hover:text-sky-600 dark:text-slate-400 dark:hover:text-sky-400 transition-colors">
+            <button onClick={() => setIsPanelOpen(prev => !prev)} className="relative text-slate-500 hover:text-primary-600 dark:text-slate-400 dark:hover:text-primary-400 transition-colors">
               <BellIcon className="h-6 w-6" />
               {unreadCount > 0 && (
                 <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-white text-[10px] font-bold">
@@ -139,7 +141,7 @@ const Header: React.FC<HeaderProps> = ({
             <img
               src={currentUser.avatarUrl}
               alt={currentUser.name}
-              className="w-10 h-10 rounded-full object-cover border-2 border-sky-500"
+              className="w-10 h-10 rounded-full object-cover border-2 border-primary-500"
             />
             <div>
               <p className="font-semibold text-slate-700 dark:text-slate-200">{currentUser.name}</p>

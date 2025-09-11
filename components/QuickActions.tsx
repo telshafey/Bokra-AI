@@ -10,7 +10,7 @@ interface QuickActionsProps {
 const ActionButton: React.FC<{ icon: React.FC<React.SVGProps<SVGSVGElement>>; label: string; onClick: () => void }> = ({ icon: Icon, label, onClick }) => (
     <button 
         onClick={onClick}
-        className="w-full flex flex-col items-center justify-center gap-2 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-sky-100 dark:hover:bg-sky-500/10 hover:text-sky-700 dark:hover:text-sky-400 transition-all duration-200 shadow-sm hover:shadow-md">
+        className="w-full flex flex-col items-center justify-center gap-2 p-4 bg-slate-50 dark:bg-slate-700/50 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-primary-100 dark:hover:bg-primary-500/10 hover:text-primary-700 dark:hover:text-primary-400 transition-all duration-200 shadow-sm hover:shadow-md">
         <Icon className="w-8 h-8"/>
         <span className="text-sm font-semibold">{label}</span>
     </button>

@@ -1,5 +1,4 @@
 
-
 import React from 'react';
 import { EmployeeProfile, HRRequest, RequestStatus } from '../types';
 import { UserGroupIcon, BriefcaseIcon, DocumentTextIcon } from './icons/Icons';
@@ -10,7 +9,8 @@ import { useTranslation } from './contexts/LanguageContext';
 interface BranchAdminPageProps {
   branchEmployees: EmployeeProfile[];
   branchPendingRequests: HRRequest[];
-  onAction: (requestId: number, newStatus: RequestStatus) => void;
+// FIX: Changed onAction prop signature to match what PendingRequests expects.
+  onAction: (requestId: string, newStatus: 'Approved' | 'Rejected', notes: string) => void;
   currentUser: EmployeeProfile;
 }
 

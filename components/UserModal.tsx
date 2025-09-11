@@ -92,7 +92,8 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSave, userToEd
                 nationality: userToEdit.personal.nationality,
                 nationalId: userToEdit.personal.nationalId,
                 maritalStatus: userToEdit.personal.maritalStatus as 'أعزب' | 'متزوج', // Type assertion
-                gender: userToEdit.personal.gender,
+// FIX: Added type assertion for gender to resolve type mismatch.
+                gender: userToEdit.personal.gender as 'Male' | 'Female',
                 religion: userToEdit.personal.religion as 'Muslim' | 'Christian', // Type assertion
                 address: userToEdit.address,
             });

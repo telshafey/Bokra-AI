@@ -8,7 +8,8 @@ import { useTranslation } from './contexts/LanguageContext';
 interface PettyCashRequestModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (newRequest: Omit<PettyCashRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'employeeId'>) => void;
+    // FIX: Omitted 'approvalHistory' from the type to match the object being passed.
+    onSubmit: (newRequest: Omit<PettyCashRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'employeeId' | 'approvalHistory'>) => void;
 }
 
 const PettyCashRequestModal: React.FC<PettyCashRequestModalProps> = ({ isOpen, onClose, onSubmit }) => {

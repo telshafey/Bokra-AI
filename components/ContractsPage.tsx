@@ -1,6 +1,7 @@
 
 
 
+
 import React, { useState } from 'react';
 import { SparklesIcon, DocumentDuplicateIcon, PrinterIcon } from './icons/Icons';
 import { generateContractWithAI } from '../services/geminiService';
@@ -93,7 +94,7 @@ const ContractsPage: React.FC = () => {
                             rows={12}
                             value={prompt}
                             onChange={(e) => setPrompt(e.target.value)}
-                            className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 transition-colors bg-white dark:bg-slate-700 dark:text-white"
+                            className="w-full p-3 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-colors bg-white dark:bg-slate-700 dark:text-white"
                             placeholder={t('contracts.promptPlaceholder')}
                             spellCheck="true"
                         />
@@ -101,7 +102,7 @@ const ContractsPage: React.FC = () => {
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="w-full flex items-center justify-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md disabled:bg-slate-400 dark:disabled:bg-slate-600"
+                            className="w-full flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-4 rounded-lg transition-colors shadow-md disabled:bg-slate-400 dark:disabled:bg-slate-600"
                         >
                             {isLoading ? (
                                 <>

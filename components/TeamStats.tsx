@@ -16,7 +16,7 @@ const TeamStats: React.FC<TeamStatsProps> = ({ teamSize, onLeave, attentionItems
             title: t('teamStats.teamMembers'),
             value: `${teamSize}`,
             icon: UserGroupIcon,
-            color: 'bg-sky-500',
+            color: 'bg-primary-500',
         },
         {
             title: t('teamStats.onLeaveToday'),

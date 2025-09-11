@@ -10,7 +10,7 @@ const TeamLearningOverviewWidget: React.FC<TeamLearningOverviewWidgetProps> = ({
     
     const getProgressColor = (progress: number) => {
         if (progress >= 75) return '#10b981'; // emerald
-        if (progress >= 40) return '#0ea5e9'; // sky
+        if (progress >= 40) return 'rgb(var(--color-primary-500))'; // primary
         return '#f59e0b'; // amber
     };
 
@@ -29,7 +29,7 @@ const TeamLearningOverviewWidget: React.FC<TeamLearningOverviewWidgetProps> = ({
                     <XAxis type="number" domain={[0, 100]} tick={{ fill: '#64748b' }} unit="%" />
                     <YAxis dataKey="name" type="category" width={60} tick={{ fill: '#334155', fontFamily: 'Cairo, sans-serif' }} />
                     <Tooltip
-                        cursor={{ fill: 'rgba(14, 165, 233, 0.1)' }}
+                        cursor={{ fill: 'rgba(var(--color-primary-500), 0.1)' }}
                         contentStyle={{
                             backgroundColor: '#fff',
                             border: '1px solid #e2e8f0',

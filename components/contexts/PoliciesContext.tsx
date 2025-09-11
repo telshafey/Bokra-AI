@@ -1,17 +1,28 @@
 
-import React, { createContext, useContext, useState } from 'react';
-import { 
-    AttendancePolicy, 
-    OvertimePolicy, 
-    LeavePolicy, 
-    PoliciesContextType, 
-    PoliciesProviderProps 
+import React, { createContext, useContext, useState, ReactNode } from 'react';
+import {
+    PoliciesContextType,
+    AttendancePolicy,
+    LeavePolicy,
+    OvertimePolicy,
+    OnboardingTemplate,
+    OffboardingTemplate,
+    WorkLocation,
+    SalaryComponent,
+    CompensationPackage,
+    ApprovalWorkflow,
 } from '../../types';
-import { 
-    MOCK_ATTENDANCE_POLICY, 
-    MOCK_OVERTIME_POLICY, 
-    MOCK_LEAVE_POLICY 
-} from '../../constants';
+
+// Mock data might be needed if not provided elsewhere
+const MOCK_ATTENDANCE_POLICIES: AttendancePolicy[] = [];
+const MOCK_LEAVE_POLICIES: LeavePolicy[] = [];
+const MOCK_OVERTIME_POLICIES: OvertimePolicy[] = [];
+const MOCK_ONBOARDING_TEMPLATES: OnboardingTemplate[] = [];
+const MOCK_OFFBOARDING_TEMPLATES: OffboardingTemplate[] = [];
+const MOCK_WORK_LOCATIONS: WorkLocation[] = [];
+const MOCK_SALARY_COMPONENTS: SalaryComponent[] = [];
+const MOCK_COMPENSATION_PACKAGES: CompensationPackage[] = [];
+const MOCK_APPROVAL_WORKFLOWS: ApprovalWorkflow[] = [];
 
 const PoliciesContext = createContext<PoliciesContextType | undefined>(undefined);
 
@@ -23,82 +34,57 @@ export const usePoliciesContext = () => {
     return context;
 };
 
-export const PoliciesProvider: React.FC<PoliciesProviderProps> = ({ children }) => {
-    const [attendancePolicies, setAttendancePolicies] = useState<AttendancePolicy[]>(MOCK_ATTENDANCE_POLICY);
-    const [overtimePolicies, setOvertimePolicies] = useState<OvertimePolicy[]>(MOCK_OVERTIME_POLICY);
-    const [leavePolicies, setLeavePolicies] = useState<LeavePolicy[]>(MOCK_LEAVE_POLICY);
+export const PoliciesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+    const [attendancePolicies, setAttendancePolicies] = useState<AttendancePolicy[]>(MOCK_ATTENDANCE_POLICIES);
+    const [leavePolicies, setLeavePolicies] = useState<LeavePolicy[]>(MOCK_LEAVE_POLICIES);
+    const [overtimePolicies, setOvertimePolicies] = useState<OvertimePolicy[]>(MOCK_OVERTIME_POLICIES);
+    const [onboardingTemplates, setOnboardingTemplates] = useState<OnboardingTemplate[]>(MOCK_ONBOARDING_TEMPLATES);
+    const [offboardingTemplates, setOffboardingTemplates] = useState<OffboardingTemplate[]>(MOCK_OFFBOARDING_TEMPLATES);
+    const [workLocations, setWorkLocations] = useState<WorkLocation[]>(MOCK_WORK_LOCATIONS);
+    const [salaryComponents, setSalaryComponents] = useState<SalaryComponent[]>(MOCK_SALARY_COMPONENTS);
+    const [compensationPackages, setCompensationPackages] = useState<CompensationPackage[]>(MOCK_COMPENSATION_PACKAGES);
+    const [approvalWorkflows, setApprovalWorkflows] = useState<ApprovalWorkflow[]>(MOCK_APPROVAL_WORKFLOWS);
 
-    // --- Attendance Policy Handlers ---
-    const saveAttendancePolicy = (policy: AttendancePolicy) => {
-        setAttendancePolicies(prev => {
-            const isNew = !prev.some(p => p.id === policy.id);
-            if (isNew) return [...prev, policy];
-            return prev.map(p => p.id === policy.id ? policy : p);
+    const createSaveFunction = <T extends { id: string }>(setter: React.Dispatch<React.SetStateAction<T[]>>) => (item: T) => {
+        setter(prev => {
+            const isNew = !prev.some(p => p.id === item.id);
+            if (isNew) return [...prev, item];
+            return prev.map(p => p.id === item.id ? item : p);
         });
     };
-    const archiveAttendancePolicy = (policyId: string) => {
-        setAttendancePolicies(prev => prev.map(p => p.id === policyId ? { ...p, status: 'Archived' } : p));
-    };
-    const bulkArchiveAttendancePolicies = (policyIds: string[]) => {
-        setAttendancePolicies(prev => prev.map(p => policyIds.includes(p.id) ? { ...p, status: 'Archived' } : p));
-    };
-    const updateAttendancePolicyStatus = (policyId: string, newStatus: 'Active' | 'Rejected') => {
-         setAttendancePolicies(prev => prev.map(p => p.id === policyId ? { ...p, status: newStatus } : p));
+    
+    const createDeleteFunction = (setter: React.Dispatch<React.SetStateAction<any[]>>) => (id: string) => {
+        setter(prev => prev.filter(item => item.id !== id));
     };
 
-    // --- Overtime Policy Handlers ---
-    const saveOvertimePolicy = (policy: OvertimePolicy) => {
-        setOvertimePolicies(prev => {
-            const isNew = !prev.some(p => p.id === policy.id);
-            if (isNew) return [...prev, policy];
-            return prev.map(p => p.id === policy.id ? policy : p);
-        });
-    };
-    const archiveOvertimePolicy = (policyId: string) => {
-        setOvertimePolicies(prev => prev.map(p => p.id === policyId ? { ...p, status: 'Archived' } : p));
-    };
-    const bulkArchiveOvertimePolicies = (policyIds: string[]) => {
-        setOvertimePolicies(prev => prev.map(p => policyIds.includes(p.id) ? { ...p, status: 'Archived' } : p));
-    };
-     const updateOvertimePolicyStatus = (policyId: string, newStatus: 'Active' | 'Rejected') => {
-         setOvertimePolicies(prev => prev.map(p => p.id === policyId ? { ...p, status: newStatus } : p));
-    };
-
-    // --- Leave Policy Handlers ---
-    const saveLeavePolicy = (policy: LeavePolicy) => {
-        setLeavePolicies(prev => {
-            const isNew = !prev.some(p => p.id === policy.id);
-            if (isNew) return [...prev, policy];
-            return prev.map(p => p.id === policy.id ? policy : p);
-        });
-    };
-    const archiveLeavePolicy = (policyId: string) => {
-        setLeavePolicies(prev => prev.map(p => p.id === policyId ? { ...p, status: 'Archived' } : p));
-    };
-    const bulkArchiveLeavePolicies = (policyIds: string[]) => {
-        setLeavePolicies(prev => prev.map(p => policyIds.includes(p.id) ? { ...p, status: 'Archived' } : p));
-    };
-     const updateLeavePolicyStatus = (policyId: string, newStatus: 'Active' | 'Rejected') => {
-         setLeavePolicies(prev => prev.map(p => p.id === policyId ? { ...p, status: newStatus } : p));
-    };
-
-
-    const value = {
+    const value: PoliciesContextType = {
         attendancePolicies,
-        overtimePolicies,
         leavePolicies,
-        saveAttendancePolicy,
-        archiveAttendancePolicy,
-        bulkArchiveAttendancePolicies,
-        updateAttendancePolicyStatus,
-        saveOvertimePolicy,
-        archiveOvertimePolicy,
-        bulkArchiveOvertimePolicies,
-        updateOvertimePolicyStatus,
-        saveLeavePolicy,
-        archiveLeavePolicy,
-        bulkArchiveLeavePolicies,
-        updateLeavePolicyStatus,
+        overtimePolicies,
+        onboardingTemplates,
+        offboardingTemplates,
+        workLocations,
+        salaryComponents,
+        compensationPackages,
+        approvalWorkflows,
+        saveAttendancePolicy: createSaveFunction(setAttendancePolicies),
+        saveLeavePolicy: createSaveFunction(setLeavePolicies),
+        saveOvertimePolicy: createSaveFunction(setOvertimePolicies),
+        saveOnboardingTemplate: createSaveFunction(setOnboardingTemplates),
+        deleteOnboardingTemplate: createDeleteFunction(setOnboardingTemplates),
+        saveOffboardingTemplate: createSaveFunction(setOffboardingTemplates),
+        deleteOffboardingTemplate: createDeleteFunction(setOffboardingTemplates),
+        addWorkLocation: (location) => {
+            const newLocation = { id: `loc-${Date.now()}`, ...location };
+            setWorkLocations(prev => [...prev, newLocation]);
+        },
+        updateWorkLocation: (location) => {
+            setWorkLocations(prev => prev.map(loc => loc.id === location.id ? location : loc));
+        },
+        saveSalaryComponent: createSaveFunction(setSalaryComponents),
+        saveCompensationPackage: createSaveFunction(setCompensationPackages),
+        saveApprovalWorkflow: createSaveFunction(setApprovalWorkflows),
+        deleteApprovalWorkflow: createDeleteFunction(setApprovalWorkflows),
     };
 
     return <PoliciesContext.Provider value={value}>{children}</PoliciesContext.Provider>;

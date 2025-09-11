@@ -1,5 +1,4 @@
 
-
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { Branch, EmployeeProfile } from '../types';

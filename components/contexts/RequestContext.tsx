@@ -1,25 +1,15 @@
-
-
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, ReactNode } from 'react';
 import {
-    HRRequest,
+    RequestContextType,
+    RequestProviderProps,
     LeaveRequest,
     AttendanceAdjustmentRequest,
     LeavePermitRequest,
     PettyCashRequest,
     RequestStatus,
-    RequestContextType,
-    RequestProviderProps
+    HRRequest,
+    ApprovalHistoryEntry
 } from '../../types';
-import {
-    MOCK_ALL_REQUESTS,
-    MOCK_LEAVE_REQUESTS_INITIAL,
-    MOCK_ADJUSTMENT_REQUESTS_INITIAL,
-    MOCK_LEAVE_PERMIT_REQUESTS_INITIAL,
-    MOCK_PETTY_CASH_REQUESTS_INITIAL
-} from '../../constants';
-import { useUserContext } from './UserContext';
-import { usePoliciesContext } from './PoliciesContext';
 
 const RequestContext = createContext<RequestContextType | undefined>(undefined);
 
@@ -32,160 +22,95 @@ export const useRequestContext = () => {
 };
 
 export const RequestProvider: React.FC<RequestProviderProps> = ({ children }) => {
-    const { employees, updateProfile } = useUserContext();
-    const { attendancePolicies, leavePolicies } = usePoliciesContext();
-    
-    const [requests, setRequests] = useState<HRRequest[]>(MOCK_ALL_REQUESTS);
-    const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>(MOCK_LEAVE_REQUESTS_INITIAL);
-    const [attendanceAdjustmentRequests, setAttendanceAdjustmentRequests] = useState<AttendanceAdjustmentRequest[]>(MOCK_ADJUSTMENT_REQUESTS_INITIAL);
-    const [leavePermitRequests, setLeavePermitRequests] = useState<LeavePermitRequest[]>(MOCK_LEAVE_PERMIT_REQUESTS_INITIAL);
-    const [pettyCashRequests, setPettyCashRequests] = useState<PettyCashRequest[]>(MOCK_PETTY_CASH_REQUESTS_INITIAL);
+    const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
+    const [attendanceAdjustmentRequests, setAttendanceAdjustmentRequests] = useState<AttendanceAdjustmentRequest[]>([]);
+    const [leavePermitRequests, setLeavePermitRequests] = useState<LeavePermitRequest[]>([]);
+    const [pettyCashRequests, setPettyCashRequests] = useState<PettyCashRequest[]>([]);
 
-    const handleRequestAction = (requestId: number, newStatus: RequestStatus) => {
-        setRequests(prev => prev.map(req => req.id === requestId ? { ...req, status: newStatus } : req));
-
-        const leaveReq = leaveRequests.find(lr => lr.id === requestId);
-        if (leaveReq) {
-            setLeaveRequests(prev => prev.map(lr => lr.id === requestId ? { ...lr, status: newStatus } : lr));
-            if (newStatus === 'Approved') {
-                const employeeToUpdate = employees.find(e => e.id === leaveReq.employeeId);
-                if (employeeToUpdate) {
-                    const updatedBalances = employeeToUpdate.leaveBalances.map(balance => {
-                        if (balance.type === leaveReq.leaveType && leaveReq.leaveType !== 'NewbornRegistration') {
-                            return { ...balance, used: balance.used + leaveReq.duration };
-                        }
-                        if (balance.type === 'NewbornRegistration' && leaveReq.leaveType === 'NewbornRegistration') {
-                            return { ...balance, used: balance.used + 1 }; // Increment used count, not days
-                        }
-                        return balance;
-                    });
-                    updateProfile({ ...employeeToUpdate, leaveBalances: updatedBalances });
-                }
-            }
-        }
-
-        if (attendanceAdjustmentRequests.some(ar => ar.id === requestId)) {
-            setAttendanceAdjustmentRequests(prev => prev.map(ar => ar.id === requestId ? { ...ar, status: newStatus } : ar));
-        }
-
-        if (leavePermitRequests.some(pr => pr.id === requestId)) {
-            setLeavePermitRequests(prev => prev.map(pr => pr.id === requestId ? { ...pr, status: newStatus } : pr));
-        }
-
-        if (pettyCashRequests.some(pc => pc.id === requestId)) {
-            setPettyCashRequests(prev => prev.map(pc => pc.id === requestId ? { ...pc, status: newStatus } : pc));
-        }
-    };
-
-    const handleNewLeaveRequest = (newRequestData: Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => {
-        const employee = employees.find(e => e.id === newRequestData.employeeId);
-        if (!employee) return;
-
-        const policy = leavePolicies.find(p => p.id === employee.leavePolicyId);
-
-        if (newRequestData.leaveType === 'Annual' && policy) {
-            const hireDate = new Date(employee.hireDate);
-            const today = new Date();
-            const monthsOfService = (today.getFullYear() - hireDate.getFullYear()) * 12 + (today.getMonth() - hireDate.getMonth());
-            
-            if (monthsOfService < policy.newEmployeeEligibilityMonths) {
-                alert(`لا يمكنك طلب إجازة سنوية قبل إتمام ${policy.newEmployeeEligibilityMonths} أشهر من تاريخ التعيين.`);
-                return;
-            }
-        }
-
-        if (newRequestData.leaveType === 'NewbornRegistration') {
-            const newbornBalance = employee.leaveBalances.find(b => b.type === 'NewbornRegistration');
-            if (!newbornBalance || newbornBalance.used >= newbornBalance.balance) {
-                 alert('لقد استنفدت رصيدك من إجازة تسجيل المولود.');
-                 return;
-            }
-            if (newRequestData.duration > 1) {
-                alert('إجازة تسجيل المولود هي يوم واحد فقط.');
-                return;
-            }
-        }
-
-        const newId = Math.max(...requests.map(r => r.id), 0) + 1;
-        const newLeaveRequest: LeaveRequest = {
-            id: newId,
-            status: 'Pending',
+    const handleNewLeaveRequest = (newRequestData: Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'approvalHistory'>) => {
+        const newRequest: LeaveRequest = {
+            ...newRequestData,
+            id: `lr-${Date.now()}`,
             type: 'Leave',
-            submissionDate: newRequestData.startDate,
-            ...newRequestData
-        };
-        setLeaveRequests(prev => [...prev, newLeaveRequest]);
-        setRequests(prev => [...prev, newLeaveRequest]);
-    };
-
-    const handleNewAttendanceAdjustmentRequest = (newRequestData: Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => {
-        const newId = Math.max(...requests.map(r => r.id), 0) + 1;
-        const newAdjRequest: AttendanceAdjustmentRequest = {
-            id: newId,
             status: 'Pending',
-            type: 'AttendanceAdjustment',
-            submissionDate: newRequestData.date,
-            ...newRequestData
+            submissionDate: new Date().toISOString(),
+            approvalHistory: [],
         };
-        setAttendanceAdjustmentRequests(prev => [...prev, newAdjRequest]);
-        setRequests(prev => [...prev, newAdjRequest]);
+        setLeaveRequests(prev => [...prev, newRequest]);
     };
-
-    const handleNewLeavePermitRequest = (newRequestData: Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'durationHours'>) => {
-        const currentUser = employees.find(e => e.id === newRequestData.employeeId); // Assuming employeeId is passed
-        if (!currentUser) return;
-        
-        const userAttendancePolicy = attendancePolicies.find(p => p.id === currentUser.attendancePolicyId);
+    
+    const handleNewAttendanceAdjustmentRequest = (newRequestData: Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'approvalHistory'>) => {
+        const newRequest: AttendanceAdjustmentRequest = {
+            ...newRequestData,
+            id: `aar-${Date.now()}`,
+            type: 'AttendanceAdjustment',
+            status: 'Pending',
+            submissionDate: new Date().toISOString(),
+            approvalHistory: [],
+        };
+        setAttendanceAdjustmentRequests(prev => [...prev, newRequest]);
+    };
+    
+    const handleNewLeavePermitRequest = (newRequestData: Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'durationHours' | 'approvalHistory'>) => {
         const start = new Date(`${newRequestData.date}T${newRequestData.startTime}`);
         const end = new Date(`${newRequestData.date}T${newRequestData.endTime}`);
         const durationHours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
-        const durationMinutes = durationHours * 60;
 
-        if (userAttendancePolicy) {
-            if (durationMinutes < userAttendancePolicy.minPermitDurationMinutes || durationHours > userAttendancePolicy.maxPermitDurationHours) {
-                alert(`مدة الإذن غير متوافقة مع السياسة.`);
-                return;
-            }
-            // Check max permits per month logic here
-        }
-
-        const newId = Math.max(...requests.map(r => r.id), 0) + 1;
-        const newPermitRequest: LeavePermitRequest = {
-            id: newId,
-            status: 'Pending',
+        const newRequest: LeavePermitRequest = {
+            ...newRequestData,
+            id: `lpr-${Date.now()}`,
             type: 'LeavePermit',
-            submissionDate: newRequestData.date,
-            durationHours,
-            ...newRequestData
+            status: 'Pending',
+            submissionDate: new Date().toISOString(),
+            durationHours: durationHours,
+            approvalHistory: [],
         };
-        setLeavePermitRequests(prev => [...prev, newPermitRequest]);
-        setRequests(prev => [...prev, newPermitRequest]);
+        setLeavePermitRequests(prev => [...prev, newRequest]);
     };
 
-    const handleNewPettyCashRequest = (newRequestData: Omit<PettyCashRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => {
-        const newId = Math.max(...requests.map(r => r.id), 0) + 1;
-        const newPettyCashRequest: PettyCashRequest = {
-            id: newId,
-            status: 'Pending',
+    const handleNewPettyCashRequest = (newRequestData: Omit<PettyCashRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'approvalHistory'>) => {
+         const newRequest: PettyCashRequest = {
+            ...newRequestData,
+            id: `pcr-${Date.now()}`,
             type: 'PettyCash',
-            submissionDate: newRequestData.date,
-            ...newRequestData
+            status: 'Pending',
+            submissionDate: new Date().toISOString(),
+            approvalHistory: [],
         };
-        setPettyCashRequests(prev => [...prev, newPettyCashRequest]);
-        setRequests(prev => [...prev, newPettyCashRequest]);
+        setPettyCashRequests(prev => [...prev, newRequest]);
     };
+
+    // FIX: Changed newStatus type from RequestStatus to be more specific, as an action can only result in approval or rejection.
+    const handleRequestAction = (requestId: string, newStatus: 'Approved' | 'Rejected', notes: string, approverId: string, approverName: string) => {
+        
+        const approvalEntry: ApprovalHistoryEntry = {
+            approverId,
+            approverName,
+            status: newStatus,
+            notes,
+            timestamp: new Date().toISOString(),
+        };
+
+        const update = (requests: HRRequest[]) => 
+            requests.map(r => r.id === requestId ? { ...r, status: newStatus, approvalHistory: [...r.approvalHistory, approvalEntry] } : r);
+
+        setLeaveRequests(prev => update(prev) as LeaveRequest[]);
+        setAttendanceAdjustmentRequests(prev => update(prev) as AttendanceAdjustmentRequest[]);
+        setLeavePermitRequests(prev => update(prev) as LeavePermitRequest[]);
+        setPettyCashRequests(prev => update(prev) as PettyCashRequest[]);
+    };
+
 
     const value = {
-        requests,
         leaveRequests,
         attendanceAdjustmentRequests,
         leavePermitRequests,
         pettyCashRequests,
-        handleRequestAction,
         handleNewLeaveRequest,
         handleNewAttendanceAdjustmentRequest,
         handleNewLeavePermitRequest,
         handleNewPettyCashRequest,
+        handleRequestAction
     };
 
     return <RequestContext.Provider value={value}>{children}</RequestContext.Provider>;

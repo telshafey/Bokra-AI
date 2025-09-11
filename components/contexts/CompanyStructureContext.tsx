@@ -1,5 +1,4 @@
 
-
 import React, { createContext, useContext, useState } from 'react';
 import { Branch, JobTitle, CompanyStructureContextType, CompanyStructureProviderProps } from '../../types';
 import { COMPANY_BRANCHES, MOCK_JOB_TITLES } from '../../constants';

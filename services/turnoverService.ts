@@ -1,4 +1,3 @@
-
 import { GoogleGenAI } from "@google/genai";
 import type { EmployeeProfile, TurnoverAnalysisResult } from '../types';
 import { Language } from "../components/contexts/LanguageContext";
@@ -27,7 +26,6 @@ export const getTurnoverPrediction = async (employee: EmployeeProfile, language:
         satisfactionSurveyScore: employee.satisfactionSurveyScore,
         timeSinceLastPromotionInYears: timeSincePromotion,
         salaryComparedToMarket: employee.salaryComparedToMarket,
-        // FIX: Replaced property access from `department` to `departmentKey` to match the `EmployeeProfile` type definition.
         departmentKey: employee.departmentKey,
         title: employee.title,
     };

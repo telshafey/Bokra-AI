@@ -1,5 +1,3 @@
-
-
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 import { translations } from '../../translations';
 
@@ -8,7 +6,6 @@ export type Language = 'ar' | 'en';
 interface LanguageContextType {
     language: Language;
     setLanguage: (lang: Language) => void;
-    // FIX: Updated the type of the `t` function to allow for more flexible options and return types, resolving an issue with `returnObjects: true`.
     t: (key: string, replacements?: { [key: string]: any }) => any;
 }
 
@@ -26,7 +23,6 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     const [language, setLanguage] = useState<Language>('ar');
 
     const t = useCallback((key: string, replacements?: { [key: string]: any }) => {
-        // FIX: Updated the logic for selecting the language dictionary to use `translations.ar` as a fallback, and cast the `translations` object to resolve the type error when accessing a dynamic language key.
         const langDict = (translations as any)[language] || translations.ar;
         let text: any = key.split('.').reduce((obj, k) => obj && (obj as any)[k], langDict) || key;
         

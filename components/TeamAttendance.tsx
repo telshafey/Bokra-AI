@@ -1,4 +1,6 @@
+
 import React from 'react';
+// FIX: Changed import path to be relative.
 import type { TeamMember } from '../types';
 
 type AttendanceStatus = TeamMember['attendanceStatus'];

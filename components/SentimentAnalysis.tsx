@@ -4,7 +4,7 @@ import type { EmployeeProfile } from '../types';
 
 const SENTIMENT_LEVELS = [
     { name: 'مرتفع (4-5)', min: 4, max: 5, color: '#10b981' },
-    { name: 'متوسط (3-3.9)', min: 3, max: 3.99, color: '#0ea5e9' },
+    { name: 'متوسط (3-3.9)', min: 3, max: 3.99, color: 'rgb(var(--color-primary-500))' },
     { name: 'منخفض (1-2.9)', min: 1, max: 2.99, color: '#ef4444' },
 ];
 
@@ -32,7 +32,7 @@ const SentimentAnalysis: React.FC<{ teamMembers: EmployeeProfile[] }> = ({ teamM
 
     const getSentimentColor = (score: number) => {
         if (score >= 4) return 'text-emerald-500';
-        if (score >= 3) return 'text-sky-500';
+        if (score >= 3) return 'text-primary-500';
         return 'text-red-500';
     };
 

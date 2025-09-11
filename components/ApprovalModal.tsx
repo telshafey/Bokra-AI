@@ -1,95 +1,80 @@
-
-import React from 'react';
-import { XMarkIcon, CalendarIcon, BriefcaseIcon } from './icons/Icons';
-import type { AttentionItem, RequestStatus, LeaveRequest } from '../types';
+import React, { useState, useEffect } from 'react';
+import { XMarkIcon } from './icons/Icons';
+import type { HRRequest, RequestStatus } from '../types';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface ApprovalModalProps {
     isOpen: boolean;
     onClose: () => void;
-    item: AttentionItem | null;
-    onAction: (requestId: number, newStatus: RequestStatus) => void;
+    request: HRRequest | null;
+    // FIX: Changed newStatus type from RequestStatus to be more specific, as an action can only result in approval or rejection.
+    onAction: (requestId: string, newStatus: 'Approved' | 'Rejected', notes: string) => void;
 }
 
-const ApprovalModal: React.FC<ApprovalModalProps> = ({ isOpen, onClose, item, onAction }) => {
-    if (!isOpen || !item || !item.context) return null;
+const ApprovalModal: React.FC<ApprovalModalProps> = ({ isOpen, onClose, request, onAction }) => {
+    const { t } = useTranslation();
+    const [notes, setNotes] = useState('');
+    const [action, setAction] = useState<RequestStatus | null>(null);
+    
+    useEffect(() => {
+        if (!isOpen) {
+            setNotes('');
+            setAction(null);
+        }
+    }, [isOpen]);
 
-    const { employee, overlappingLeaves } = item.context;
-    const request = item.request as LeaveRequest;
+    if (!isOpen || !request) return null;
 
-    const annualLeaveBalance = employee.leaveBalances.find(b => b.type === 'Annual');
-
-    const handleAction = (status: RequestStatus) => {
-        onAction(item.request.id, status);
-        onClose();
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        // FIX: Changed type assertion to be more specific to 'Approved' | 'Rejected'.
+        const finalAction = (e.nativeEvent as SubmitEvent).submitter?.dataset.action as 'Approved' | 'Rejected';
+        if (finalAction) {
+            onAction(request.id, finalAction, notes);
+            onClose();
+        }
     };
 
+
     return (
-        <div 
-            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4 transition-opacity"
-            onClick={onClose}
-        >
-            <div 
-                className="bg-white rounded-xl shadow-2xl p-6 w-full max-w-2xl transform transition-all"
-                onClick={(e) => e.stopPropagation()}
-            >
-                <div className="flex justify-between items-center mb-4 border-b pb-3">
-                    <div>
-                        <h2 className="text-xl font-bold text-slate-800">مراجعة طلب إجازة</h2>
-                        <p className="text-sm text-slate-500">للموظف: {employee.name}</p>
-                    </div>
-                    <button onClick={onClose} className="text-slate-400 hover:text-slate-600">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4" onClick={onClose}>
+            <form onSubmit={handleSubmit} className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-8 w-full max-w-lg" onClick={e => e.stopPropagation()}>
+                <div className="flex justify-between items-center mb-6">
+                    <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">اتخاذ إجراء على الطلب</h2>
+                    <button type="button" onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
                         <XMarkIcon className="w-7 h-7" />
                     </button>
                 </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {/* Left Column: Request Details */}
-                    <div className="space-y-4">
-                        <h3 className="font-bold text-slate-700">تفاصيل الطلب</h3>
-                        <div className="p-4 bg-slate-50 rounded-lg">
-                             <p><strong>النوع:</strong> {item.text}</p>
-                             <p><strong>الفترة:</strong> من {new Date(request.startDate).toLocaleDateString('ar-EG-u-nu-latn')} إلى {new Date(request.endDate).toLocaleDateString('ar-EG-u-nu-latn')} ({request.duration} أيام)</p>
-                             <p><strong>السبب:</strong> {request.reason}</p>
-                        </div>
-                        {annualLeaveBalance && (
-                            <div className="p-4 bg-sky-50 border border-sky-200 rounded-lg">
-                                <h4 className="font-semibold text-sky-800 mb-1">رصيد الإجازات السنوية للموظف</h4>
-                                <p className="text-sky-700">
-                                    الرصيد المتبقي: <strong className="text-lg">{annualLeaveBalance.balance - annualLeaveBalance.used}</strong> يوم
-                                </p>
-                            </div>
-                        )}
-                    </div>
-                    {/* Right Column: Overlapping Leaves */}
-                    <div className="space-y-4">
-                         <h3 className="font-bold text-slate-700 flex items-center gap-2"><CalendarIcon className="w-5 h-5"/> تداخل الإجازات مع الفريق</h3>
-                         <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg max-h-60 overflow-y-auto">
-                            {overlappingLeaves.length > 0 ? (
-                                <ul className="space-y-3">
-                                    {overlappingLeaves.map((leave, index) => (
-                                        <li key={index} className="flex items-center gap-3 text-sm">
-                                            <img src={leave.avatarUrl} alt={leave.employeeName} className="w-8 h-8 rounded-full" />
-                                            <div>
-                                                <p className="font-semibold text-slate-800">{leave.employeeName}</p>
-                                                <p className="text-xs text-slate-500">
-                                                    {leave.startDate} - {leave.endDate}
-                                                </p>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            ) : (
-                                <p className="text-sm text-slate-600 text-center py-4">لا يوجد تداخل في الإجازات مع أعضاء الفريق الآخرين خلال هذه الفترة.</p>
-                            )}
-                         </div>
+                
+                <div className="space-y-4">
+                    <div>
+                        <label htmlFor="notes" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
+                            ملاحظات (اختياري)
+                        </label>
+                        <textarea
+                            id="notes"
+                            rows={4}
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-700 dark:text-white"
+                            placeholder="اكتب سبب الموافقة أو الرفض هنا..."
+                            spellCheck="true"
+                        ></textarea>
                     </div>
                 </div>
 
-                <div className="flex justify-end gap-4 pt-6 mt-4 border-t">
-                    <button onClick={() => handleAction('Rejected')} className="py-2 px-6 bg-red-100 text-red-700 rounded-lg font-semibold hover:bg-red-200">رفض</button>
-                    <button onClick={() => handleAction('Approved')} className="py-2 px-6 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 shadow-sm">موافقة</button>
+                <div className="flex justify-end gap-4 pt-6 mt-4 border-t dark:border-slate-700">
+                    <button type="button" onClick={onClose} className="py-2 px-6 bg-slate-100 dark:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg font-semibold hover:bg-slate-200 dark:hover:bg-slate-500">
+                        {t('general.cancel')}
+                    </button>
+                    <button type="submit" data-action="Rejected" className="py-2 px-6 bg-red-600 text-white rounded-lg font-semibold hover:bg-red-700 shadow-sm">
+                        رفض
+                    </button>
+                    <button type="submit" data-action="Approved" className="py-2 px-6 bg-emerald-600 text-white rounded-lg font-semibold hover:bg-emerald-700 shadow-sm">
+                        موافقة
+                    </button>
                 </div>
-            </div>
+            </form>
         </div>
     );
 };

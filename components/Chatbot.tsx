@@ -1,16 +1,10 @@
-
-
-
-
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatBubbleOvalLeftEllipsisIcon, PaperAirplaneIcon, XMarkIcon } from './icons/Icons';
 import { sendMessageToAI } from '../services/geminiService';
-// FIX: Import EmployeeProfile type to define component props and fix type error from App.tsx.
 import type { ChatMessage, EmployeeProfile } from '../types';
 import { useTranslation } from './contexts/LanguageContext';
 
 
-// FIX: Define props for the Chatbot component to accept the currentUser object.
 interface ChatbotProps {
   currentUser: EmployeeProfile;
 }
@@ -69,7 +63,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ currentUser }) => {
     <>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="fixed bottom-6 left-6 bg-sky-600 text-white p-4 rounded-full shadow-lg hover:bg-sky-700 transition-transform transform hover:scale-110 focus:outline-none z-50"
+        className="fixed bottom-6 left-6 bg-primary-600 text-white p-4 rounded-full shadow-lg hover:bg-primary-700 transition-transform transform hover:scale-110 focus:outline-none z-50"
         aria-label={t('chatbot.openAIAssistant')}
       >
         <ChatBubbleOvalLeftEllipsisIcon className="w-8 h-8" />
@@ -78,9 +72,9 @@ const Chatbot: React.FC<ChatbotProps> = ({ currentUser }) => {
       {isOpen && (
         <div className="fixed bottom-24 left-6 w-full max-w-sm h-[60vh] bg-white dark:bg-slate-800 rounded-2xl shadow-2xl flex flex-col z-50 transition-all duration-300 ease-in-out">
           {/* Header */}
-          <div className="bg-sky-600 text-white p-4 rounded-t-2xl flex justify-between items-center">
+          <div className="bg-primary-600 text-white p-4 rounded-t-2xl flex justify-between items-center">
             <h3 className="font-bold text-lg">{t('chatbot.header')}</h3>
-            <button onClick={() => setIsOpen(false)} className="hover:bg-sky-700 p-1 rounded-full">
+            <button onClick={() => setIsOpen(false)} className="hover:bg-primary-700 p-1 rounded-full">
               <XMarkIcon className="w-6 h-6" />
             </button>
           </div>
@@ -89,7 +83,7 @@ const Chatbot: React.FC<ChatbotProps> = ({ currentUser }) => {
           <div className="flex-1 p-4 overflow-y-auto bg-slate-50 dark:bg-slate-900">
             {messages.map((msg, index) => (
               <div key={index} className={`flex mb-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`rounded-xl p-3 max-w-xs lg:max-w-md ${msg.sender === 'user' ? 'bg-sky-500 text-white' : 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200'}`}>
+                <div className={`rounded-xl p-3 max-w-xs lg:max-w-md ${msg.sender === 'user' ? 'bg-primary-500 text-white' : 'bg-slate-200 text-slate-800 dark:bg-slate-700 dark:text-slate-200'}`}>
                    {msg.text || <span className="animate-pulse">...</span>}
                 </div>
               </div>
@@ -104,11 +98,11 @@ const Chatbot: React.FC<ChatbotProps> = ({ currentUser }) => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder={t('chatbot.placeholder')}
-              className="flex-1 p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+              className="flex-1 p-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white"
               disabled={isLoading}
               spellCheck="true"
             />
-            <button type="submit" disabled={isLoading} className="bg-sky-600 text-white p-2 rounded-lg disabled:bg-slate-400 hover:bg-sky-700 transition-colors">
+            <button type="submit" disabled={isLoading} className="bg-primary-600 text-white p-2 rounded-lg disabled:bg-slate-400 hover:bg-primary-700 transition-colors">
               <PaperAirplaneIcon className="w-6 h-6" />
             </button>
           </form>

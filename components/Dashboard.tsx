@@ -1,6 +1,8 @@
 
+
 import React from 'react';
 import RecentActivity from './RecentActivity';
+// FIX: Changed import path to be relative.
 import { EmployeeProfile, EmployeeDashboardData, AppModule } from '../types';
 import ClockInWidget from './ClockInWidget';
 import LearningProgressWidget from './LearningProgressWidget';

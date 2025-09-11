@@ -1,69 +1,43 @@
-
-import React, { useState } from 'react';
+import React from 'react';
+import type { TeamDashboardData, RequestStatus } from '../types';
 import TeamStats from './TeamStats';
-import { EmployeeProfile, TeamDashboardData, AttentionItem, RequestStatus } from '../types';
+import PendingRequests from './PendingRequests';
+import TeamAttendance from './TeamAttendance';
 import AttentionWidget from './AttentionWidget';
 import TeamLearningOverviewWidget from './TeamLearningOverviewWidget';
-import TeamAttendance from './TeamAttendance';
-import ApprovalModal from './ApprovalModal';
-import { useRequestContext } from './contexts/RequestContext';
 
 interface TeamDashboardProps {
-  currentUser: EmployeeProfile;
-  teamMembers: EmployeeProfile[];
-  dashboardData: TeamDashboardData;
-  setActivePage: (page: string) => void;
+  teamDashboardData: TeamDashboardData;
+  onAction: (requestId: string, newStatus: 'Approved' | 'Rejected', notes: string) => void;
 }
 
-const TeamDashboard: React.FC<TeamDashboardProps> = ({ currentUser, teamMembers, dashboardData, setActivePage }) => {
-  const [isApprovalModalOpen, setIsApprovalModalOpen] = useState(false);
-  const [selectedItem, setSelectedItem] = useState<AttentionItem | null>(null);
-  const { handleRequestAction } = useRequestContext();
+const TeamDashboard: React.FC<TeamDashboardProps> = ({ teamDashboardData, onAction }) => {
+    const { teamSize, onLeaveToday, pendingRequestsCount, pendingRequests, teamAttendance } = teamDashboardData;
 
-  const handleItemClick = (item: AttentionItem) => {
-    if (item.type === 'leave' && item.context) {
-        setSelectedItem(item);
-        setIsApprovalModalOpen(true);
-    } else {
-        // Default navigation for other types
-        let pageKey = 'sidebar.teamAnalytics';
-        if (item.type === 'ticket') pageKey = 'sidebar.support';
-        setActivePage(pageKey);
-    }
-  };
-
-  const handleCloseModal = () => {
-    setIsApprovalModalOpen(false);
-    setSelectedItem(null);
-  };
-
-  return (
-    <div className="space-y-6">
-      <TeamStats 
-        teamSize={teamMembers.length} 
-        onLeave={dashboardData.teamAttendance.onLeave}
-        attentionItemsCount={dashboardData.attentionItems.length}
-      />
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-           <AttentionWidget items={dashboardData.attentionItems} onItemClick={handleItemClick} />
-           <TeamLearningOverviewWidget stats={dashboardData.teamLearningStats} />
-        </div>
-
+    return (
         <div className="space-y-6">
-            <TeamAttendance members={dashboardData.teamMembersWithAttendance} />
+            <TeamStats 
+                teamSize={teamSize}
+                onLeave={onLeaveToday}
+                attentionItemsCount={pendingRequestsCount}
+            />
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div className="lg:col-span-2">
+                    <PendingRequests 
+                        requests={pendingRequests} 
+                        onAction={onAction} 
+                    />
+                </div>
+                <div>
+                    <TeamAttendance members={teamAttendance} />
+                </div>
+            </div>
+             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <AttentionWidget items={[]} onItemClick={() => {}}/>
+                <TeamLearningOverviewWidget stats={[]}/>
+            </div>
         </div>
-      </div>
-      
-      <ApprovalModal
-        isOpen={isApprovalModalOpen}
-        onClose={handleCloseModal}
-        item={selectedItem}
-        onAction={handleRequestAction}
-      />
-    </div>
-  );
+    );
 };
 
 export default TeamDashboard;

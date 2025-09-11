@@ -17,21 +17,49 @@
             fontFamily: {
               sans: ['Cairo', 'sans-serif'],
             },
+            colors: {
+              primary: {
+                50: 'rgb(var(--color-primary-50) / <alpha-value>)',
+                100: 'rgb(var(--color-primary-100) / <alpha-value>)',
+                200: 'rgb(var(--color-primary-200) / <alpha-value>)',
+                300: 'rgb(var(--color-primary-300) / <alpha-value>)',
+                400: 'rgb(var(--color-primary-400) / <alpha-value>)',
+                500: 'rgb(var(--color-primary-500) / <alpha-value>)',
+                600: 'rgb(var(--color-primary-600) / <alpha-value>)',
+                700: 'rgb(var(--color-primary-700) / <alpha-value>)',
+                800: 'rgb(var(--color-primary-800) / <alpha-value>)',
+                900: 'rgb(var(--color-primary-900) / <alpha-value>)',
+                950: 'rgb(var(--color-primary-950) / <alpha-value>)',
+              }
+            }
           },
         },
       }
     </script>
     <style>
+      :root {
+        --color-primary-50: 240 249 255; /* sky-50 */
+        --color-primary-100: 224 242 254; /* sky-100 */
+        --color-primary-200: 186 230 253; /* sky-200 */
+        --color-primary-300: 125 211 252; /* sky-300 */
+        --color-primary-400: 59 179 247; /* sky-400 */
+        --color-primary-500: 14 165 233; /* sky-500 */
+        --color-primary-600: 2 132 199; /* sky-600 */
+        --color-primary-700: 3 105 161; /* sky-700 */
+        --color-primary-800: 7 89 133; /* sky-800 */
+        --color-primary-900: 12 74 110; /* sky-900 */
+        --color-primary-950: 8 51 68; /* sky-950 */
+      }
       .dragging {
         opacity: 0.5;
         border: 2px dashed #38bdf8; /* light-blue-400 */
       }
       .drop-target {
-        background-color: #e0f2fe; /* light-sky-100 */
-        border: 2px dashed #0ea5e9; /* sky-500 */
+        background-color: rgb(var(--color-primary-100));
+        border: 2px dashed rgb(var(--color-primary-500));
       }
       .dark .drop-target {
-        background-color: #0c4a6e; /* dark-sky-900 */
+        background-color: rgb(var(--color-primary-900));
       }
     </style>
   <script type="importmap">

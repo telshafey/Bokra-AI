@@ -1,5 +1,8 @@
 
+
+
 import React, { useState } from 'react';
+// FIX: Changed import path to be relative.
 import type { EmployeeProfile } from '../types';
 import { MagnifyingGlassIcon } from './icons/Icons';
 
@@ -26,7 +29,7 @@ const TeamMemberList: React.FC<TeamMemberListProps> = ({ members, selectedMember
             placeholder="ابحث عن عضو بالفريق..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full p-2 pr-10 border border-slate-300 rounded-lg bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
+            className="w-full p-2 pr-10 border border-slate-300 rounded-lg bg-slate-50 dark:bg-slate-700 dark:border-slate-600 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
             spellCheck="true"
           />
           <MagnifyingGlassIcon className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
@@ -39,7 +42,7 @@ const TeamMemberList: React.FC<TeamMemberListProps> = ({ members, selectedMember
             onClick={() => onSelectMember(member.id)}
             className={`w-full text-right flex items-center gap-4 p-4 transition-colors duration-200 border-r-4 ${
               selectedMemberId === member.id
-                ? 'bg-sky-100 border-sky-500 dark:bg-slate-700'
+                ? 'bg-primary-100 border-primary-500 dark:bg-slate-700'
                 : 'hover:bg-slate-50 dark:hover:bg-slate-700/50 border-transparent'
             }`}
           >
@@ -49,7 +52,7 @@ const TeamMemberList: React.FC<TeamMemberListProps> = ({ members, selectedMember
               className="w-12 h-12 rounded-full object-cover"
             />
             <div>
-              <p className={`font-semibold ${selectedMemberId === member.id ? 'text-sky-700 dark:text-sky-400' : 'text-slate-800 dark:text-slate-200'}`}>
+              <p className={`font-semibold ${selectedMemberId === member.id ? 'text-primary-700 dark:text-primary-400' : 'text-slate-800 dark:text-slate-200'}`}>
                 {member.name}
               </p>
               <p className="text-sm text-slate-500 dark:text-slate-400">{member.title}</p>

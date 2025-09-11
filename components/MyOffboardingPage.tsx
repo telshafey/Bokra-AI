@@ -54,7 +54,7 @@ const MyOffboardingPage: React.FC<MyOffboardingPageProps> = ({ process, onUpdate
                             <h3 className="font-bold text-slate-700 mb-3 border-b pb-2 text-lg">{category}</h3>
                             <div className="space-y-3">
                                 {tasks.map(task => {
-                                    // FIX: Corrected the string comparison for task responsibility to use the correct Arabic term, resolving a logical error.
+// FIX: Corrected the string comparison for task responsibility to use the correct Arabic term, resolving a logical error.
                                     const isEmployeeResponsible = task.responsible === 'الموظف المغادر';
                                     return (
                                         <div key={task.id} className={`p-3 rounded-lg flex items-center justify-between ${task.isCompleted ? 'bg-emerald-50' : 'bg-slate-50'}`}>

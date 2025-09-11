@@ -1,7 +1,3 @@
-
-
-
-// FIX: Import Chat and GenerateContentResponse types.
 import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
 import type { EmployeeProfile } from '../types';
 import { Language } from '../components/contexts/LanguageContext';

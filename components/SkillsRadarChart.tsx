@@ -29,7 +29,7 @@ const SkillsRadarChart: React.FC<SkillsRadarChartProps> = ({ skills }) => {
                     }}
                 />
                 <Legend wrapperStyle={{ fontFamily: 'Cairo, sans-serif' }} />
-                <Radar name="المستوى الحالي" dataKey="current" stroke="#0ea5e9" fill="#0ea5e9" fillOpacity={0.6} />
+                <Radar name="المستوى الحالي" dataKey="current" stroke="rgb(var(--color-primary-500))" fill="rgb(var(--color-primary-500))" fillOpacity={0.6} />
                 <Radar name="المستوى المطلوب" dataKey="required" stroke="#10b981" fill="#10b981" fillOpacity={0.4} />
             </RadarChart>
         </ResponsiveContainer>

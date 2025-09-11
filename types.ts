@@ -1,155 +1,104 @@
+import React, { ReactNode } from 'react';
 
-import type React from 'react';
+// General & App Structure
+export type UserRole = 'Super Admin' | 'Admin' | 'Branch Admin' | 'General Manager' | 'HR Manager' | 'HR Specialist' | 'Finance Manager' | 'Team Lead' | 'Employee';
+export type EmploymentStatus = 'دوام كامل' | 'دوام جزئي' | 'متدرب' | 'Inactive';
+export type CheckInStatus = 'CheckedIn' | 'CheckedOut';
+export type RequestStatus = 'Pending' | 'Approved' | 'Rejected';
+export type RequestType = 'Leave' | 'DataUpdate' | 'AttendanceAdjustment' | 'LeavePermit' | 'PettyCash';
+export type Language = 'ar' | 'en';
+export type AppModule = 'payroll' | 'documents' | 'recruitment' | 'performance' | 'learning' | 'onboarding' | 'offboarding' | 'assets' | 'support' | 'help_center';
 
-export type AppModule = 'performance' | 'learning' | 'recruitment' | 'onboarding' | 'offboarding' | 'support' | 'compensation' | 'job_titles' | 'documents' | 'assets' | 'help_center';
+export interface BilingualText {
+    ar: string;
+    en: string;
+}
 
 export interface NavItem {
-  nameKey: string; // Key for translation
-  icon: React.FC<React.SVGProps<SVGSVGElement>>;
-  path: string;
-  requiresEmployee?: boolean; // Controls visibility for actual employees vs system accounts
-  pageTitleKey?: string; // Key for translation
-  roles?: UserRole[]; // Defines specific roles that can see this item
-  module?: AppModule;
+    nameKey: string;
+    path: string;
+    icon: React.FC<React.SVGProps<SVGSVGElement>>;
+    module?: AppModule;
+    roles?: UserRole[];
+    requiresEmployee?: boolean;
 }
 
 export interface NavGroup {
-  groupNameKey: string; // Key for translation
-  items: NavItem[];
+    groupNameKey: string;
+    items: NavItem[];
 }
-
-export interface Employee {
-  name:string;
-  title: string;
-  avatarUrl: string;
-}
-
-export type UserRole = 'Super Admin' | 'Admin' | 'Branch Admin' | 'General Manager' | 'HR Manager' | 'HR Specialist' | 'Finance Manager' | 'Team Lead' | 'Employee';
 
 export interface Branch {
     id: string;
-    nameKey: string; // for translation
+    nameKey: string;
     status: 'Active' | 'Archived';
 }
 
-export type CheckInStatus = 'CheckedIn' | 'CheckedOut';
-export type EmploymentStatus = 'دوام كامل' | 'System Account' | 'Inactive';
-
 export interface JobTitle {
     id: string;
-    nameKey: string; // for translation
+    nameKey: string;
     parentId: string | null;
 }
 
-// --- Compensation & Benefits Types ---
-export type SalaryComponentType = 'Allowance' | 'Deduction';
-export type CalculationType = 'FixedAmount' | 'PercentageOfBase';
-
-export interface SalaryComponent {
+// Employee & User
+export interface EmployeeProfile {
     id: string;
+    employeeId: string;
     name: string;
-    type: SalaryComponentType;
-    calculationType: CalculationType;
-    value: number; // Can be a fixed amount or a percentage
-}
-
-export interface CompensationPackage {
-    id: string;
-    name: string;
-    components: {
-        componentId: string;
-        value: number; // The specific value for this package, can override default
-    }[];
-}
-
-// --- Asset Management Types ---
-export type AssetCategory = 'Hardware' | 'Software' | 'Furniture' | 'Vehicle';
-export type AssetStatus = 'Available' | 'Assigned' | 'UnderMaintenance' | 'Retired';
-export type DepreciationMethod = 'Straight-line' | 'Declining Balance';
-
-export interface Asset {
-    id: string;
-    name: string;
-    category: AssetCategory;
-    serialNumber: string;
-    purchaseDate: string;
-    purchaseValue: number; // Renamed from value
-    status: AssetStatus;
-    assignedToId: string | null;
-    // New fields for depreciation
-    depreciationMethod: DepreciationMethod;
-    usefulLifeYears: number;
-    currentValue?: number; // Will be calculated dynamically
-    depreciationStatus?: 'Normal' | 'NearingEOL' | 'Depreciated';
-}
-
-export interface AssetsContextType {
-    assets: Asset[];
-    saveAsset: (asset: Asset) => void;
-    assignAsset: (assetId: string, employeeId: string | null) => void;
-}
-
-export interface AssetsProviderProps {
-    children: React.ReactNode;
-}
-
-// FIX: Added missing type definitions
-export interface AnnualLeaveTier {
-    id: string;
-    afterYears: number;
-    days: number;
-}
-
-export interface LeavePolicy {
-    id: string;
-    name: string;
-    scope: 'company' | 'branch';
-    branchId?: string;
-    status: 'Active' | 'PendingApproval' | 'Archived' | 'Rejected';
-    newEmployeeBalance: number;
-    newEmployeeEligibilityMonths: number;
-    annualLeaveTiers: AnnualLeaveTier[];
-    specialAnnualLeave: {
-        over50YearsOld: number;
-        specialNeeds: number;
+    title: string;
+    jobTitleId: string;
+    role: UserRole;
+    isEmployee: boolean;
+    avatarUrl: string;
+    departmentKey: string;
+    hireDate: string;
+    deactivationDate?: string;
+    employmentStatus: EmploymentStatus;
+    managerId?: string;
+    manager?: string;
+    branchId: string;
+    branchName?: string;
+    checkInStatus: CheckInStatus;
+    contact: {
+        phone: string;
+        workEmail: string;
+        personalEmail: string;
     };
-    maternityLeaveMonths: number;
-    casualLeaveBalance: number;
+    personal: {
+        dateOfBirth: string;
+        nationality: string;
+        nationalId: string;
+        maritalStatus: string;
+        gender: string;
+        religion: string;
+    };
+    address: string;
+    leaveBalances: LeaveBalance[];
+    baseSalary: number;
+    attendancePolicyId?: string;
+    attendancePolicyName?: string;
+    overtimePolicyId?: string;
+    overtimePolicyName?: string;
+    leavePolicyId?: string;
+    leavePolicyName?: string;
+    compensationPackageId?: string;
+    performanceScore: number;
+    satisfactionSurveyScore: number;
+    lastPromotionDate: string | null;
+    salaryComparedToMarket: 'Below Average' | 'Average' | 'Above Average';
+    attendanceRecords?: AttendanceRecord[];
+    payslips?: Payslip[];
 }
 
-
-export interface PoliciesContextType {
-    attendancePolicies: AttendancePolicy[];
-    overtimePolicies: OvertimePolicy[];
-    leavePolicies: LeavePolicy[];
-    saveAttendancePolicy: (policy: AttendancePolicy) => void;
-    archiveAttendancePolicy: (policyId: string) => void;
-    bulkArchiveAttendancePolicies: (policyIds: string[]) => void;
-    updateAttendancePolicyStatus: (policyId: string, newStatus: 'Active' | 'Rejected') => void;
-    saveOvertimePolicy: (policy: OvertimePolicy) => void;
-    archiveOvertimePolicy: (policyId: string) => void;
-    bulkArchiveOvertimePolicies: (policyIds: string[]) => void;
-    updateOvertimePolicyStatus: (policyId: string, newStatus: 'Active' | 'Rejected') => void;
-    saveLeavePolicy: (policy: LeavePolicy) => void;
-    archiveLeavePolicy: (policyId: string) => void;
-    bulkArchiveLeavePolicies: (policyIds: string[]) => void;
-    updateLeavePolicyStatus: (policyId: string, newStatus: 'Active' | 'Rejected') => void;
-}
-
-export interface PoliciesProviderProps {
-    children: React.ReactNode;
-}
-
-// FIX: Added missing type definitions
 export interface NewUserPayload {
     name: string;
     jobTitleId: string;
-    departmentKey: string; // changed from department
+    departmentKey: string;
     hireDate: string;
-    baseSalary: number | undefined;
     branchId: string;
     role: UserRole;
     managerId: string;
+    baseSalary: number;
     attendancePolicyId: string;
     overtimePolicyId: string;
     leavePolicyId: string;
@@ -166,170 +115,61 @@ export interface NewUserPayload {
     address: string;
 }
 
-export interface UserContextType {
-    employees: EmployeeProfile[];
-    updateUserRole: (userId: string, newRole: UserRole) => void;
-    deactivateUser: (userId: string) => void;
-    bulkDeactivateUsers: (userIds: string[]) => void;
-    reactivateUser: (userId: string) => void;
-    bulkAssignAttendancePolicy: (policyId: string, employeeIds: string[]) => void;
-    bulkAssignOvertimePolicy: (policyId: string, employeeIds: string[]) => void;
-    bulkAssignLeavePolicy: (policyId: string, employeeIds: string[]) => void;
-    updateProfile: (updatedProfile: EmployeeProfile) => void;
-    addNewUser: (newUserPayload: NewUserPayload) => void;
-    updateUser: (userId: string, updatedData: NewUserPayload) => void;
-    updateBranchManager: (branchId: string, newManagerId: string) => void;
-    updateEmployeeManager: (employeeId: string, newManagerId: string) => void;
-}
 
-export interface UserProviderProps {
-    children: React.ReactNode;
-}
-
-export interface CompanyStructureContextType {
-    branches: Branch[];
-    jobTitles: JobTitle[];
-    addBranch: (name: string) => Branch;
-    updateBranch: (id: string, name: string) => void;
-    archiveBranch: (id: string) => void;
-    saveJobTitle: (jobTitle: JobTitle) => void;
-    deleteJobTitle: (jobTitleId: string) => void;
-}
-
-export interface CompanyStructureProviderProps {
-    children: React.ReactNode;
-}
-
-export interface RequestContextType {
-    requests: HRRequest[];
-    leaveRequests: LeaveRequest[];
-    attendanceAdjustmentRequests: AttendanceAdjustmentRequest[];
-    leavePermitRequests: LeavePermitRequest[];
-    pettyCashRequests: PettyCashRequest[];
-    handleRequestAction: (requestId: number, newStatus: RequestStatus) => void;
-    handleNewLeaveRequest: (newRequestData: Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => void;
-    handleNewAttendanceAdjustmentRequest: (newRequestData: Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => void;
-    handleNewLeavePermitRequest: (newRequestData: Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'durationHours'>) => void;
-    handleNewPettyCashRequest: (newRequestData: Omit<PettyCashRequest, 'id' | 'status' | 'type' | 'submissionDate'>) => void;
-}
-
-export interface RequestProviderProps {
-    children: React.ReactNode;
-}
-
-
-export interface EmployeeProfile extends Employee {
-    id: string;
-    employeeId: string;
-    jobTitleId?: string;
-    role: UserRole;
-    isEmployee: boolean; // Distinguishes real employees from system accounts
-    branchId: string;
-    branchName?: string; // Optional, can be added dynamically
-    departmentKey: string; // changed from department
-    manager?: string; // Manager Name
-    managerId?: string; // Manager ID for hierarchy
-    hireDate: string;
-    employmentStatus: EmploymentStatus; 
-    deactivationDate?: string;
-    checkInStatus: CheckInStatus;
-    leaveBalances: LeaveBalance[];
-    baseSalary?: number; // Added for payslip generation
-    attendancePolicyId?: string; 
-    attendancePolicyName?: string; // Added dynamically
-    overtimePolicyId?: string;
-    overtimePolicyName?: string;
-    leavePolicyId?: string;
-    leavePolicyName?: string; // Added dynamically
-    compensationPackageId?: string; // New field
-    assets?: Asset[]; // Added dynamically
-    // New fields for turnover analysis
-    performanceScore: number; // e.g., 1 to 5
-    satisfactionSurveyScore: number; // e.g., 1 to 5
-    lastPromotionDate: string | null;
-    salaryComparedToMarket: 'Below' | 'Average' | 'Above';
-    contact: {
-        phone: string;
-        workEmail: string;
-        personalEmail: string;
-    };
-    personal: {
-        dateOfBirth: string;
-        nationality: string;
-        nationalId: string;
-        maritalStatus: 'أعزب' | 'متزوج' | '-';
-        gender: 'Male' | 'Female';
-        religion: 'Muslim' | 'Christian' | '-';
-        isSpecialNeeds?: boolean;
-    };
-    address: string;
-}
-
-export interface OrgTreeNode extends EmployeeProfile {
-    children: OrgTreeNode[];
-}
-
+// Dashboard & Widgets
 export interface Stat {
-  title: string;
-  value: string;
-  icon: React.FC<React.SVGProps<SVGSVGElement>>;
-  color: string;
-  chartData?: { name: string; value: number }[];
-  chartColor?: string;
+    title: string;
+    value: string;
+    icon: React.FC<React.SVGProps<SVGSVGElement>>;
+    color: string;
+    chartData?: { name: string; value: number }[];
+    chartColor?: string;
 }
 
-export interface Activity {
-  description: string;
-  timestamp: string;
-  icon: React.FC<React.SVGProps<SVGSVGElement>>;
+export interface RecentActivityItem {
+    id: string;
+    icon: React.FC<React.SVGProps<SVGSVGElement>>;
+    text: string;
+    timestamp: string;
+    pageKey: string;
+    details?: string;
 }
 
-export interface ChatMessage {
-  sender: 'user' | 'ai';
-  text: string;
+export interface EmployeeDashboardData {
+    stats: {
+        remainingAnnualLeave: number;
+        pendingRequestsCount: number;
+        overtimeHoursThisMonth: number;
+        overtimeTrend: { name: string, value: number }[];
+    } | null;
+    recentActivities: RecentActivityItem[];
+    activeCourse: (Course & EmployeeCourse) | null;
+    latestTicket: SupportTicket | null;
 }
 
+export interface TeamDashboardData {
+    teamSize: number;
+    onLeaveToday: number;
+    pendingRequestsCount: number;
+    pendingRequests: PendingRequest[];
+    teamAttendance: TeamMember[];
+}
+
+export interface AttentionItem {
+    id: string;
+    type: 'request' | 'approval';
+    icon: React.FC<React.SVGProps<SVGSVGElement>>;
+    text: string;
+    timestamp: string;
+    employeeName: string;
+    employeeAvatarUrl: string;
+    pageKey: string;
+    relatedId: string;
+}
+
+// Attendance & Leave
 export type AttendanceStatus = 'Present' | 'Absent' | 'Leave' | 'Holiday' | 'Weekend';
-
-export interface AttendanceRecord {
-  employeeId: string;
-  date: string;
-  day: string;
-  status: AttendanceStatus;
-  firstCheckIn?: string;
-  lastCheckOut?: string;
-  workedHours?: number;
-  overtime?: number;
-}
-
-export interface AttendanceEvent {
-    id: string;
-    employeeId: string;
-    timestamp: string; // ISO string
-    type: 'CheckIn' | 'CheckOut';
-    isWithinGeofence: boolean;
-    coords?: { latitude: number; longitude: number };
-    taskId?: string;
-}
-
-export interface PayslipItem {
-    description: string;
-    amount: number;
-}
-
-export interface Payslip {
-    id: string;
-    month: string;
-    year: number;
-    grossSalary: number;
-    totalDeductions: number;
-    netSalary: number;
-    earnings: PayslipItem[];
-    deductions: PayslipItem[];
-}
-
 export type LeaveType = 'Annual' | 'Sick' | 'Casual' | 'Unpaid' | 'NewbornRegistration' | 'Exam';
-export type RequestStatus = 'Approved' | 'Pending' | 'Rejected';
 
 export interface LeaveBalance {
     type: LeaveType;
@@ -338,221 +178,25 @@ export interface LeaveBalance {
     used: number;
 }
 
-// --- Unified & Discriminated Request Types ---
-export type RequestType = 'Leave' | 'DataUpdate' | 'AttendanceAdjustment' | 'LeavePermit' | 'PettyCash';
-
-interface BaseRequest {
-    id: number;
-    employeeId: string;
-    status: RequestStatus;
-    submissionDate: string;
-}
-
-export interface LeaveRequest extends BaseRequest {
-    type: 'Leave';
-    leaveType: LeaveType;
-    startDate: string;
-    endDate: string;
-    duration: number;
-    reason: string;
-    attachmentUrl?: string;
-}
-
-export interface AttendanceAdjustmentRequest extends BaseRequest {
-    type: 'AttendanceAdjustment';
-    adjustmentType: AttendanceAdjustmentType;
+export interface AttendanceRecord {
     date: string;
-    time: string;
-    reason: string;
-}
-
-export interface LeavePermitRequest extends BaseRequest {
-    type: 'LeavePermit';
-    date: string;
-    startTime: string;
-    endTime: string;
-    durationHours: number;
-    reason: string;
-}
-
-export interface DataUpdateRequest extends BaseRequest {
-    type: 'DataUpdate';
-    details: string;
-}
-
-export type PettyCashCategory = 'Transportation' | 'OfficeSupplies' | 'ClientMeeting' | 'Other';
-
-export interface PettyCashRequest extends BaseRequest {
-    type: 'PettyCash';
-    date: string;
-    category: PettyCashCategory;
-    amount: number;
-    description: string;
-    attachmentUrl?: string;
-}
-
-export type HRRequest = LeaveRequest | AttendanceAdjustmentRequest | LeavePermitRequest | DataUpdateRequest | PettyCashRequest;
-
-export type AttendanceAdjustmentType = 'LateArrival' | 'EarlyDeparture';
-
-
-// Manager View Types
-export interface TeamMember {
-    id: string;
-    name: string;
-    title: string;
-    avatarUrl: string;
-    attendanceStatus: 'Present' | 'Absent' | 'Leave';
-}
-
-// Context for approval modal
-export interface OverlappingLeave {
-    employeeName: string;
-    avatarUrl: string;
-    leaveType: LeaveType;
-    startDate: string;
-    endDate: string;
-}
-
-export interface ApprovalContext {
-    employee: EmployeeProfile;
-    overlappingLeaves: OverlappingLeave[];
-}
-
-export type PendingRequest = HRRequest & {
-    employeeName: string;
-    employeeAvatarUrl: string;
-    context?: ApprovalContext;
-};
-
-// Manager Reports Types
-export interface LeaveDistributionDataItem {
-    name: LeaveType;
-    value: number;
-    typeName: string;
-    fill: string;
-}
-
-export interface TeamWeeklyAttendanceItem {
     day: string;
-    present: number;
-    absent: number;
-    leave: number;
-}
-
-export interface TeamReportsData {
-    keyMetrics: {
-        avgGoalCompletion: number;
-        pendingRequests: number;
-        avgTeamSentiment: number;
-        totalOvertime: number;
-    };
-    leaveDistribution: LeaveDistributionDataItem[];
-    weeklyAttendance: TeamWeeklyAttendanceItem[];
-}
-
-// Team Analytics & Skills Types
-export interface Skill {
-    name: string;
-    currentLevel: number;
-    requiredLevel: number;
-}
-
-export interface DevelopmentSuggestion {
-    area: string;
-    suggestion: string;
-}
-
-export type GoalStatus = 'On Track' | 'At Risk' | 'Completed' | 'Off Track' | 'Draft';
-
-export interface Goal {
-    id: string;
+    status: AttendanceStatus;
+    firstCheckIn?: string;
+    lastCheckOut?: string;
+    workedHours?: number;
+    overtime?: number;
     employeeId: string;
-    title: string;
-    description: string;
-    type: 'Objective' | 'Key Result';
-    parentId: string | null;
-    status: GoalStatus;
-    progress: number; // 0-100
-    dueDate: string;
 }
 
-export type ReviewStatus = 'Draft' | 'In Progress' | 'Completed';
-
-export interface PerformanceCriteria {
-    qualityOfWork: number;
-    productivity: number;
-    technicalSkills: number;
-    problemSolving: number;
-    communication: number;
-    teamwork: number;
-    initiative: number;
-    punctuality: number;
+export interface EmployeeInfraction {
+    date: string;
+    details: string;
+    penaltyApplied: boolean;
+    penaltyDetails?: string;
 }
 
-export interface PerformanceComments {
-    qualityOfWork: string;
-    productivity: string;
-    technicalSkills: string;
-    problemSolving: string;
-    communication: string;
-    teamwork: string;
-    initiative: string;
-    punctuality: string;
-}
-
-export interface PerformanceReview {
-    id: string;
-    employeeId: string;
-    reviewerId: string;
-    cycle: string; // e.g., "Mid-Year 2024"
-    status: ReviewStatus;
-    ratings: Partial<PerformanceCriteria>;
-    comments: Partial<PerformanceComments>;
-    finalComments: string;
-    reviewDate: string;
-    // FIX: Added missing properties to the PerformanceReview type to align it with its usage in various components.
-    overallRating: number;
-    strengths: string;
-    areasForImprovement: string;
-}
-
-// --- New Employee Document System ---
-export type DocumentType = 'عقد عمل' | 'مسوغات تعيين' | 'استمارة ١ (تأمينات)' | 'استمارة ٢ (تأمينات)' | 'استمارة ٦ (تأمينات)' | 'شهادات تدريب';
-
-export interface EmployeeDocument {
-    id: string;
-    employeeId: string;
-    name: string;
-    type: DocumentType;
-    uploadDate: string;
-    expirationDate: string | null;
-    fileUrl?: string; // Placeholder for file path/URL
-}
-
-
-// --- New Attendance & Leave Policy System Types ---
-
-export type ViolationType = 'Lateness' | 'Absence';
-export type PenaltyType = 'DeductLeave' | 'DeductSalary' | 'Warning';
-
-export interface WorkLocation {
-    id: string;
-    name: string;
-    latitude: number;
-    longitude: number;
-    radiusMeters: number;
-}
-
-export interface ViolationRule {
-    id: string;
-    type: ViolationType;
-    threshold: number; // e.g., 3 occurrences of unexcused absence
-    period: 'Month';
-    penaltyType: PenaltyType;
-    penaltyValue?: number; // e.g., 2 days for absence
-}
-
+// Policies
 export interface LatenessTier {
     id: string;
     fromMinutes: number;
@@ -562,20 +206,21 @@ export interface LatenessTier {
 
 export interface EarlyLeaveTier {
     id: string;
-    fromMinutes: number; // minutes before shift end
+    fromMinutes: number;
     toMinutes: number;
     penaltyHours: number;
 }
+
 
 export interface AttendancePolicy {
     id: string;
     name: string;
     scope: 'company' | 'branch';
     branchId?: string;
-    status: 'Active' | 'PendingApproval' | 'Archived' | 'Rejected';
+    status: 'Active' | 'Archived' | 'PendingApproval' | 'Rejected';
     gracePeriodInMinutes: number;
     latenessTiers: LatenessTier[];
-    absenceRules: ViolationRule[];
+    absenceRules: any[]; // Define further if needed
     earlyLeaveTiers: EarlyLeaveTier[];
     maxPermitsPerMonth: number;
     minPermitDurationMinutes: number;
@@ -589,37 +234,272 @@ export interface OvertimePolicy {
     name: string;
     scope: 'company' | 'branch';
     branchId?: string;
-    status: 'Active' | 'PendingApproval' | 'Archived' | 'Rejected';
-    // FIX: Completed the interface and corrected property names.
+    status: 'Active' | 'Archived' | 'PendingApproval' | 'Rejected';
     allowOvertime: boolean;
     minOvertimeInMinutes: number;
     overtimeRateNormal: number;
     overtimeRateHoliday: number;
 }
 
-// --- Learning & Development Types ---
+export interface AnnualLeaveTier {
+    id: string;
+    afterYears: number;
+    days: number;
+}
+
+export interface LeavePolicy {
+    id: string;
+    name: string;
+    scope: 'company' | 'branch';
+    branchId?: string;
+    status: 'Active' | 'Archived' | 'PendingApproval' | 'Rejected';
+    newEmployeeBalance: number;
+    newEmployeeEligibilityMonths: number;
+    annualLeaveTiers: AnnualLeaveTier[];
+    specialAnnualLeave: {
+        over50YearsOld: number;
+        specialNeeds: number;
+    };
+    maternityLeaveMonths: number;
+    casualLeaveBalance: number;
+}
+
+// Requests
+export interface ApprovalHistoryEntry {
+    approverId: string;
+    approverName: string;
+    status: 'Approved' | 'Rejected';
+    timestamp: string;
+    notes?: string;
+}
+
+export interface BaseRequest {
+    id: string;
+    employeeId: string;
+    type: RequestType;
+    status: RequestStatus;
+    submissionDate: string;
+    approvalHistory: ApprovalHistoryEntry[];
+}
+
+export interface LeaveRequest extends BaseRequest {
+    type: 'Leave';
+    leaveType: LeaveType;
+    startDate: string;
+    endDate: string;
+    reason: string;
+    duration: number;
+    attachmentUrl?: string;
+}
+
+export type AttendanceAdjustmentType = 'LateArrival' | 'EarlyDeparture';
+export interface AttendanceAdjustmentRequest extends BaseRequest {
+    type: 'AttendanceAdjustment';
+    adjustmentType: AttendanceAdjustmentType;
+    date: string;
+    time: string;
+    reason: string;
+}
+
+export interface LeavePermitRequest extends BaseRequest {
+    type: 'LeavePermit';
+    date: string;
+    startTime: string;
+    endTime: string;
+    reason: string;
+    durationHours: number;
+}
+
+export type PettyCashCategory = 'Transportation' | 'OfficeSupplies' | 'ClientMeeting' | 'Other';
+export interface PettyCashRequest extends BaseRequest {
+    type: 'PettyCash';
+    date: string;
+    category: PettyCashCategory;
+    amount: number;
+    description: string;
+    attachmentUrl?: string;
+}
+
+export interface DataUpdateRequest extends BaseRequest {
+    type: 'DataUpdate';
+    details: string;
+    requestedChanges: Partial<EmployeeProfile>;
+}
+
+export type HRRequest = LeaveRequest | AttendanceAdjustmentRequest | LeavePermitRequest | DataUpdateRequest | PettyCashRequest;
+
+export type PendingRequest = HRRequest & {
+    employeeName: string;
+    employeeAvatarUrl: string;
+};
+
+
+// Payroll & Finance
+export interface PayslipItem {
+    description: string;
+    amount: number;
+}
+
+export interface Payslip {
+    id: string;
+    employeeId: string;
+    month: string;
+    year: number;
+    grossSalary: number;
+    totalDeductions: number;
+    netSalary: number;
+    earnings: PayslipItem[];
+    deductions: PayslipItem[];
+}
+
+export type SalaryComponentType = 'Allowance' | 'Deduction';
+export type CalculationType = 'FixedAmount' | 'PercentageOfBase';
+export interface SalaryComponent {
+    id: string;
+    name: string;
+    type: SalaryComponentType;
+    calculationType: CalculationType;
+    value: number;
+}
+
+export interface CompensationPackage {
+    id: string;
+    name: string;
+    components: {
+        componentId: string;
+        value: number;
+    }[];
+}
+
+
+// Team & Manager
+export interface TeamMember {
+    id: string;
+    name: string;
+    title: string;
+    avatarUrl: string;
+    attendanceStatus: 'Present' | 'Absent' | 'Leave';
+}
+
+export interface TeamMemberDetails {
+    profile: EmployeeProfile;
+    stats: {
+        usedPermissionHours: number;
+        usedAnnualLeavesDays: number;
+        usedRemoteDays: number;
+        emergencyDays: number;
+    };
+    reviews: PerformanceReview[];
+    goals: Goal[];
+    pettyCashRequests: PettyCashRequest[];
+    documents: EmployeeDocument[];
+    assets: Asset[];
+}
+
+export interface TeamReportsData {
+    keyMetrics: {
+        avgGoalCompletion: number;
+        avgTeamSentiment: number;
+        pendingRequests: number;
+        totalOvertime: number;
+    };
+    weeklyAttendance: TeamWeeklyAttendanceItem[];
+    leaveDistribution: LeaveDistributionDataItem[];
+}
+
+export interface TeamWeeklyAttendanceItem {
+    day: string;
+    present: number;
+    leave: number;
+    absent: number;
+}
+
+export interface LeaveDistributionDataItem {
+    type: LeaveType;
+    typeName: string;
+    value: number;
+    fill: string;
+}
+
+// Performance & Goals
+export type GoalStatus = 'On Track' | 'At Risk' | 'Off Track' | 'Completed' | 'Draft';
+export type GoalType = 'Objective' | 'Key Result';
+
+export interface Goal {
+    id: string;
+    title: string;
+    description: string;
+    type: GoalType;
+    status: GoalStatus;
+    progress: number;
+    dueDate: string;
+    parentId: string | null;
+}
+
+export type ReviewStatus = 'Draft' | 'In Progress' | 'Completed';
+export type MonthlyCheckInRating = 'Exceeds Expectations' | 'Meets Expectations' | 'Needs Improvement';
+
+export interface MonthlyCheckIn {
+    id: string;
+    employeeId: string;
+    reviewerId: string;
+    date: string;
+    month: number;
+    year: number;
+    rating: MonthlyCheckInRating;
+    notes: string;
+}
+
+export interface PerformanceReview {
+    id: string;
+    employeeId: string;
+    reviewerId: string;
+    cycle: string;
+    status: ReviewStatus;
+    reviewDate: string;
+    ratings: Record<string, number>;
+    comments: Record<string, string>;
+    overallRating: number;
+    strengths: string;
+    areasForImprovement: string;
+    finalComments: string;
+}
+
+export interface TeamMemberPerformanceData {
+    member: EmployeeProfile;
+    goalProgress: number;
+    latestCheckIn: MonthlyCheckIn | null;
+    reviewStatus: 'Completed' | 'In Progress' | 'Not Started';
+}
+
+export interface ManagerPerformanceData {
+    cycle: { name: string; status: 'Active' | 'Upcoming' | 'Closed' };
+    cycleStats: {
+        totalReviews: number;
+        reviewsCompleted: number;
+        avgTeamGoalProgress: number;
+    };
+    teamPerformance: TeamMemberPerformanceData[];
+}
+
+// Learning & Development
 export type CourseCategory = 'Technical' | 'Soft Skills' | 'Compliance' | 'Leadership';
 export type CourseStatus = 'Not Started' | 'In Progress' | 'Completed';
 export type ManagerApprovalStatus = 'Pending' | 'Approved' | 'Rejected' | 'NotSubmitted';
 export type ExternalCourseVenue = 'Online' | 'On-site' | 'Training Center';
-
-export interface CourseModule {
-    id: string;
-    title: string;
-    topics: string[];
-}
+export type CourseType = 'Internal' | 'External';
 
 export interface Course {
     id: string;
-    type: 'Internal' | 'External';
     title: string;
+    description: string;
     category: CourseCategory;
     durationHours: number;
-    description: string;
     isMandatory: boolean;
-    // Internal
+    type: CourseType;
     learningObjectives?: string[];
-    modules?: CourseModule[];
+    // Internal
+    modules?: { title: string; topics: string[] }[];
     // External
     provider?: string;
     url?: string;
@@ -632,11 +512,11 @@ export interface EmployeeCourse {
     courseId: string;
     status: CourseStatus;
     progress: number;
+    enrollmentDate: string;
+    completionDate?: string;
     managerApprovalStatus: ManagerApprovalStatus;
-    submittedNotes?: string;
-    certificateUrl?: string; // Storing URL/path after upload
-    result?: string; // e.g., "Pass", "95/100"
-    performanceRating?: number; // 1-5, Manager's rating of employee's performance post-course
+    notes?: string;
+    certificateUrl?: string;
 }
 
 export interface CourseOutline {
@@ -648,44 +528,36 @@ export interface CourseOutline {
     }[];
 }
 
-// --- Recruitment (ATS) Types ---
+// Recruitment
 export type CandidateStage = 'Applied' | 'Screening' | 'Interview' | 'Offer' | 'Hired' | 'Rejected';
-
 export interface JobOpening {
     id: string;
     title: string;
-    departmentKey: string; // changed from department
+    departmentKey: string;
     status: 'Open' | 'Closed';
-    datePosted: string;
-    description: string;
-    requirements: string[];
 }
 
 export interface Candidate {
     id: string;
-    jobOpeningId: string;
     name: string;
     email: string;
-    phone: string;
-    stage: CandidateStage;
-    applicationDate: string;
     avatarUrl: string;
+    jobOpeningId: string;
+    stage: CandidateStage;
 }
 
-// --- Onboarding & Offboarding Types ---
-export type OnboardingTaskCategory = 'الأوراق والمستندات' | 'إعدادات تقنية' | 'التعريف بالفريق' | 'سياسات الشركة';
-export type OnboardingResponsible = 'الموظف الجديد' | 'المدير المباشر' | 'الموارد البشرية' | 'تقنية المعلومات';
-export type OffboardingTaskCategory = 'تسليم العهدة' | 'نقل المعرفة' | 'إجراءات الموارد البشرية' | 'التسوية المالية النهائية';
-export type OffboardingResponsible = 'الموظف المغادر' | 'المدير المباشر' | 'الموارد البشرية' | 'تقنية المعلومات';
+// Onboarding & Offboarding
+export type OnboardingTaskCategory = 'الأوراق والمستندات' | 'إعدادات النظام والحسابات' | 'التعريف بالشركة والفريق' | 'مهام أول أسبوع';
+export type OnboardingResponsible = 'الموظف الجديد' | 'المدير المباشر' | 'الموارد البشرية' | 'تكنولوجيا المعلومات';
 
 export interface OnboardingTask {
-    id: string;
+    id?: string;
     title: string;
     category: OnboardingTaskCategory;
     responsible: OnboardingResponsible;
     dueOffsetDays: number;
-    isCompleted: boolean;
-    dueDate: string;
+    dueDate?: string;
+    isCompleted?: boolean;
 }
 
 export interface OnboardingTemplate {
@@ -700,17 +572,20 @@ export interface OnboardingProcess {
     employeeId: string;
     templateId: string;
     startDate: string;
-    tasks: OnboardingTask[];
+    tasks: (Omit<OnboardingTask, 'id'> & { id: string; isCompleted: boolean; dueDate: string; })[];
 }
 
+export type OffboardingTaskCategory = 'تسليم العهدة' | 'إجراءات إدارية' | 'نقل المعرفة' | 'إجراءات الخروج النهائية';
+export type OffboardingResponsible = 'الموظف المغادر' | 'المدير المباشر' | 'الموارد البشرية' | 'تكنولوجيا المعلومات' | 'المالية';
+
 export interface OffboardingTask {
-    id: string;
+    id?: string;
     title: string;
     category: OffboardingTaskCategory;
     responsible: OffboardingResponsible;
-    dueOffsetDays: number; // Days *before* last day
-    isCompleted: boolean;
-    dueDate: string;
+    dueOffsetDays: number; // days before last day
+    dueDate?: string;
+    isCompleted?: boolean;
 }
 
 export interface OffboardingTemplate {
@@ -725,78 +600,77 @@ export interface OffboardingProcess {
     employeeId: string;
     templateId: string;
     lastDay: string;
-    tasks: OffboardingTask[];
+    tasks: (Omit<OffboardingTask, 'id'> & { id: string; isCompleted: boolean; dueDate: string; })[];
 }
 
 
-// --- Notifications & Support Types ---
-export type NotificationType = 'approval_request' | 'status_update' | 'announcement';
-export type TicketCategory = 'Payroll' | 'Leave Balance' | 'Technical Support' | 'Policy Question' | 'Other';
-export type TicketPriority = 'Low' | 'Medium' | 'High' | 'Urgent';
-export type TicketStatus = 'New' | 'In Progress' | 'Resolved' | 'Closed';
-
+// Misc
 export interface Notification {
     id: string;
-    recipientId: string;
-    senderId: string;
-    type: NotificationType;
     message: string;
+    timestamp: string;
     isRead: boolean;
-    timestamp: string; // ISO string
-    relatedEntity?: {
-        type: 'course' | 'leave_request' | 'attendance_adjustment';
-        id: string;
-    };
+    senderId: string; // 'system' or employeeId
 }
 
-export interface SupportTicketMessage {
-    id: string;
-    authorId: string;
-    content: string;
-    timestamp: string; // ISO string
+export interface ChatMessage {
+    sender: 'user' | 'ai';
+    text: string;
 }
 
-export interface SupportTicket {
-    id: string;
-    employeeId: string;
-    title: string;
-    description: string;
-    category: TicketCategory;
-    priority: TicketPriority;
-    status: TicketStatus;
-    assignedToId?: string;
-    createdAt: string; // ISO string
-    updatedAt: string; // ISO string
-    messages: SupportTicketMessage[];
+export interface TurnoverAnalysisResult {
+    riskLevel: TurnoverRiskLevel;
+    riskScore: number;
+    keyFactors: string[];
+}
+export type TurnoverRiskLevel = 'Low' | 'Medium' | 'High' | 'Unknown';
+
+export interface Skill {
+    name: string;
+    currentLevel: number;
+    requiredLevel: number;
 }
 
-// --- Performance & Goals Types (continued) ---
-export type MonthlyCheckInRating = 'Exceeds Expectations' | 'Meets Expectations' | 'Needs Improvement';
-
-export interface MonthlyCheckIn {
+export type DocumentType = 'عقد عمل' | 'مسوغات تعيين' | 'استمارة ١ (تأمينات)' | 'استمارة ٢ (تأمينات)' | 'استمارة ٦ (تأمينات)' | 'شهادات تدريب';
+export interface EmployeeDocument {
     id: string;
     employeeId: string;
-    reviewerId: string;
-    month: number; // 0-11
-    year: number;
-    rating: MonthlyCheckInRating;
-    notes: string;
-    date: string; // ISO string
+    name: string;
+    type: DocumentType;
+    uploadDate: string;
+    expirationDate: string | null;
+    fileUrl?: string;
 }
 
-// --- Policy System Types (continued) ---
-export interface EmployeeInfraction {
+export type AssetCategory = 'Hardware' | 'Software' | 'Furniture' | 'Vehicle';
+export type DepreciationMethod = 'Straight-line' | 'Declining Balance';
+export type AssetStatus = 'Available' | 'Assigned' | 'In-Repair' | 'Retired';
+
+export interface Asset {
+    id: string;
+    name: string;
+    category: AssetCategory;
+    serialNumber: string;
+    purchaseDate: string;
+    purchaseValue: number;
+    depreciationMethod: DepreciationMethod;
+    usefulLifeYears: number;
+    status: AssetStatus;
+    assignedToId: string | null;
+    currentValue?: number;
+    depreciationStatus?: 'Normal' | 'NearingEOL' | 'Depreciated';
+}
+
+export interface AttendanceEvent {
     id: string;
     employeeId: string;
-    policyId: string;
-    ruleType: 'Lateness' | 'Absence';
-    date: string;
-    details: string;
-    penaltyApplied: boolean;
-    penaltyDetails: string;
+    timestamp: string;
+    type: 'CheckIn' | 'CheckOut';
+    isWithinGeofence: boolean;
+    coords?: { latitude: number; longitude: number };
+    taskId?: string;
 }
 
-// --- External Tasks ---
 export interface ExternalTask {
     id: string;
     employeeId: string;
@@ -809,128 +683,50 @@ export interface ExternalTask {
     endTime: string;
     status: 'PendingApproval' | 'Approved' | 'Rejected' | 'InProgress' | 'Completed' | 'Cancelled';
     checkInTimestamp?: string;
-    checkInCoords?: { latitude: number; longitude: number; };
     checkOutTimestamp?: string;
-    checkOutCoords?: { latitude: number; longitude: number; };
 }
 
-// --- Dashboard & Analytics Types ---
-export interface RecentActivityItem {
+export type TicketCategory = 'Payroll' | 'Leave Balance' | 'Technical Support' | 'Policy Question' | 'Other';
+export type TicketPriority = 'Low' | 'Medium' | 'High' | 'Urgent';
+export type TicketStatus = 'New' | 'In Progress' | 'Resolved' | 'Closed';
+
+export interface SupportTicketMessage {
     id: string;
-    icon: React.FC<React.SVGProps<SVGSVGElement>>;
-    text: string;
+    authorId: string;
     timestamp: string;
-    pageKey: string;
-    details?: string;
+    content: string;
 }
 
-export interface AttentionItem {
+export interface SupportTicket {
     id: string;
-    type: 'leave' | 'attendance_adjustment' | 'leave_permit' | 'course' | 'external_task' | 'ticket' | 'petty_cash';
+    employeeId: string;
+    assignedToId?: string;
+    title: string;
+    description: string;
+    category: TicketCategory;
+    priority: TicketPriority;
+    status: TicketStatus;
+    createdAt: string;
+    updatedAt: string;
+    messages: SupportTicketMessage[];
+}
+
+export interface OrgTreeNode extends EmployeeProfile {
+    children: OrgTreeNode[];
+}
+
+export interface WorkLocation {
+    id: string;
+    name: string;
+    latitude: number;
+    longitude: number;
+    radiusMeters: number;
+}
+
+export interface HelpCategory {
+    id: string;
+    name: BilingualText;
     icon: React.FC<React.SVGProps<SVGSVGElement>>;
-    text: string;
-    employeeName: string;
-    employeeAvatarUrl: string;
-    timestamp: string;
-    request: HRRequest; // The original request object
-    context?: ApprovalContext;
-}
-
-export interface EmployeeDashboardData {
-    activeCourse: (Course & EmployeeCourse) | null;
-    latestTicket: SupportTicket | null;
-    recentActivities: RecentActivityItem[];
-    stats: {
-        remainingAnnualLeave: number;
-        pendingRequestsCount: number;
-        overtimeHoursThisMonth: number;
-        overtimeTrend: { name: string; value: number }[];
-    };
-}
-
-export interface TeamLearningStat {
-    name: string;
-    progress: number;
-}
-
-export interface TeamDashboardData {
-    attentionItems: AttentionItem[];
-    teamLearningStats: TeamLearningStat[];
-    teamAttendance: {
-        present: number;
-        onLeave: number;
-        absent: number;
-    };
-    teamMembersWithAttendance: TeamMember[];
-}
-
-export interface TeamMemberStats {
-    usedPermissionHours: number;
-    usedAnnualLeavesDays: number;
-    usedRemoteDays: number;
-    emergencyDays: number;
-    usedGraceMinutes: number;
-    absentDays: number;
-}
-
-export interface TeamMemberDetails {
-    profile: EmployeeProfile;
-    attendance: AttendanceRecord[];
-    leave: LeaveRequest[];
-    skills: Skill[];
-    developmentPlan: DevelopmentSuggestion[];
-    goals: Goal[];
-    reviews: PerformanceReview[];
-    documents: EmployeeDocument[];
-    assets: Asset[];
-    infractions: EmployeeInfraction[];
-    courses: (Course & EmployeeCourse)[];
-    monthlyCheckIns: MonthlyCheckIn[];
-    externalTasks: ExternalTask[];
-    stats: TeamMemberStats;
-    dailyPunches: AttendanceEvent[];
-    pettyCashRequests: PettyCashRequest[];
-}
-
-
-// --- Turnover Analysis ---
-export type TurnoverRiskLevel = 'Low' | 'Medium' | 'High' | 'Unknown';
-
-export interface TurnoverAnalysisResult {
-    riskLevel: TurnoverRiskLevel;
-    riskScore: number;
-    keyFactors: string[];
-}
-
-// --- Performance Management ---
-export interface PerformanceCycle {
-    name: string;
-    status: 'Upcoming' | 'Active' | 'Closed';
-    startDate: string;
-    endDate: string;
-}
-
-export interface TeamMemberPerformanceData {
-    member: EmployeeProfile;
-    goalProgress: number;
-    latestCheckIn: MonthlyCheckIn | null;
-    reviewStatus: 'Not Started' | 'In Progress' | 'Completed';
-}
-
-export interface ManagerPerformanceData {
-    cycle: PerformanceCycle;
-    cycleStats: {
-        totalReviews: number;
-        reviewsCompleted: number;
-        avgTeamGoalProgress: number;
-    };
-    teamPerformance: TeamMemberPerformanceData[];
-}
-
-// --- Help Center Types ---
-export interface BilingualText {
-    ar: string;
-    en: string;
 }
 
 export interface HelpArticle {
@@ -941,19 +737,114 @@ export interface HelpArticle {
     keywords: string[];
 }
 
-export interface HelpCategory {
+export type ApproverRole = 'Direct Manager' | 'Branch Admin' | 'HR Manager' | 'General Manager';
+export interface ApprovalStep {
     id: string;
-    name: BilingualText;
-    icon: React.FC<React.SVGProps<SVGSVGElement>>;
+    approverRole: ApproverRole;
+    order: number;
+}
+export interface ApprovalWorkflow {
+    id: string;
+    name: string;
+    requestType: RequestType;
+    steps: ApprovalStep[];
+}
+
+
+// Context Provider Props
+export interface AssetsProviderProps {
+  children: ReactNode;
+}
+export interface AssetsContextType {
+  assets: Asset[];
+  saveAsset: (asset: Asset) => void;
+  assignAsset: (assetId: string, employeeId: string | null) => void;
+}
+
+export interface CompanyStructureProviderProps {
+    children: ReactNode;
+}
+export interface CompanyStructureContextType {
+    branches: Branch[];
+    jobTitles: JobTitle[];
+    addBranch: (name: string) => Branch;
+    updateBranch: (id: string, name: string) => void;
+    archiveBranch: (id: string) => void;
+    saveJobTitle: (jobTitle: JobTitle) => void;
+    deleteJobTitle: (jobTitleId: string) => void;
+}
+
+export interface UserProviderProps {
+    children: ReactNode;
+}
+export interface UserContextType {
+    employees: EmployeeProfile[];
+    updateUserRole: (userId: string, newRole: UserRole) => void;
+    deactivateUser: (userId: string) => void;
+    bulkDeactivateUsers: (userIds: string[]) => void;
+    reactivateUser: (userId: string) => void;
+    bulkAssignAttendancePolicy: (policyId: string, employeeIds: string[]) => void;
+    bulkAssignOvertimePolicy: (policyId: string, employeeIds: string[]) => void;
+    bulkAssignLeavePolicy: (policyId: string, employeeIds: string[]) => void;
+    updateProfile: (updatedProfile: EmployeeProfile) => void;
+    addNewUser: (newUser: NewUserPayload) => void;
+    updateUser: (userId: string, updatedData: NewUserPayload) => void;
+    updateBranchManager: (branchId: string, newManagerId: string) => void;
+    updateEmployeeManager: (employeeId: string, newManagerId: string) => void;
+}
+
+export interface TeamLearningStat {
+    name: string;
+    progress: number;
 }
 
 export interface HelpCenterContextType {
     articles: HelpArticle[];
     categories: HelpCategory[];
-    addArticle: (article: Omit<HelpArticle, 'id'>) => void;
-    updateArticle: (article: HelpArticle) => void;
+    addArticle: (articleData: Omit<HelpArticle, 'id'>) => void;
+    updateArticle: (updatedArticle: HelpArticle) => void;
     deleteArticle: (articleId: string) => void;
-    addCategory: (category: Omit<HelpCategory, 'id' | 'icon'> & { name: BilingualText }) => void;
-    updateCategory: (category: Omit<HelpCategory, 'icon'>) => void;
+    addCategory: (categoryData: Omit<HelpCategory, 'id' | 'icon'> & { name: BilingualText }) => void;
+    updateCategory: (updatedCategory: Omit<HelpCategory, 'icon'>) => void;
     deleteCategory: (categoryId: string) => void;
+}
+
+export interface PoliciesContextType {
+    attendancePolicies: AttendancePolicy[];
+    leavePolicies: LeavePolicy[];
+    overtimePolicies: OvertimePolicy[];
+    onboardingTemplates: OnboardingTemplate[];
+    offboardingTemplates: OffboardingTemplate[];
+    workLocations: WorkLocation[];
+    salaryComponents: SalaryComponent[];
+    compensationPackages: CompensationPackage[];
+    approvalWorkflows: ApprovalWorkflow[];
+    saveAttendancePolicy: (policy: AttendancePolicy) => void;
+    saveLeavePolicy: (policy: LeavePolicy) => void;
+    saveOvertimePolicy: (policy: OvertimePolicy) => void;
+    saveOnboardingTemplate: (template: OnboardingTemplate) => void;
+    deleteOnboardingTemplate: (templateId: string) => void;
+    saveOffboardingTemplate: (template: OffboardingTemplate) => void;
+    deleteOffboardingTemplate: (templateId: string) => void;
+    addWorkLocation: (location: Omit<WorkLocation, 'id'>) => void;
+    updateWorkLocation: (location: WorkLocation) => void;
+    saveSalaryComponent: (component: SalaryComponent) => void;
+    saveCompensationPackage: (pkg: CompensationPackage) => void;
+    saveApprovalWorkflow: (workflow: ApprovalWorkflow) => void;
+    deleteApprovalWorkflow: (workflowId: string) => void;
+}
+
+export interface RequestProviderProps {
+    children: ReactNode;
+}
+export interface RequestContextType {
+    leaveRequests: LeaveRequest[];
+    attendanceAdjustmentRequests: AttendanceAdjustmentRequest[];
+    leavePermitRequests: LeavePermitRequest[];
+    pettyCashRequests: PettyCashRequest[];
+    handleNewLeaveRequest: (newRequest: Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'approvalHistory'>) => void;
+    handleNewAttendanceAdjustmentRequest: (newRequest: Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'approvalHistory'>) => void;
+    handleNewLeavePermitRequest: (newRequest: Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'durationHours' | 'approvalHistory'>) => void;
+    handleNewPettyCashRequest: (newRequest: Omit<PettyCashRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'approvalHistory'>) => void;
+    handleRequestAction: (requestId: string, newStatus: 'Approved' | 'Rejected', notes: string, approverId: string, approverName: string) => void;
 }

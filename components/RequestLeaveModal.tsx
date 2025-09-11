@@ -1,13 +1,16 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, ArrowUpTrayIcon } from './icons/Icons';
+// FIX: Changed import path to be relative.
 import type { LeaveRequest, LeaveType } from '../types';
 import { useTranslation } from './contexts/LanguageContext';
 
 interface RequestLeaveModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onSubmit: (newRequest: Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'employeeId'>) => void;
+    // FIX: Omitted 'approvalHistory' from the type to match the object being passed.
+    onSubmit: (newRequest: Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'employeeId' | 'approvalHistory'>) => void;
 }
 
 const RequestLeaveModal: React.FC<RequestLeaveModalProps> = ({ isOpen, onClose, onSubmit }) => {
@@ -90,7 +93,7 @@ const RequestLeaveModal: React.FC<RequestLeaveModalProps> = ({ isOpen, onClose, 
                             id="leaveType"
                             value={leaveType}
                             onChange={(e) => setLeaveType(e.target.value as LeaveType)}
-                            className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500"
+                            className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500"
                         >
                             <option value="Annual">{t('leaveTypes.Annual')}</option>
                             <option value="Sick">{t('leaveTypes.Sick')}</option>
@@ -104,11 +107,11 @@ const RequestLeaveModal: React.FC<RequestLeaveModalProps> = ({ isOpen, onClose, 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label htmlFor="startDate" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('leave.startDate')}</label>
-                            <input type="date" id="startDate" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-700 dark:text-white" />
+                            <input type="date" id="startDate" value={startDate} onChange={(e) => setStartDate(e.target.value)} className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white" />
                         </div>
                         <div>
                             <label htmlFor="endDate" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">{t('leave.endDate')}</label>
-                            <input type="date" id="endDate" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-700 dark:text-white" disabled={leaveType === 'NewbornRegistration'} />
+                            <input type="date" id="endDate" value={endDate} onChange={(e) => setEndDate(e.target.value)} className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white" disabled={leaveType === 'NewbornRegistration'} />
                         </div>
                     </div>
 
@@ -119,7 +122,7 @@ const RequestLeaveModal: React.FC<RequestLeaveModalProps> = ({ isOpen, onClose, 
                             rows={3}
                             value={reason}
                             onChange={(e) => setReason(e.target.value)}
-                            className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 dark:bg-slate-700 dark:text-white"
+                            className="w-full p-2 border border-slate-300 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 dark:bg-slate-700 dark:text-white"
                             placeholder={t('leave.reasonPlaceholder')}
                             spellCheck="true"
                         ></textarea>
@@ -129,7 +132,7 @@ const RequestLeaveModal: React.FC<RequestLeaveModalProps> = ({ isOpen, onClose, 
                         <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">
                             {t('leave.attachFile')} {isExamLeave ? <span className="text-red-500 font-bold">{t('leave.attachFileRequired')}</span> : `(${t('leave.attachFileOptional')})`}
                         </label>
-                        <label htmlFor="attachment" className="cursor-pointer bg-slate-50 dark:bg-slate-700 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-4 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 hover:border-sky-500 hover:text-sky-600">
+                        <label htmlFor="attachment" className="cursor-pointer bg-slate-50 dark:bg-slate-700 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg p-4 flex flex-col items-center justify-center text-slate-500 dark:text-slate-400 hover:border-primary-500 hover:text-primary-600">
                            <ArrowUpTrayIcon className="w-8 h-8 mb-1"/>
                            <span className="text-sm">{attachment ? attachment.name : t('leave.attachFilePrompt')}</span>
                            <input id="attachment" type="file" className="hidden" onChange={(e) => setAttachment(e.target.files ? e.target.files[0] : null)} />
@@ -138,7 +141,7 @@ const RequestLeaveModal: React.FC<RequestLeaveModalProps> = ({ isOpen, onClose, 
 
                     <div className="flex justify-end gap-4 pt-4">
                         <button type="button" onClick={onClose} className="py-2 px-6 bg-slate-100 dark:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg font-semibold hover:bg-slate-200 dark:hover:bg-slate-500">{t('general.cancel')}</button>
-                        <button type="submit" className="py-2 px-6 bg-sky-600 text-white rounded-lg font-semibold hover:bg-sky-700 shadow-sm">{t('leave.submitRequest')}</button>
+                        <button type="submit" className="py-2 px-6 bg-primary-600 text-white rounded-lg font-semibold hover:bg-primary-700 shadow-sm">{t('leave.submitRequest')}</button>
                     </div>
                 </form>
             </div>

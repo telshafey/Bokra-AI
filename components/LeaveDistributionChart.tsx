@@ -1,5 +1,7 @@
+
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+// FIX: Changed import path to be relative.
 import type { LeaveDistributionDataItem } from '../types';
 
 interface LeaveDistributionChartProps {

@@ -1,8 +1,12 @@
 
 
+
+
+
 import React, { useState, useMemo, useEffect } from 'react';
 import TeamMemberList from './TeamMemberList';
 import TeamMemberDetailView from './TeamMemberDetailView';
+// FIX: Changed import path to be relative.
 import { EmployeeProfile, TeamMemberDetails, Branch, AttendancePolicy, LeavePolicy, JobTitle, MonthlyCheckIn, OvertimePolicy, PerformanceReview, NewUserPayload, AppModule, SalaryComponent, CompensationPackage, EmployeeDocument } from '../types';
 import { useTranslation } from './contexts/LanguageContext';
 
@@ -67,7 +71,7 @@ const TeamAnalyticsPage: React.FC<TeamAnalyticsPageProps> = ({
             id="branch-filter"
             value={branchFilter}
             onChange={(e) => setBranchFilter(e.target.value)}
-            className="p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-sky-500 text-sm"
+            className="p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
           >
             <option value="all">كل الفروع</option>
             {/* FIX: Replaced property access from `name` to `nameKey` and wrapped it in the translation function to match the type definition. */}
