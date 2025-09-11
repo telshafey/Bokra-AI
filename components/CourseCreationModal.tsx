@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { Course, CourseCategory, ExternalCourseVenue } from '../types';
@@ -61,11 +60,16 @@ const CourseCreationModal: React.FC<CourseCreationModalProps> = ({ isOpen, onClo
         handleClose();
     };
 
-    if (!isOpen) return null;
-    
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-start z-50 p-4 pt-16" onClick={handleClose}>
-            <form onSubmit={handleSave} className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div 
+            className={`fixed inset-0 bg-black bg-opacity-60 flex justify-center items-start z-50 p-4 pt-16 transition-opacity duration-300 ease-in-out ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+            onClick={handleClose}
+        >
+            <form 
+                onSubmit={handleSave} 
+                className={`bg-white rounded-xl shadow-2xl p-8 w-full max-w-2xl max-h-[90vh] overflow-y-auto transform transition-all duration-300 ease-in-out ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+                onClick={e => e.stopPropagation()}
+            >
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-slate-800">إضافة دورة خارجية</h2>
                     <button type="button" onClick={handleClose}><XMarkIcon className="w-7 h-7 text-slate-400" /></button>

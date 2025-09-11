@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { EmployeeProfile, SupportTicket, TicketStatus } from '../types';
 import { ArrowRightIcon, PaperAirplaneIcon } from './icons/Icons';
-import { timeSince } from '../constants';
+import { timeSince } from './utils';
 import { useTranslation } from './contexts/LanguageContext';
 
 const STATUS_BADGE_CLASSES: Record<TicketStatus, string> = {

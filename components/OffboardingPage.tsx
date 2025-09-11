@@ -1,9 +1,9 @@
-
 import React, { useState, useMemo } from 'react';
 import { OffboardingProcess, OffboardingTemplate, EmployeeProfile, OffboardingTask, OffboardingTaskCategory } from '../types';
 import { UserMinusIcon, BanknotesIcon } from './icons/Icons';
 import StartOffboardingModal from './StartOffboardingModal';
 import CompensationCalculatorModal from './CompensationCalculatorModal';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface OffboardingPageProps {
     offboardingProcesses: OffboardingProcess[];
@@ -23,6 +23,7 @@ const OffboardingPage: React.FC<OffboardingPageProps> = ({ offboardingProcesses,
     const [selectedProcessId, setSelectedProcessId] = useState<string | null>(offboardingProcesses[0]?.id || null);
     const [isStartModalOpen, setIsStartModalOpen] = useState(false);
     const [isCalculatorModalOpen, setIsCalculatorModalOpen] = useState(false);
+    const { t } = useTranslation();
     
     const employeeMap = useMemo(() => new Map(employees.map(e => [e.id, e])), [employees]);
 
@@ -131,7 +132,7 @@ const OffboardingPage: React.FC<OffboardingPageProps> = ({ offboardingProcesses,
                                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                                     {Array.from(tasksByCategory.entries()).map(([category, tasks]) => (
                                         <div key={category}>
-                                            <h3 className="font-bold text-slate-700 mb-3 border-b pb-2">{category}</h3>
+                                            <h3 className="font-bold text-slate-700 mb-3 border-b pb-2">{t(`offboarding.categories.${category}`)}</h3>
                                             <div className="space-y-3">
                                                 {tasks.map(task => (
                                                     <div key={task.id} className={`p-3 rounded-lg flex items-center justify-between ${task.isCompleted ? 'bg-emerald-50' : 'bg-slate-50'}`}>
@@ -145,7 +146,7 @@ const OffboardingPage: React.FC<OffboardingPageProps> = ({ offboardingProcesses,
                                                             <div>
                                                                 <p className={`font-medium ${task.isCompleted ? 'line-through text-slate-500' : 'text-slate-800'}`}>{task.title}</p>
                                                                 <p className="text-xs text-slate-500">
-                                                                    المسؤول: {task.responsible} | الاستحقاق: {task.dueDate}
+                                                                    المسؤول: {t(`offboarding.responsibles.${task.responsible}`)} | الاستحقاق: {task.dueDate}
                                                                 </p>
                                                             </div>
                                                         </div>

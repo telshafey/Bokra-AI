@@ -1,9 +1,8 @@
-
-
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, PlusCircleIcon, TrashIcon } from './icons/Icons';
 import type { OffboardingTemplate, OffboardingTask, OffboardingTaskCategory, OffboardingResponsible } from '../types';
 import { OFFBOARDING_TASK_CATEGORIES, OFFBOARDING_RESPONSIBLE_PARTIES } from '../constants';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface OffboardingTemplateModalProps {
     isOpen: boolean;
@@ -13,10 +12,11 @@ interface OffboardingTemplateModalProps {
 }
 
 const OffboardingTemplateModal: React.FC<OffboardingTemplateModalProps> = ({ isOpen, onClose, onSave, templateToEdit }) => {
+    const { t } = useTranslation();
     const getInitialState = (): Omit<OffboardingTemplate, 'id'> => ({
         name: '',
         description: '',
-        tasks: [{ title: '', category: 'تسليم العهدة', responsible: 'الموظف المغادر', dueOffsetDays: 0 }]
+        tasks: [{ title: '', category: 'assetHandover', responsible: 'departingEmployee', dueOffsetDays: 0 }]
     });
 
     const [templateData, setTemplateData] = useState(getInitialState());
@@ -27,8 +27,6 @@ const OffboardingTemplateModal: React.FC<OffboardingTemplateModalProps> = ({ isO
         }
     }, [isOpen, templateToEdit]);
 
-    if (!isOpen) return null;
-    
     const handleMainChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setTemplateData(prev => ({ ...prev, [name]: value }));
@@ -45,7 +43,7 @@ const OffboardingTemplateModal: React.FC<OffboardingTemplateModalProps> = ({ isO
     const handleAddTask = () => {
         setTemplateData(prev => ({
             ...prev,
-            tasks: [...prev.tasks, { title: '', category: 'تسليم العهدة', responsible: 'الموظف المغادر', dueOffsetDays: 0 }]
+            tasks: [...prev.tasks, { title: '', category: 'assetHandover', responsible: 'departingEmployee', dueOffsetDays: 0 }]
         }));
     };
 
@@ -67,8 +65,14 @@ const OffboardingTemplateModal: React.FC<OffboardingTemplateModalProps> = ({ isO
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4" onClick={onClose}>
-            <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-3xl max-h-[90vh] flex flex-col" onClick={e => e.stopPropagation()}>
+        <div 
+            className={`fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4 transition-opacity duration-300 ease-in-out ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+            onClick={onClose}
+        >
+            <div 
+                className={`bg-white rounded-xl shadow-2xl p-8 w-full max-w-3xl max-h-[90vh] flex flex-col transform transition-all duration-300 ease-in-out ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+                onClick={(e) => e.stopPropagation()}
+            >
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-slate-800">{templateToEdit ? 'تعديل قالب إنهاء الخدمة' : 'إنشاء قالب إنهاء خدمة جديد'}</h2>
                     <button onClick={onClose}><XMarkIcon className="w-7 h-7 text-slate-400" /></button>
@@ -110,10 +114,10 @@ const OffboardingTemplateModal: React.FC<OffboardingTemplateModalProps> = ({ isO
                                     spellCheck="true"
                                 />
                                 <select value={task.category} onChange={e => handleTaskChange(index, 'category', e.target.value)} className="w-full md:w-48 p-1.5 border rounded bg-white text-sm">
-                                    {OFFBOARDING_TASK_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                                    {OFFBOARDING_TASK_CATEGORIES.map(cat => <option key={cat} value={cat}>{t(`offboarding.categories.${cat}`)}</option>)}
                                 </select>
                                 <select value={task.responsible} onChange={e => handleTaskChange(index, 'responsible', e.target.value)} className="w-full md:w-48 p-1.5 border rounded bg-white text-sm">
-                                    {OFFBOARDING_RESPONSIBLE_PARTIES.map(p => <option key={p} value={p}>{p}</option>)}
+                                    {OFFBOARDING_RESPONSIBLE_PARTIES.map(p => <option key={p} value={p}>{t(`offboarding.responsibles.${p}`)}</option>)}
                                 </select>
                                 <div className="flex items-center gap-1">
                                     <input

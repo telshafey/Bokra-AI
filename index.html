@@ -61,6 +61,19 @@
       .dark .drop-target {
         background-color: rgb(var(--color-primary-900));
       }
+      @keyframes fade-in-right {
+        from {
+          opacity: 0;
+          transform: translateX(100%);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(0);
+        }
+      }
+      .animate-fade-in-right {
+        animation: fade-in-right 0.5s ease-out forwards;
+      }
     </style>
   <script type="importmap">
 {

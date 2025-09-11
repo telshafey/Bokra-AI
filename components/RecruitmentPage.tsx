@@ -5,15 +5,6 @@ import PageHeader from './PageHeader';
 import Card from './Card';
 import { useTranslation } from './contexts/LanguageContext';
 
-const STAGE_TRANSLATION: Record<CandidateStage, string> = {
-    Applied: 'المتقدمون',
-    Screening: 'الفحص',
-    Interview: 'المقابلة',
-    Offer: 'العرض',
-    Hired: 'تم التعيين',
-    Rejected: 'مرفوض',
-};
-
 const STAGE_COLORS: Record<CandidateStage, string> = {
     Applied: 'border-slate-500 text-slate-500 dark:border-slate-400 dark:text-slate-400',
     Screening: 'border-sky-500 text-sky-500 dark:border-sky-400 dark:text-sky-400',
@@ -87,7 +78,7 @@ const RecruitmentPage: React.FC<RecruitmentPageProps> = ({ jobOpenings, candidat
 
     const renderKanbanBoard = () => {
         if (!selectedJobId) {
-            return <div className="text-center p-12 text-slate-500 dark:text-slate-400">الرجاء اختيار وظيفة لعرض المتقدمين.</div>;
+            return <div className="text-center p-12 text-slate-500 dark:text-slate-400">{t('recruitment.selectJob')}</div>;
         }
         const currentCandidates = candidatesByJob[selectedJobId] || [];
 
@@ -105,7 +96,7 @@ const RecruitmentPage: React.FC<RecruitmentPageProps> = ({ jobOpenings, candidat
                         onDragLeave={(e) => (e.currentTarget as HTMLDivElement).classList.remove('bg-slate-200', 'dark:bg-slate-600')}
                     >
                         <h3 className={`font-bold text-slate-800 dark:text-slate-200 p-3 border-t-4 ${STAGE_COLORS[stage]}`}>
-                            {STAGE_TRANSLATION[stage]} ({currentCandidates.filter(c => c.stage === stage).length})
+                            {t(`recruitment.stages.${stage}`)} ({currentCandidates.filter(c => c.stage === stage).length})
                         </h3>
                         <div className="space-y-3 p-2 h-full overflow-y-auto">
                             {currentCandidates.filter(c => c.stage === stage).map(candidate => (
@@ -133,7 +124,7 @@ const RecruitmentPage: React.FC<RecruitmentPageProps> = ({ jobOpenings, candidat
 
     return (
         <div className="space-y-6">
-            <PageHeader title="إدارة التوظيف" subtitle="تتبع الوظائف الشاغرة والمرشحين عبر جميع مراحل التوظيف." />
+            <PageHeader title={t('pageTitles.recruitment')} subtitle={t('recruitment.pageSubtitle')} />
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
                 {jobOpenings.map(job => {
                     const stats = statsByJobId[job.id];
@@ -150,19 +141,19 @@ const RecruitmentPage: React.FC<RecruitmentPageProps> = ({ jobOpenings, candidat
                                 <p className="text-sm text-slate-500 dark:text-slate-400 my-1">{t('departments.' + job.departmentKey)}</p>
                             </div>
                             <span className={`px-2 py-0.5 text-xs font-semibold rounded-full ${job.status === 'Open' ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300' : 'bg-slate-100 text-slate-600 dark:bg-slate-700 dark:text-slate-300'}`}>
-                                {job.status === 'Open' ? 'مفتوحة' : 'مغلقة'}
+                                {t(`recruitment.jobStatuses.${job.status}`)}
                             </span>
                         </div>
                          <div className="flex items-center text-sm text-slate-600 dark:text-slate-400 pt-3 mt-3 border-t dark:border-slate-700">
                             <UsersIcon className="w-5 h-5 ml-2 text-sky-600 dark:text-sky-400"/>
-                            <span>إجمالي المتقدمين: <strong className="dark:text-slate-200">{stats.total}</strong></span>
+                            <span>{t('recruitment.totalApplicants')}: <strong className="dark:text-slate-200">{stats.total}</strong></span>
                         </div>
                         <div className="mt-2 space-y-2">
                              <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 flex overflow-hidden">
                                 {pipelineStages.map(stage => {
                                     if(stats[stage] === 0) return null;
                                     const percentage = (stats.total > 0 ? (stats[stage] / stats.total) * 100 : 0);
-                                    return <div key={stage} className={`${STAGE_BG_COLORS[stage]}`} style={{width: `${percentage}%`}} title={`${STAGE_TRANSLATION[stage]}: ${stats[stage]}`}></div>
+                                    return <div key={stage} className={`${STAGE_BG_COLORS[stage]}`} style={{width: `${percentage}%`}} title={`${t(`recruitment.stages.${stage}`)}: ${stats[stage]}`}></div>
                                 })}
                             </div>
                             <div className="flex flex-wrap gap-x-3 gap-y-1 text-xs">
@@ -171,7 +162,7 @@ const RecruitmentPage: React.FC<RecruitmentPageProps> = ({ jobOpenings, candidat
                                     return (
                                         <div key={stage} className="flex items-center gap-1.5">
                                             <span className={`w-2 h-2 rounded-full ${STAGE_BG_COLORS[stage]}`}></span>
-                                            <span className="text-slate-600 dark:text-slate-400">{STAGE_TRANSLATION[stage]}: <strong className="dark:text-slate-200">{stats[stage]}</strong></span>
+                                            <span className="text-slate-600 dark:text-slate-400">{t(`recruitment.stages.${stage}`)}: <strong className="dark:text-slate-200">{stats[stage]}</strong></span>
                                         </div>
                                     )
                                 })}
@@ -181,7 +172,7 @@ const RecruitmentPage: React.FC<RecruitmentPageProps> = ({ jobOpenings, candidat
                 )})}
                  <button className="p-5 bg-white dark:bg-slate-800 rounded-xl shadow-md flex flex-col items-center justify-center text-center text-slate-500 dark:text-slate-400 transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border-2 border-dashed hover:border-sky-500 dark:hover:border-sky-500">
                      <BriefcaseIcon className="w-10 h-10 mb-2 text-slate-400" />
-                     <span className="font-bold">إضافة وظيفة جديدة</span>
+                     <span className="font-bold">{t('recruitment.addNewJob')}</span>
                 </button>
             </div>
             

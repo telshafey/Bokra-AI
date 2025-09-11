@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 // FIX: Changed import path to be relative.
@@ -13,6 +11,7 @@ import { UserProvider } from './components/contexts/UserContext';
 import { RequestProvider } from './components/contexts/RequestContext';
 import { LanguageProvider } from './components/contexts/LanguageContext';
 import { HelpCenterProvider } from './components/contexts/HelpCenterContext';
+import { ToastProvider } from './components/contexts/ToastContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -23,19 +22,21 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <LanguageProvider>
-      <HelpCenterProvider>
-        <PoliciesProvider>
-          <AssetsProvider>
-            <CompanyStructureProvider>
-              <UserProvider>
-                <RequestProvider>
-                  <App />
-                </RequestProvider>
-              </UserProvider>
-            </CompanyStructureProvider>
-          </AssetsProvider>
-        </PoliciesProvider>
-      </HelpCenterProvider>
+      <ToastProvider>
+        <HelpCenterProvider>
+          <PoliciesProvider>
+            <AssetsProvider>
+              <CompanyStructureProvider>
+                <UserProvider>
+                  <RequestProvider>
+                    <App />
+                  </RequestProvider>
+                </UserProvider>
+              </CompanyStructureProvider>
+            </AssetsProvider>
+          </PoliciesProvider>
+        </HelpCenterProvider>
+      </ToastProvider>
     </LanguageProvider>
   </React.StrictMode>
 );

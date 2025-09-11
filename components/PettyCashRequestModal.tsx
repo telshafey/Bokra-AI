@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import { XMarkIcon, ArrowUpTrayIcon } from './icons/Icons';
 import type { PettyCashRequest, PettyCashCategory } from '../types';
@@ -21,8 +19,6 @@ const PettyCashRequestModal: React.FC<PettyCashRequestModalProps> = ({ isOpen, o
     const [attachment, setAttachment] = useState<File | null>(null);
 
     const categories: PettyCashCategory[] = ['Transportation', 'OfficeSupplies', 'ClientMeeting', 'Other'];
-
-    if (!isOpen) return null;
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -50,11 +46,11 @@ const PettyCashRequestModal: React.FC<PettyCashRequestModalProps> = ({ isOpen, o
     
     return (
         <div 
-            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 transition-opacity"
+            className={`fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4 transition-opacity duration-300 ease-in-out ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             onClick={onClose}
         >
             <div 
-                className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-8 w-full max-w-lg transform transition-all"
+                className={`bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-8 w-full max-w-lg transform transition-all duration-300 ease-in-out ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex justify-between items-center mb-6">

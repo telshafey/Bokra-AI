@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, PlusCircleIcon, TrashIcon } from './icons/Icons';
 import type { LeavePolicy, EmployeeProfile, Branch, AnnualLeaveTier } from '../types';
@@ -54,8 +51,6 @@ const LeavePolicyModal: React.FC<LeavePolicyModalProps> = ({ isOpen, onClose, on
         }
     }, [isOpen, policyToEdit, currentUser]);
 
-    if (!isOpen) return null;
-
     const handleChange = (field: keyof LeavePolicy, value: any) => {
         setPolicy(p => ({ ...p, [field]: Number.isInteger(Number(value)) && typeof value !== 'string' ? Number(value) : value }));
     };
@@ -93,8 +88,14 @@ const LeavePolicyModal: React.FC<LeavePolicyModalProps> = ({ isOpen, onClose, on
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4" onClick={onClose}>
-            <div className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-3xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div 
+            className={`fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4 transition-opacity duration-300 ease-in-out ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+            onClick={onClose}
+        >
+            <div 
+                className={`bg-white rounded-xl shadow-2xl p-8 w-full max-w-3xl max-h-[90vh] overflow-y-auto transform transition-all duration-300 ease-in-out ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+                onClick={(e) => e.stopPropagation()}
+            >
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-slate-800">{policyToEdit ? 'تعديل سياسة الإجازات' : 'إنشاء سياسة إجازات جديدة'}</h2>
                     <button onClick={onClose}><XMarkIcon className="w-7 h-7 text-slate-400" /></button>

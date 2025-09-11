@@ -1,9 +1,9 @@
-
 import React, { createContext, useContext, useState } from 'react';
 import { EmployeeProfile, UserContextType, UserProviderProps, NewUserPayload, UserRole } from '../../types';
 import { ALL_EMPLOYEES } from '../../constants';
 import { useCompanyStructureContext } from './CompanyStructureContext';
 import { useTranslation } from './LanguageContext';
+import { useToast } from './ToastContext';
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
@@ -17,39 +17,48 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const { jobTitles } = useCompanyStructureContext();
     const [employees, setEmployees] = useState<EmployeeProfile[]>(ALL_EMPLOYEES);
     const { t } = useTranslation();
+    const { addToast } = useToast();
 
     const updateUserRole = (userId: string, newRole: UserRole) => {
         setEmployees(prev => prev.map(emp => emp.id === userId ? { ...emp, role: newRole } : emp));
+        addToast(t('toasts.userRoleUpdated'), 'success');
     };
 
     const deactivateUser = (userId: string) => {
         const deactivationDate = new Date().toISOString();
         setEmployees(prev => prev.map(emp => emp.id === userId ? { ...emp, employmentStatus: 'Inactive', deactivationDate } : emp));
+        addToast(t('toasts.userDeactivated'), 'success');
     };
     
     const bulkDeactivateUsers = (userIds: string[]) => {
         const deactivationDate = new Date().toISOString();
         setEmployees(prev => prev.map(emp => userIds.includes(emp.id) ? { ...emp, employmentStatus: 'Inactive', deactivationDate } : emp));
+        addToast(t('toasts.userDeactivated'), 'success');
     };
     
     const reactivateUser = (userId: string) => {
         setEmployees(prev => prev.map(emp => emp.id === userId ? { ...emp, employmentStatus: 'دوام كامل', deactivationDate: undefined } : emp));
+        addToast(t('toasts.userReactivated'), 'success');
     };
     
     const bulkAssignAttendancePolicy = (policyId: string, employeeIds: string[]) => {
         setEmployees(prev => prev.map(emp => employeeIds.includes(emp.id) ? { ...emp, attendancePolicyId: policyId } : emp));
+        addToast(t('toasts.policySaved'), 'success');
     };
     
     const bulkAssignOvertimePolicy = (policyId: string, employeeIds: string[]) => {
         setEmployees(prev => prev.map(emp => employeeIds.includes(emp.id) ? { ...emp, overtimePolicyId: policyId } : emp));
+         addToast(t('toasts.policySaved'), 'success');
     };
     
     const bulkAssignLeavePolicy = (policyId: string, employeeIds: string[]) => {
         setEmployees(prev => prev.map(emp => employeeIds.includes(emp.id) ? { ...emp, leavePolicyId: policyId } : emp));
+         addToast(t('toasts.policySaved'), 'success');
     };
     
     const updateProfile = (updatedProfile: EmployeeProfile) => {
         setEmployees(prev => prev.map(emp => emp.id === updatedProfile.id ? updatedProfile : emp));
+        addToast(t('toasts.profileUpdated'), 'success');
     };
 
     const addNewUser = (newUserPayload: NewUserPayload) => {
@@ -100,6 +109,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           salaryComparedToMarket: 'Average',
         };
         setEmployees(prev => [...prev, newUserProfile]);
+        addToast(t('toasts.userAdded'), 'success');
     };
   
     const updateUser = (userId: string, updatedData: NewUserPayload) => {
@@ -142,6 +152,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
             }
             return emp;
         }));
+        addToast(t('toasts.userUpdated'), 'success');
     };
 
     const updateBranchManager = (branchId: string, newManagerId: string) => {
@@ -160,6 +171,7 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
                 return emp;
             });
         });
+        addToast(t('toasts.branchManagerUpdated'), 'success');
     };
 
     const updateEmployeeManager = (employeeId: string, newManagerId: string) => {

@@ -1,4 +1,3 @@
-
 import React, { useMemo } from 'react';
 import { OffboardingProcess, OffboardingTask, OffboardingTaskCategory } from '../types';
 import { useTranslation } from './contexts/LanguageContext';
@@ -51,11 +50,10 @@ const MyOffboardingPage: React.FC<MyOffboardingPageProps> = ({ process, onUpdate
                  <div className="space-y-6">
                     {Array.from(tasksByCategory.entries()).map(([category, tasks]) => (
                         <div key={category}>
-                            <h3 className="font-bold text-slate-700 mb-3 border-b pb-2 text-lg">{category}</h3>
+                            <h3 className="font-bold text-slate-700 mb-3 border-b pb-2 text-lg">{t(`offboarding.categories.${category}`)}</h3>
                             <div className="space-y-3">
                                 {tasks.map(task => {
-// FIX: Corrected the string comparison for task responsibility to use the correct Arabic term, resolving a logical error.
-                                    const isEmployeeResponsible = task.responsible === 'الموظف المغادر';
+                                    const isEmployeeResponsible = task.responsible === 'departingEmployee';
                                     return (
                                         <div key={task.id} className={`p-3 rounded-lg flex items-center justify-between ${task.isCompleted ? 'bg-emerald-50' : 'bg-slate-50'}`}>
                                             <div className="flex items-center gap-3">
@@ -69,7 +67,7 @@ const MyOffboardingPage: React.FC<MyOffboardingPageProps> = ({ process, onUpdate
                                                 <div>
                                                     <p className={`font-medium ${task.isCompleted ? 'line-through text-slate-500' : 'text-slate-800'}`}>{task.title}</p>
                                                     <p className="text-xs text-slate-500">
-                                                        {t('myOnboarding.responsible')}: {task.responsible} | {t('myOnboarding.dueDate')}: {task.dueDate}
+                                                        {t('myOnboarding.responsible')}: {t(`offboarding.responsibles.${task.responsible}`)} | {t('myOnboarding.dueDate')}: {task.dueDate}
                                                     </p>
                                                 </div>
                                             </div>

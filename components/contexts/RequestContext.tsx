@@ -10,6 +10,8 @@ import {
     HRRequest,
     ApprovalHistoryEntry
 } from '../../types';
+import { useToast } from './ToastContext';
+import { useTranslation } from './LanguageContext';
 
 const RequestContext = createContext<RequestContextType | undefined>(undefined);
 
@@ -26,6 +28,8 @@ export const RequestProvider: React.FC<RequestProviderProps> = ({ children }) =>
     const [attendanceAdjustmentRequests, setAttendanceAdjustmentRequests] = useState<AttendanceAdjustmentRequest[]>([]);
     const [leavePermitRequests, setLeavePermitRequests] = useState<LeavePermitRequest[]>([]);
     const [pettyCashRequests, setPettyCashRequests] = useState<PettyCashRequest[]>([]);
+    const { addToast } = useToast();
+    const { t } = useTranslation();
 
     const handleNewLeaveRequest = (newRequestData: Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'approvalHistory'>) => {
         const newRequest: LeaveRequest = {
@@ -37,6 +41,7 @@ export const RequestProvider: React.FC<RequestProviderProps> = ({ children }) =>
             approvalHistory: [],
         };
         setLeaveRequests(prev => [...prev, newRequest]);
+        addToast(t('toasts.requestSubmitted'), 'success');
     };
     
     const handleNewAttendanceAdjustmentRequest = (newRequestData: Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'approvalHistory'>) => {
@@ -49,6 +54,7 @@ export const RequestProvider: React.FC<RequestProviderProps> = ({ children }) =>
             approvalHistory: [],
         };
         setAttendanceAdjustmentRequests(prev => [...prev, newRequest]);
+        addToast(t('toasts.requestSubmitted'), 'success');
     };
     
     const handleNewLeavePermitRequest = (newRequestData: Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'durationHours' | 'approvalHistory'>) => {
@@ -66,6 +72,7 @@ export const RequestProvider: React.FC<RequestProviderProps> = ({ children }) =>
             approvalHistory: [],
         };
         setLeavePermitRequests(prev => [...prev, newRequest]);
+        addToast(t('toasts.requestSubmitted'), 'success');
     };
 
     const handleNewPettyCashRequest = (newRequestData: Omit<PettyCashRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'approvalHistory'>) => {
@@ -78,9 +85,9 @@ export const RequestProvider: React.FC<RequestProviderProps> = ({ children }) =>
             approvalHistory: [],
         };
         setPettyCashRequests(prev => [...prev, newRequest]);
+        addToast(t('toasts.requestSubmitted'), 'success');
     };
 
-    // FIX: Changed newStatus type from RequestStatus to be more specific, as an action can only result in approval or rejection.
     const handleRequestAction = (requestId: string, newStatus: 'Approved' | 'Rejected', notes: string, approverId: string, approverName: string) => {
         
         const approvalEntry: ApprovalHistoryEntry = {
@@ -91,13 +98,27 @@ export const RequestProvider: React.FC<RequestProviderProps> = ({ children }) =>
             timestamp: new Date().toISOString(),
         };
 
-        const update = (requests: HRRequest[]) => 
-            requests.map(r => r.id === requestId ? { ...r, status: newStatus, approvalHistory: [...r.approvalHistory, approvalEntry] } : r);
+        const updateRequest = (request: HRRequest): HRRequest => ({
+            ...request,
+            status: newStatus,
+            approvalHistory: [...(request.approvalHistory || []), approvalEntry],
+        });
+        
+        const updateState = <T extends HRRequest>(setState: React.Dispatch<React.SetStateAction<T[]>>) => {
+             setState(prev => prev.map(r => r.id === requestId ? updateRequest(r) as T : r));
+        };
 
-        setLeaveRequests(prev => update(prev) as LeaveRequest[]);
-        setAttendanceAdjustmentRequests(prev => update(prev) as AttendanceAdjustmentRequest[]);
-        setLeavePermitRequests(prev => update(prev) as LeavePermitRequest[]);
-        setPettyCashRequests(prev => update(prev) as PettyCashRequest[]);
+        if (requestId.startsWith('lr-')) {
+            updateState(setLeaveRequests);
+        } else if (requestId.startsWith('aar-')) {
+            updateState(setAttendanceAdjustmentRequests);
+        } else if (requestId.startsWith('lpr-')) {
+            updateState(setLeavePermitRequests);
+        } else if (requestId.startsWith('pcr-')) {
+            updateState(setPettyCashRequests);
+        }
+
+        addToast(newStatus === 'Approved' ? t('toasts.requestApproved') : t('toasts.requestRejected'), 'success');
     };
 
 

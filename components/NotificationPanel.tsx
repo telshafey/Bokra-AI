@@ -1,7 +1,7 @@
 import React from 'react';
 import type { Notification, EmployeeProfile } from '../types';
 import { TrashIcon, CheckCircleIcon } from './icons/Icons';
-import { timeSince } from '../constants';
+import { timeSince } from './utils';
 import { useTranslation } from './contexts/LanguageContext';
 
 

@@ -1,8 +1,8 @@
-
 import React, { useState, useMemo } from 'react';
 import { OnboardingProcess, OnboardingTemplate, EmployeeProfile, OnboardingTask, OnboardingTaskCategory } from '../types';
 import { UserPlusIcon } from './icons/Icons';
 import StartOnboardingModal from './StartOnboardingModal';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface OnboardingPageProps {
     onboardingProcesses: OnboardingProcess[];
@@ -21,6 +21,7 @@ const ProgressBar: React.FC<{ value: number }> = ({ value }) => (
 const OnboardingPage: React.FC<OnboardingPageProps> = ({ onboardingProcesses, onboardingTemplates, employees, onStartOnboarding, onUpdateTask }) => {
     const [selectedProcessId, setSelectedProcessId] = useState<string | null>(onboardingProcesses[0]?.id || null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { t } = useTranslation();
     
     const employeeMap = useMemo(() => new Map(employees.map(e => [e.id, e])), [employees]);
 
@@ -120,7 +121,7 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onboardingProcesses, on
                                 <div className="flex-1 overflow-y-auto p-6 space-y-6">
                                     {Array.from(tasksByCategory.entries()).map(([category, tasks]) => (
                                         <div key={category}>
-                                            <h3 className="font-bold text-slate-700 mb-3 border-b pb-2">{category}</h3>
+                                            <h3 className="font-bold text-slate-700 mb-3 border-b pb-2">{t(`onboarding.categories.${category}`)}</h3>
                                             <div className="space-y-3">
                                                 {tasks.map(task => (
                                                     <div key={task.id} className={`p-3 rounded-lg flex items-center justify-between ${task.isCompleted ? 'bg-emerald-50' : 'bg-slate-50'}`}>
@@ -134,7 +135,7 @@ const OnboardingPage: React.FC<OnboardingPageProps> = ({ onboardingProcesses, on
                                                             <div>
                                                                 <p className={`font-medium ${task.isCompleted ? 'line-through text-slate-500' : 'text-slate-800'}`}>{task.title}</p>
                                                                 <p className="text-xs text-slate-500">
-                                                                    المسؤول: {task.responsible} | الاستحقاق: {task.dueDate}
+                                                                    المسؤول: {t(`onboarding.responsibles.${task.responsible}`)} | الاستحقاق: {task.dueDate}
                                                                 </p>
                                                             </div>
                                                         </div>

@@ -1,9 +1,11 @@
+
 import React, { useState, useMemo } from 'react';
 import type { EmployeeProfile, SupportTicket, TicketStatus, TicketPriority } from '../types';
 import CreateTicketModal from './CreateTicketModal';
 import TicketDetailView from './TicketDetailView';
 import { PlusCircleIcon } from './icons/Icons';
-import { timeSince } from '../constants';
+// FIX: Changed import path for `timeSince` from `../constants` to `./utils` to resolve the module resolution error.
+import { timeSince } from './utils';
 import { useTranslation } from './contexts/LanguageContext';
 
 const STATUS_BADGE_CLASSES: Record<TicketStatus, string> = {

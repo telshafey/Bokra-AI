@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { EmployeeProfile, TurnoverAnalysisResult, TurnoverRiskLevel } from '../types';
 import { getTurnoverPrediction } from '../services/turnoverService';

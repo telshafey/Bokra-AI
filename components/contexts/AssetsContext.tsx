@@ -1,7 +1,8 @@
-
 import React, { createContext, useContext, useState } from 'react';
 import { Asset, AssetsContextType, AssetsProviderProps } from '../../types';
 import { MOCK_ASSETS } from '../../constants';
+import { useToast } from './ToastContext';
+import { useTranslation } from './LanguageContext';
 
 const AssetsContext = createContext<AssetsContextType | undefined>(undefined);
 
@@ -15,6 +16,9 @@ export const useAssetsContext = () => {
 
 export const AssetsProvider: React.FC<AssetsProviderProps> = ({ children }) => {
     const [assets, setAssets] = useState<Asset[]>(MOCK_ASSETS);
+    const { addToast } = useToast();
+    const { t } = useTranslation();
+
 
     const saveAsset = (asset: Asset) => {
         setAssets(prev => {
@@ -25,6 +29,7 @@ export const AssetsProvider: React.FC<AssetsProviderProps> = ({ children }) => {
                 return prev.map(a => a.id === asset.id ? asset : a);
             }
         });
+        addToast(t('toasts.assetSaved'), 'success');
     };
 
     const assignAsset = (assetId: string, employeeId: string | null) => {
@@ -35,6 +40,7 @@ export const AssetsProvider: React.FC<AssetsProviderProps> = ({ children }) => {
                     : a
             )
         );
+        addToast(t('toasts.assetAssigned'), 'success');
     };
 
     const value = {

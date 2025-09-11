@@ -68,9 +68,9 @@ export interface EmployeeProfile {
         dateOfBirth: string;
         nationality: string;
         nationalId: string;
-        maritalStatus: string;
-        gender: string;
-        religion: string;
+        maritalStatus: 'أعزب' | 'متزوج';
+        gender: 'Male' | 'Female';
+        religion: 'Muslim' | 'Christian';
     };
     address: string;
     leaveBalances: LeaveBalance[];
@@ -427,6 +427,7 @@ export type GoalType = 'Objective' | 'Key Result';
 
 export interface Goal {
     id: string;
+    employeeId: string;
     title: string;
     description: string;
     type: GoalType;
@@ -547,8 +548,8 @@ export interface Candidate {
 }
 
 // Onboarding & Offboarding
-export type OnboardingTaskCategory = 'الأوراق والمستندات' | 'إعدادات النظام والحسابات' | 'التعريف بالشركة والفريق' | 'مهام أول أسبوع';
-export type OnboardingResponsible = 'الموظف الجديد' | 'المدير المباشر' | 'الموارد البشرية' | 'تكنولوجيا المعلومات';
+export type OnboardingTaskCategory = 'paperwork' | 'systemSetup' | 'companyIntro' | 'firstWeekTasks';
+export type OnboardingResponsible = 'newEmployee' | 'directManager' | 'hr' | 'it';
 
 export interface OnboardingTask {
     id?: string;
@@ -575,8 +576,8 @@ export interface OnboardingProcess {
     tasks: (Omit<OnboardingTask, 'id'> & { id: string; isCompleted: boolean; dueDate: string; })[];
 }
 
-export type OffboardingTaskCategory = 'تسليم العهدة' | 'إجراءات إدارية' | 'نقل المعرفة' | 'إجراءات الخروج النهائية';
-export type OffboardingResponsible = 'الموظف المغادر' | 'المدير المباشر' | 'الموارد البشرية' | 'تكنولوجيا المعلومات' | 'المالية';
+export type OffboardingTaskCategory = 'assetHandover' | 'adminProcedures' | 'knowledgeTransfer' | 'finalExit';
+export type OffboardingResponsible = 'departingEmployee' | 'directManager' | 'hr' | 'it' | 'finance';
 
 export interface OffboardingTask {
     id?: string;

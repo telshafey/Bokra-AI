@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { Asset, EmployeeProfile } from '../types';
@@ -22,8 +21,6 @@ const AssignAssetModal: React.FC<AssignAssetModalProps> = ({ isOpen, onClose, on
         }
     }, [isOpen, asset]);
 
-    if (!isOpen) return null;
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onSave(asset.id, selectedEmployeeId);
@@ -31,8 +28,14 @@ const AssignAssetModal: React.FC<AssignAssetModalProps> = ({ isOpen, onClose, on
     };
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4" onClick={onClose}>
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-8 w-full max-w-lg" onClick={e => e.stopPropagation()}>
+        <div 
+            className={`fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4 transition-opacity duration-300 ease-in-out ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+            onClick={onClose}
+        >
+            <div 
+                className={`bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-8 w-full max-w-lg transform transition-all duration-300 ease-in-out ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+                onClick={(e) => e.stopPropagation()}
+            >
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{t('assignAssetModal.title')}</h2>
                     <button onClick={onClose}><XMarkIcon className="w-7 h-7 text-slate-400" /></button>

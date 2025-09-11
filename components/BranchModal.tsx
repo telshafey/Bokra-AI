@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { Branch, EmployeeProfile } from '../types';
@@ -29,8 +28,6 @@ const BranchModal: React.FC<BranchModalProps> = ({ isOpen, onClose, onSave, bran
         }
     }, [branchToEdit, isOpen, employees]);
 
-    if (!isOpen) return null;
-
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (nameKey.trim()) {
@@ -43,11 +40,11 @@ const BranchModal: React.FC<BranchModalProps> = ({ isOpen, onClose, onSave, bran
 
     return (
         <div 
-            className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+            className={`fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4 transition-opacity duration-300 ease-in-out ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
             onClick={onClose}
         >
             <div 
-                className="bg-white rounded-xl shadow-2xl p-8 w-full max-w-md"
+                className={`bg-white rounded-xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-300 ease-in-out ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
                 onClick={(e) => e.stopPropagation()}
             >
                 <div className="flex justify-between items-center mb-6">

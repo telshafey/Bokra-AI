@@ -3,6 +3,7 @@
 
 
 
+
 import React, { useState, useMemo, useEffect } from 'react';
 import TeamMemberList from './TeamMemberList';
 import TeamMemberDetailView from './TeamMemberDetailView';
@@ -66,15 +67,14 @@ const TeamAnalyticsPage: React.FC<TeamAnalyticsPageProps> = ({
     <div className="flex flex-col gap-6 h-[calc(100vh-120px)]">
       {canViewAllBranches && (
         <div className="bg-white dark:bg-slate-800 p-3 rounded-xl shadow-md flex items-center gap-4">
-          <label htmlFor="branch-filter" className="font-semibold text-slate-700 dark:text-slate-200 text-sm">فلترة حسب الفرع:</label>
+          <label htmlFor="branch-filter" className="font-semibold text-slate-700 dark:text-slate-200 text-sm">{t('teamAnalytics.filterByBranch')}:</label>
           <select 
             id="branch-filter"
             value={branchFilter}
             onChange={(e) => setBranchFilter(e.target.value)}
             className="p-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
           >
-            <option value="all">كل الفروع</option>
-            {/* FIX: Replaced property access from `name` to `nameKey` and wrapped it in the translation function to match the type definition. */}
+            <option value="all">{t('general.all')}</option>
             {branches.map(branch => (
               <option key={branch.id} value={branch.id}>{t(branch.nameKey)}</option>
             ))}
@@ -105,7 +105,7 @@ const TeamAnalyticsPage: React.FC<TeamAnalyticsPageProps> = ({
           ) : (
             <div className="bg-white dark:bg-slate-800 h-full rounded-xl shadow-md flex items-center justify-center">
               <p className="text-slate-500 dark:text-slate-400 text-center">
-                {filteredTeamDetails.length === 0 ? "لا يوجد موظفون في هذا الفرع." : "الرجاء اختيار عضو من القائمة لعرض التفاصيل."}
+                {filteredTeamDetails.length === 0 ? t('teamAnalytics.noEmployeesInBranch') : t('teamAnalytics.selectMember')}
               </p>
             </div>
           )}

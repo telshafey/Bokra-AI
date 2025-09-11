@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { Branch, EmployeeProfile, NewUserPayload, UserRole, AttendancePolicy, LeavePolicy, JobTitle, CompensationPackage, OvertimePolicy } from '../types';
@@ -91,10 +90,9 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSave, userToEd
                 dateOfBirth: userToEdit.personal.dateOfBirth,
                 nationality: userToEdit.personal.nationality,
                 nationalId: userToEdit.personal.nationalId,
-                maritalStatus: userToEdit.personal.maritalStatus as 'أعزب' | 'متزوج', // Type assertion
-// FIX: Added type assertion for gender to resolve type mismatch.
+                maritalStatus: userToEdit.personal.maritalStatus as 'أعزب' | 'متزوج',
                 gender: userToEdit.personal.gender as 'Male' | 'Female',
-                religion: userToEdit.personal.religion as 'Muslim' | 'Christian', // Type assertion
+                religion: userToEdit.personal.religion as 'Muslim' | 'Christian',
                 address: userToEdit.address,
             });
         } else {
@@ -102,8 +100,6 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSave, userToEd
         }
     }, [userToEdit, isOpen, branches]);
 
-
-    if (!isOpen) return null;
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -123,8 +119,14 @@ const UserModal: React.FC<UserModalProps> = ({ isOpen, onClose, onSave, userToEd
 
 
     return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50 p-4" onClick={onClose}>
-            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}>
+        <div 
+            className={`fixed inset-0 bg-black bg-opacity-60 flex justify-center items-center z-50 p-4 transition-opacity duration-300 ease-in-out ${isOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+            onClick={onClose}
+        >
+            <div 
+                className={`bg-white dark:bg-slate-800 rounded-xl shadow-2xl p-8 w-full max-w-4xl max-h-[90vh] overflow-y-auto transform transition-all duration-300 ease-in-out ${isOpen ? 'scale-100 opacity-100' : 'scale-95 opacity-0'}`}
+                onClick={e => e.stopPropagation()}
+            >
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">{modalTitle}</h2>
                     <button onClick={onClose}><XMarkIcon className="w-7 h-7 text-slate-400" /></button>

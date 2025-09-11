@@ -1,6 +1,7 @@
 import React from 'react';
 import type { AttentionItem } from '../types';
-import { timeSince } from '../constants';
+// FIX: Changed import path for `timeSince` from `../constants` to `./utils` to resolve the module resolution error.
+import { timeSince } from './utils';
 import { useTranslation } from './contexts/LanguageContext';
 
 interface AttentionWidgetProps {

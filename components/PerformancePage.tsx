@@ -32,7 +32,6 @@ const PerformancePage: React.FC<PerformancePageProps> = ({ reviews, monthlyCheck
                      {monthlyCheckIns.length > 0 ? (
                          <div className="space-y-4">
                              {monthlyCheckIns.map(checkIn => {
-                                // FIX: Added a return statement to the map function to correctly render JSX elements, which resolves multiple type errors.
                                 const ratingStyle = RATING_STYLES[checkIn.rating];
                                 const monthName = new Date(checkIn.year, checkIn.month).toLocaleDateString(locale, { month: 'long' });
                                 return (
@@ -72,5 +71,4 @@ const PerformancePage: React.FC<PerformancePageProps> = ({ reviews, monthlyCheck
     );
 };
 
-// FIX: Added a default export to resolve the module import error in App.tsx.
 export default PerformancePage;

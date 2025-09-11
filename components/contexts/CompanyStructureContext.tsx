@@ -1,7 +1,8 @@
-
 import React, { createContext, useContext, useState } from 'react';
 import { Branch, JobTitle, CompanyStructureContextType, CompanyStructureProviderProps } from '../../types';
 import { COMPANY_BRANCHES, MOCK_JOB_TITLES } from '../../constants';
+import { useToast } from './ToastContext';
+import { useTranslation } from './LanguageContext';
 
 const CompanyStructureContext = createContext<CompanyStructureContextType | undefined>(undefined);
 
@@ -14,6 +15,8 @@ export const useCompanyStructureContext = () => {
 export const CompanyStructureProvider: React.FC<CompanyStructureProviderProps> = ({ children }) => {
     const [branches, setBranches] = useState<Branch[]>(COMPANY_BRANCHES);
     const [jobTitles, setJobTitles] = useState<JobTitle[]>(MOCK_JOB_TITLES);
+    const { addToast } = useToast();
+    const { t } = useTranslation();
 
     const addBranch = (nameKey: string): Branch => {
         const newBranch: Branch = {
@@ -23,16 +26,19 @@ export const CompanyStructureProvider: React.FC<CompanyStructureProviderProps> =
             status: 'Active'
         };
         setBranches(prev => [...prev, newBranch]);
+        addToast(t('toasts.branchSaved'), 'success');
         return newBranch;
     };
 
     const updateBranch = (id: string, nameKey: string) => {
         // FIX: Changed property from `name` to `nameKey` to align with the `Branch` type definition.
         setBranches(prev => prev.map(b => b.id === id ? { ...b, nameKey: nameKey } : b));
+        addToast(t('toasts.branchSaved'), 'success');
     };
 
     const archiveBranch = (id: string) => {
         setBranches(prev => prev.map(b => b.id === id ? { ...b, status: 'Archived' } : b));
+        addToast(t('toasts.branchArchived'), 'success');
     };
 
     const saveJobTitle = (jobTitle: JobTitle) => {
@@ -41,10 +47,12 @@ export const CompanyStructureProvider: React.FC<CompanyStructureProviderProps> =
             if (isNew) return [...prev, jobTitle];
             return prev.map(jt => jt.id === jobTitle.id ? jobTitle : jt);
         });
+        addToast(t('toasts.jobTitleSaved'), 'success');
     };
     
     const deleteJobTitle = (jobTitleId: string) => {
         setJobTitles(prev => prev.filter(jt => jt.id !== jobTitleId));
+        addToast(t('toasts.jobTitleDeleted'), 'success');
     };
 
     const value = { branches, jobTitles, addBranch, updateBranch, archiveBranch, saveJobTitle, deleteJobTitle };

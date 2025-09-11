@@ -1,7 +1,7 @@
 import {
   HomeIcon, CalendarIcon, DocumentTextIcon, UserCircleIcon, CogIcon, ArrowLeftOnRectangleIcon, BriefcaseIcon, UserGroupIcon, PresentationChartLineIcon, ShieldCheckIcon, UsersIcon, BuildingOfficeIcon, ShieldExclamationIcon, SitemapIcon, DocumentDuplicateIcon, BanknotesIcon, StarIcon, CheckBadgeIcon, QuestionMarkCircleIcon, LifebuoyIcon, BookOpenIcon, ClipboardDocumentListIcon, DocumentCheckIcon, ComputerDesktopIcon, ChartPieIcon
 } from './components/icons/Icons';
-import type { NavGroup, NavItem, EmployeeProfile, Branch, JobTitle, LeaveBalance, AttendanceRecord, Payslip, Stat, RecentActivityItem, TeamMember, PendingRequest, HRRequest, Notification, TeamReportsData, TeamWeeklyAttendanceItem, LeaveDistributionDataItem, ManagerPerformanceData, TeamMemberPerformanceData, JobOpening, Candidate, OnboardingProcess, OnboardingTemplate, OffboardingProcess, OffboardingTemplate, EmployeeDocument, Asset, Course, EmployeeCourse, PerformanceReview, MonthlyCheckIn, ExternalTask, SupportTicket, SalaryComponent, CompensationPackage, WorkLocation, HelpCategory, HelpArticle, ApprovalWorkflow, OnboardingTaskCategory, OnboardingResponsible, OffboardingTaskCategory, OffboardingResponsible, EmployeeDashboardData, TeamDashboardData } from './types';
+import type { NavGroup, NavItem, EmployeeProfile, Branch, JobTitle, LeaveBalance, AttendanceRecord, Payslip, Stat, RecentActivityItem, TeamMember, PendingRequest, HRRequest, Notification, TeamReportsData, TeamWeeklyAttendanceItem, LeaveDistributionDataItem, ManagerPerformanceData, TeamMemberPerformanceData, JobOpening, Candidate, OnboardingProcess, OnboardingTemplate, OffboardingProcess, OffboardingTemplate, EmployeeDocument, Asset, Course, EmployeeCourse, PerformanceReview, MonthlyCheckIn, ExternalTask, SupportTicket, SalaryComponent, CompensationPackage, WorkLocation, HelpCategory, HelpArticle, ApprovalWorkflow, OnboardingTaskCategory, OnboardingResponsible, OffboardingTaskCategory, OffboardingResponsible, EmployeeDashboardData, TeamDashboardData, Goal, AttendancePolicy, LeavePolicy, OvertimePolicy } from './types';
 
 // Icons mapping for recent activities
 import {
@@ -197,7 +197,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
         attendancePolicyId: 'att-p-1',
         attendancePolicyName: 'سياسة الحضور القياسية',
         contact: { phone: '01112345678', workEmail: 'fatma.elzahraa@bokra.com', personalEmail: 'fatma.elzahraa@gmail.com' },
-        personal: { dateOfBirth: '1998-11-10', nationality: 'مصرية', nationalId: '29811100200456', maritalStatus: 'متزوجة', gender: 'Female', religion: 'Muslim' },
+        personal: { dateOfBirth: '1998-11-10', nationality: 'مصرية', nationalId: '29811100200456', maritalStatus: 'متزوج', gender: 'Female', religion: 'Muslim' },
         address: '456 شارع فؤاد، الإسكندرية',
         performanceScore: 4.8,
         satisfactionSurveyScore: 4.5,
@@ -303,7 +303,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
         leaveBalances: [],
         baseSalary: 30000,
         contact: { phone: '01123456789', workEmail: 'sara.ibrahim@bokra.com', personalEmail: 'sara.ibrahim@gmail.com' },
-        personal: { dateOfBirth: '1988-08-08', nationality: 'مصرية', nationalId: '28808080100789', maritalStatus: 'متزوجة', gender: 'Female', religion: 'Muslim' },
+        personal: { dateOfBirth: '1988-08-08', nationality: 'مصرية', nationalId: '28808080100789', maritalStatus: 'متزوج', gender: 'Female', religion: 'Muslim' },
         address: '34 شارع مكرم عبيد، مدينة نصر، القاهرة',
         performanceScore: 4.7,
         satisfactionSurveyScore: 4.6,
@@ -462,7 +462,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
       leaveBalances: [],
       baseSalary: 0,
       contact: { phone: '', workEmail: 'super@bokra.com', personalEmail: '' },
-      personal: { dateOfBirth: '', nationality: '', nationalId: '', maritalStatus: '', gender: '', religion: '' },
+      personal: { dateOfBirth: '', nationality: '', nationalId: '', maritalStatus: 'أعزب', gender: 'Male', religion: 'Muslim' },
       address: '',
       performanceScore: 0,
       satisfactionSurveyScore: 0,
@@ -487,7 +487,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
       leaveBalances: [],
       baseSalary: 0,
       contact: { phone: '', workEmail: 'admin@bokra.com', personalEmail: '' },
-      personal: { dateOfBirth: '', nationality: '', nationalId: '', maritalStatus: '', gender: '', religion: '' },
+      personal: { dateOfBirth: '', nationality: '', nationalId: '', maritalStatus: 'أعزب', gender: 'Male', religion: 'Muslim' },
       address: '',
       performanceScore: 0,
       satisfactionSurveyScore: 0,
@@ -495,21 +495,6 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
       salaryComparedToMarket: 'Average',
     }
 ];
-
-export const timeSince = (dateString: string, t: (key: string, replacements?: { [key: string]: string | number }) => string): string => {
-  const seconds = Math.floor((new Date().getTime() - new Date(dateString).getTime()) / 1000);
-  let interval = seconds / 31536000;
-  if (interval > 1) return t('time.yearsAgo', { count: Math.floor(interval) });
-  interval = seconds / 2592000;
-  if (interval > 1) return t('time.monthsAgo', { count: Math.floor(interval) });
-  interval = seconds / 86400;
-  if (interval > 1) return t('time.daysAgo', { count: Math.floor(interval) });
-  interval = seconds / 3600;
-  if (interval > 1) return t('time.hoursAgo', { count: Math.floor(interval) });
-  interval = seconds / 60;
-  if (interval > 1) return t('time.minutesAgo', { count: Math.floor(interval) });
-  return t('time.now', {});
-};
 
 export const MOCK_ASSETS: Asset[] = [
     { id: 'asset-1', name: 'لابتوب Dell Latitude 7420', category: 'Hardware', serialNumber: 'SN-DELL-12345', purchaseDate: '2022-01-20', purchaseValue: 25000, depreciationMethod: 'Straight-line', usefulLifeYears: 3, status: 'Assigned', assignedToId: 'emp-001', currentValue: 12000, depreciationStatus: 'Normal' },
@@ -597,8 +582,8 @@ export const MOCK_CANDIDATES: Candidate[] = [
 ];
 export const MOCK_ONBOARDING_PROCESSES: OnboardingProcess[] = [
     { id: 'on-1', employeeId: 'emp-010', templateId: 'ot-1', startDate: '2024-01-10', tasks: [
-        { id: 't-1-1', title: 'توقيع العقد واستمارة 1', category: 'الأوراق والمستندات', responsible: 'الموظف الجديد', dueOffsetDays: 0, isCompleted: true, dueDate: '2024-01-10' },
-        { id: 't-1-2', title: 'إنشاء حساب بريد إلكتروني', category: 'إعدادات النظام والحسابات', responsible: 'تكنولوجيا المعلومات', dueOffsetDays: 1, isCompleted: false, dueDate: '2024-01-11' }
+        { id: 't-1-1', title: 'توقيع العقد واستمارة 1', category: 'paperwork', responsible: 'newEmployee', dueOffsetDays: 0, isCompleted: true, dueDate: '2024-01-10' },
+        { id: 't-1-2', title: 'إنشاء حساب بريد إلكتروني', category: 'systemSetup', responsible: 'it', dueOffsetDays: 1, isCompleted: false, dueDate: '2024-01-11' }
     ] }
 ];
 export const MOCK_OFFBOARDING_PROCESSES: OffboardingProcess[] = [];
@@ -669,7 +654,36 @@ export const OPTIONAL_MODULES_CONFIG: any[] = [
     { key: 'support', nameKey: 'modules.optional.support.name', descriptionKey: 'modules.optional.support.description' },
     { key: 'help_center', nameKey: 'modules.optional.help_center.name', descriptionKey: 'modules.optional.help_center.description' },
 ];
-export const ONBOARDING_TASK_CATEGORIES: OnboardingTaskCategory[] = ['الأوراق والمستندات', 'إعدادات النظام والحسابات', 'التعريف بالشركة والفريق', 'مهام أول أسبوع'];
-export const ONBOARDING_RESPONSIBLE_PARTIES: OnboardingResponsible[] = ['الموظف الجديد', 'المدير المباشر', 'الموارد البشرية', 'تكنولوجيا المعلومات'];
-export const OFFBOARDING_TASK_CATEGORIES: OffboardingTaskCategory[] = ['تسليم العهدة', 'إجراءات إدارية', 'نقل المعرفة', 'إجراءات الخروج النهائية'];
-export const OFFBOARDING_RESPONSIBLE_PARTIES: OffboardingResponsible[] = ['الموظف المغادر', 'المدير المباشر', 'الموارد البشرية', 'تكنولوجيا المعلومات', 'المالية'];
+export const ONBOARDING_TASK_CATEGORIES: OnboardingTaskCategory[] = ['paperwork', 'systemSetup', 'companyIntro', 'firstWeekTasks'];
+export const ONBOARDING_RESPONSIBLE_PARTIES: OnboardingResponsible[] = ['newEmployee', 'directManager', 'hr', 'it'];
+export const OFFBOARDING_TASK_CATEGORIES: OffboardingTaskCategory[] = ['assetHandover', 'adminProcedures', 'knowledgeTransfer', 'finalExit'];
+export const OFFBOARDING_RESPONSIBLE_PARTIES: OffboardingResponsible[] = ['departingEmployee', 'directManager', 'hr', 'it', 'finance'];
+export const MOCK_GOALS: Goal[] = [
+    { id: 'g1', employeeId: 'emp-001', title: 'إطلاق النسخة 2.0 من لوحة التحكم', description: 'تطوير وإطلاق النسخة الجديدة من لوحة تحكم المستخدمين.', type: 'Objective', status: 'On Track', progress: 75, dueDate: '2025-09-30', parentId: null },
+    { id: 'g2', employeeId: 'emp-001', title: 'إكمال وحدة عرض البيانات الجديدة', description: '', type: 'Key Result', status: 'Completed', progress: 100, dueDate: '2025-08-30', parentId: 'g1' },
+    { id: 'g3', employeeId: 'emp-001', title: 'تقليل وقت تحميل الصفحة بنسبة 20%', description: '', type: 'Key Result', status: 'On Track', progress: 60, dueDate: '2025-09-15', parentId: 'g1' },
+    { id: 'g4', employeeId: 'emp-011', title: 'إصلاح 10 أخطاء برمجية حرجة', description: 'إصلاح الأخطاء ذات الأولوية العالية في النظام.', type: 'Objective', status: 'At Risk', progress: 50, dueDate: '2025-09-10', parentId: null },
+];
+
+export const MOCK_WORK_LOCATIONS: WorkLocation[] = [
+    { id: 'loc-1', name: 'المقر الرئيسي بالقاهرة', latitude: 30.0444, longitude: 31.2357, radiusMeters: 200 },
+    { id: 'loc-2', name: 'فرع الإسكندرية', latitude: 31.2001, longitude: 29.9187, radiusMeters: 200 },
+];
+export const MOCK_ATTENDANCE_POLICIES: AttendancePolicy[] = [
+    { id: 'att-p-1', name: 'سياسة الحضور القياسية', scope: 'company', status: 'Active', gracePeriodInMinutes: 15, latenessTiers: [{id: 't1', fromMinutes: 16, toMinutes: 60, penaltyHours: 1}], absenceRules: [], earlyLeaveTiers: [], maxPermitsPerMonth: 4, minPermitDurationMinutes: 30, maxPermitDurationHours: 3, breakDurationHours: 1, workLocationIds: ['loc-1', 'loc-2'] },
+];
+export const MOCK_LEAVE_POLICIES: LeavePolicy[] = [
+    { id: 'leave-p-1', name: 'سياسة الإجازات القياسية', scope: 'company', status: 'Active', newEmployeeBalance: 15, newEmployeeEligibilityMonths: 6, annualLeaveTiers: [{id:'at1', afterYears: 1, days: 21}, {id:'at2', afterYears: 10, days: 30}], specialAnnualLeave: { over50YearsOld: 30, specialNeeds: 45 }, maternityLeaveMonths: 4, casualLeaveBalance: 7 },
+];
+export const MOCK_OVERTIME_POLICIES: OvertimePolicy[] = [
+    { id: 'ot-p-1', name: 'سياسة الوقت الإضافي للمطورين', scope: 'company', status: 'Active', allowOvertime: true, minOvertimeInMinutes: 30, overtimeRateNormal: 1.5, overtimeRateHoliday: 2 },
+];
+export const MOCK_ONBOARDING_TEMPLATES: OnboardingTemplate[] = [
+    { id: 'ot-1', name: 'قالب التعيين القياسي', description: 'يستخدم لجميع الموظفين الجدد.', tasks: [{ title: 'توقيع العقد', category: 'paperwork', responsible: 'newEmployee', dueOffsetDays: 0 }] },
+];
+export const MOCK_OFFBOARDING_TEMPLATES: OffboardingTemplate[] = [
+     { id: 'off-t-1', name: 'قالب إنهاء الخدمة القياسي', description: 'يستخدم لجميع الموظفين المغادرين.', tasks: [{ title: 'تسليم اللابتوب', category: 'assetHandover', responsible: 'departingEmployee', dueOffsetDays: 1 }] },
+];
+export const MOCK_APPROVAL_WORKFLOWS: ApprovalWorkflow[] = [
+    { id: 'aw-1', name: 'موافقة الإجازة القياسية', requestType: 'Leave', steps: [{id: 's1', approverRole: 'Direct Manager', order: 1}, {id: 's2', approverRole: 'HR Manager', order: 2}]},
+];
