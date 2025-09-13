@@ -17,7 +17,6 @@ const SystemAdminPage = lazy(() => import('./components/SystemAdminPage'));
 const BranchAdminPage = lazy(() => import('./components/BranchAdminPage'));
 const ManagerReportsPage = lazy(() => import('./components/ManagerReportsPage'));
 const SettingsPage = lazy(() => import('./components/SettingsPage'));
-const ContractsPage = lazy(() => import('./components/ContractsPage'));
 const MyOnboardingPage = lazy(() => import('./components/MyOnboardingPage'));
 const MyOffboardingPage = lazy(() => import('./components/MyOffboardingPage'));
 const OnboardingPage = lazy(() => import('./components/OnboardingPage'));
@@ -243,7 +242,6 @@ const App: React.FC = () => {
         'sidebar.branchManagement': <BranchManagementPage branches={branches} employees={employees} onAddBranch={(name) => { const newBranch=structureActions.addBranch(name); userActions.updateBranchManager(newBranch.id, ''); }} onUpdateBranch={(id, name, managerId) => { structureActions.updateBranch(id, name); userActions.updateBranchManager(id, managerId); }} onArchiveBranch={structureActions.archiveBranch} />,
         'sidebar.jobTitles': <JobTitlesPage jobTitles={jobTitles} employees={employees} onSaveJobTitle={structureActions.saveJobTitle} onDeleteJobTitle={structureActions.deleteJobTitle} />,
         'sidebar.compensation': <CompensationPage salaryComponents={policyActions.salaryComponents} compensationPackages={policyActions.compensationPackages} onSaveSalaryComponent={policyActions.saveSalaryComponent} onSaveCompensationPackage={policyActions.saveCompensationPackage} />,
-        'sidebar.contracts': <ContractsPage />,
         'sidebar.attendancePolicies': <AttendancePolicyPage attendancePolicies={attendancePolicies} employees={employees} onSaveAttendancePolicy={policyActions.saveAttendancePolicy} onArchivePolicy={() => {}} onBulkAssignPolicy={() => {}} onBulkArchivePolicies={()=>{}} currentUser={currentUser} branches={branches} onUpdatePolicyStatus={()=>{}} workLocations={policyActions.workLocations} onAddWorkLocation={policyActions.addWorkLocation} onUpdateWorkLocation={policyActions.updateWorkLocation} />,
         'sidebar.overtimePolicies': <OvertimePolicyPage overtimePolicies={overtimePolicies} employees={employees} onSaveOvertimePolicy={policyActions.saveOvertimePolicy} onArchivePolicy={() => {}} onBulkAssignPolicy={() => {}} onBulkArchivePolicies={()=>{}} currentUser={currentUser} branches={branches} onUpdatePolicyStatus={()=>{}} />,
         'sidebar.leavePolicies': <LeavePolicyPage leavePolicies={leavePolicies} employees={employees} onSaveLeavePolicy={policyActions.saveLeavePolicy} onArchivePolicy={() => {}} onBulkAssignPolicy={() => {}} onBulkArchivePolicies={()=>{}} currentUser={currentUser} branches={branches} onUpdatePolicyStatus={()=>{}} />,

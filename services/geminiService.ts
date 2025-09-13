@@ -1,4 +1,4 @@
-import { GoogleGenAI, Chat, GenerateContentResponse, Type } from "@google/genai";
+import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
 import type { EmployeeProfile } from '../types';
 import { Language } from '../components/contexts/LanguageContext';
 
@@ -130,62 +130,37 @@ export const sendMessageToAI = async (message: string, employeeData: EmployeePro
   }
 };
 
+// FIX: Add generateContractWithAI function to generate employment contracts.
 export const generateContractWithAI = async (prompt: string, language: Language): Promise<string> => {
     if (!process.env.API_KEY) {
         throw new Error("API_KEY is not set in environment variables.");
     }
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-    const responseSchema = {
-        type: Type.OBJECT,
-        properties: {
-            contractText: {
-                type: Type.STRING,
-                description: "The full, legally sound employment contract text, formatted as a single string."
-            }
-        },
-        required: ["contractText"]
-    };
-
-    const fullPrompt = language === 'ar' 
-        ? `
-        أنت خبير استشارات قانونية في الموارد البشرية متخصص في قانون العمل المصري. مهمتك هي إنشاء عقد عمل رسمي وكامل باللغة العربية بناءً على النقاط الرئيسية المقدمة.
-        يجب أن يكون العقد منظمًا بشكل جيد مع بنود واضحة (مثل، الأطراف، المنصب، الراتب، المدة، الإنهاء، القانون الحاكم).
-        
-        النقاط الرئيسية المقدمة من المستخدم:
-        ---
-        ${prompt}
-        ---
-
-        أنشئ عقد عمل شامل وسليم قانونيًا باللغة العربية بناءً على هذه النقاط ومتوافق مع قانون العمل المصري. قم بإرجاع العقد في كائن JSON.
-    `
-        : `
-        You are an expert HR legal consultant specializing in Egyptian labor law. Your task is to generate a formal and complete employment contract in English based on the provided key points.
-        The contract should be well-structured with clear clauses (e.g., Parties, Position, Salary, Duration, Termination, Governing Law).
-
-        Key Points provided by the user:
-        ---
-        ${prompt}
-        ---
-
-        Generate a comprehensive and legally sound employment contract in English based on these points and compliant with Egyptian labor law. Return the contract in a JSON object.
+    const systemInstruction = language === 'ar' ? `
+        أنت خبير في قانون العمل المصري ومستشار قانوني متخصص في صياغة عقود العمل.
+        مهمتك هي صياغة عقد عمل رسمي كامل بناءً على النقاط الأساسية المقدمة من المستخدم.
+        يجب أن يكون العقد باللغة العربية، احترافي، وشامل لجميع البنود الأساسية المطلوبة قانونياً (مثل: بيانات الطرفين، المسمى الوظيفي، الراتب، مدة العقد، الإجازات، واجبات الموظف، التزامات الشركة، شرط إنهاء العقد).
+        تأكد من أن الصياغة القانونية سليمة وواضحة.
+    ` : `
+        You are an expert in Egyptian labor law and a legal consultant specializing in drafting employment contracts.
+        Your task is to draft a complete, formal employment contract based on the key points provided by the user.
+        The contract must be in English, professional, and include all legally required essential clauses (e.g., parties' details, job title, salary, contract duration, leaves, employee duties, company obligations, termination clause).
+        Ensure the legal wording is sound and clear.
     `;
-    
+
     try {
         const response = await ai.models.generateContent({
-            model: "gemini-2.5-flash",
-            contents: fullPrompt,
+            model: 'gemini-2.5-flash',
+            contents: prompt,
             config: {
-                responseMimeType: "application/json",
-                responseSchema
+                systemInstruction: systemInstruction,
             }
         });
 
-        const result = JSON.parse(response.text.trim());
-        return result.contractText || '';
-
+        return response.text.trim();
     } catch (error) {
         console.error("Error generating contract with Gemini:", error);
-        throw new Error("Failed to generate contract from AI assistant.");
+        throw new Error("Failed to generate contract from AI service.");
     }
 };

@@ -64,7 +64,6 @@ export const NAV_GROUPS: NavGroup[] = [
       { nameKey: 'sidebar.branchManagement', path: '/branch-management', icon: BuildingOfficeIcon, roles: ['Super Admin'] },
       { nameKey: 'sidebar.jobTitles', path: '/job-titles', icon: SitemapIcon, roles: ['Admin', 'Super Admin'] },
       { nameKey: 'sidebar.compensation', path: '/compensation', icon: BanknotesIcon, module: 'payroll', roles: ['HR Manager', 'Finance Manager', 'Admin', 'Super Admin'] },
-      { nameKey: 'sidebar.contracts', path: '/contracts', icon: DocumentCheckIcon, roles: ['HR Specialist', 'HR Manager', 'Admin', 'Super Admin'] },
       { nameKey: 'sidebar.documentManagement', path: '/document-management', icon: DocumentDuplicateIcon, module: 'documents', roles: ['HR Specialist', 'HR Manager', 'Admin', 'Super Admin'] },
       { nameKey: 'sidebar.assetsManagement', path: '/assets-management', icon: ComputerDesktopIcon, module: 'assets', roles: ['Admin', 'Super Admin'] },
       { nameKey: 'sidebar.attendancePolicies', path: '/policies/attendance', icon: ShieldCheckIcon, roles: ['Admin', 'Super Admin'] },
@@ -72,7 +71,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { nameKey: 'sidebar.leavePolicies', path: '/policies/leave', icon: ShieldCheckIcon, roles: ['Admin', 'Super Admin'] },
       { nameKey: 'sidebar.onboardingTemplates', path: '/templates/onboarding', icon: DocumentTextIcon, module: 'onboarding', roles: ['Admin', 'Super Admin'] },
       { nameKey: 'sidebar.offboardingTemplates', path: '/templates/offboarding', icon: DocumentTextIcon, module: 'offboarding', roles: ['Admin', 'Super Admin'] },
-      { nameKey: 'sidebar.moduleManagement', path: '/module-management', icon: CogIcon, roles: ['Super Admin'] },
+      { nameKey: 'sidebar.moduleManagement', path: '/module-management', icon: CogIcon, roles: ['Super Admin', 'Admin'] },
       { nameKey: 'sidebar.approvalWorkflows', path: '/approval-workflows', icon: SitemapIcon, roles: ['Super Admin'] },
 
     ]
