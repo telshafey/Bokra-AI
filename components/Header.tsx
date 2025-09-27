@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { BellIcon, SunIcon, MoonIcon, LanguageIcon } from './icons/Icons';
-// FIX: Changed import path to be relative.
 import { EmployeeProfile, Notification, Branch } from '../types';
 import NotificationPanel from './NotificationPanel';
 import { useTranslation, Language } from './contexts/LanguageContext';

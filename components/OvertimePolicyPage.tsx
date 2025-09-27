@@ -1,4 +1,5 @@
 
+
 import React, { useState, useMemo } from 'react';
 import type { OvertimePolicy, EmployeeProfile, Branch } from '../types';
 import { PlusCircleIcon, PencilIcon, ArchiveBoxIcon, UserGroupIcon, ClockIcon, BanknotesIcon, ArrowsUpDownIcon, ChevronUpIcon, ChevronDownIcon } from './icons/Icons';
@@ -171,7 +172,6 @@ const OvertimePolicyPage: React.FC<OvertimePolicyPageProps> = ({
                                 <tr key={policy.id} className="border-b dark:border-slate-700">
                                     <td className="p-4"><input type="checkbox" checked={selectedPolicyIds.has(policy.id)} onChange={() => handleToggleSelect(policy.id)} /></td>
                                     <td className="px-6 py-4 font-semibold dark:text-slate-200">{policy.name}</td>
-                                    {/* FIX: Replaced property access from `name` to `nameKey` and wrapped it in the translation function to match the type definition. */}
                                     <td className="px-6 py-4">{policy.scope === 'company' ? 'عام للشركة' : `خاص بـ ${t(branches.find(b => b.id === policy.branchId)?.nameKey || 'فرع')}`}</td>
                                     <td className="px-6 py-4">{assignedEmployeesCount}</td>
                                     <td className="px-6 py-4"><span className={`px-2 py-1 text-xs font-semibold rounded-full ${STATUS_STYLES[policy.status].bg} ${STATUS_STYLES[policy.status].text}`}>{policy.status === 'Active' ? 'نشط' : (policy.status === 'Archived' ? 'مؤرشفة' : 'بانتظار الموافقة')}</span></td>

@@ -6,7 +6,6 @@ import { useTranslation } from './contexts/LanguageContext';
 interface LeavePermitModalProps {
     isOpen: boolean;
     onClose: () => void;
-    // FIX: Omitted 'approvalHistory' from the type to match the object being passed.
     onSubmit: (newRequest: Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'durationHours' | 'employeeId' | 'approvalHistory'>) => void;
     attendancePolicy?: AttendancePolicy;
     permitRequests: LeavePermitRequest[];

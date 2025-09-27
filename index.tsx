@@ -1,13 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-// FIX: Changed import path to be relative.
 import App from './App';
 import { AssetsProvider } from './components/contexts/AssetsContext';
-// FIX: Changed import path to be relative.
 import { PoliciesProvider } from './components/contexts/PoliciesContext';
 import { CompanyStructureProvider } from './components/contexts/CompanyStructureContext';
 import { UserProvider } from './components/contexts/UserContext';
-// FIX: Changed import path to be relative.
 import { RequestProvider } from './components/contexts/RequestContext';
 import { LanguageProvider } from './components/contexts/LanguageContext';
 import { HelpCenterProvider } from './components/contexts/HelpCenterContext';

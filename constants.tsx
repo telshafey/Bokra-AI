@@ -9,7 +9,6 @@ import {
   CheckCircleIcon,
   XCircleIcon,
 } from './components/icons/Icons';
-import { useTranslation } from './components/contexts/LanguageContext';
 
 export const NAV_GROUPS: NavGroup[] = [
   {
@@ -97,6 +96,13 @@ export const MOCK_JOB_TITLES: JobTitle[] = [
     { id: 'jt-devlead', nameKey: 'jobTitles.devLead', parentId: 'jt-gm' },
     { id: 'jt-sse', nameKey: 'jobTitles.sse', parentId: 'jt-devlead' },
     { id: 'jt-se', nameKey: 'jobTitles.se', parentId: 'jt-sse' },
+    { id: 'jt-saleslead', nameKey: 'jobTitles.salesLead', parentId: 'jt-gm' },
+    { id: 'jt-salesrep', nameKey: 'jobTitles.salesRep', parentId: 'jt-saleslead' },
+    { id: 'jt-hrspec', nameKey: 'jobTitles.hrSpecialist', parentId: 'jt-hrm' },
+    { id: 'jt-finman', nameKey: 'jobTitles.financeManager', parentId: 'jt-gm' },
+    { id: 'jt-branchadmin', nameKey: 'jobTitles.branchAdmin', parentId: 'jt-gm' },
+    { id: 'jt-superadmin', nameKey: 'jobTitles.superAdmin', parentId: null },
+    { id: 'jt-admin', nameKey: 'jobTitles.platformAdmin', parentId: 'jt-superadmin' },
 ];
 
 const MOCK_LEAVE_BALANCES: LeaveBalance[] = [

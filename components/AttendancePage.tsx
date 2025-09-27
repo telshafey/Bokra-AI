@@ -3,21 +3,16 @@
 
 
 
+
 import React, { useState, useMemo } from 'react';
-// FIX: Changed import path to be relative.
-import { AttendanceRecord, EmployeeInfraction, EmployeeProfile, AttendancePolicy, AttendanceAdjustmentRequest, LeavePermitRequest, RequestStatus, AttendanceEvent, ExternalTask, AttendanceStatus, Branch } from '../types';
+import { AttendanceRecord, EmployeeInfraction, EmployeeProfile, AttendancePolicy, RequestStatus, AttendanceEvent, ExternalTask, AttendanceStatus } from '../types';
 import AttendanceSummary from './AttendanceSummary';
 import CalendarView from './CalendarView';
 import AttendanceLogTable from './AttendanceLogTable';
-import { PlusCircleIcon, ClockIcon, MagnifyingGlassIcon, FunnelIcon } from './icons/Icons';
+import { PlusCircleIcon, ClockIcon } from './icons/Icons';
 import AttendanceAdjustmentModal from './AttendanceAdjustmentModal';
 import LeavePermitModal from './LeavePermitModal';
-import EmployeeAttendanceCard from './EmployeeAttendanceCard';
-// FIX: Changed import path to be relative.
-import { ALL_EMPLOYEES, COMPANY_BRANCHES } from '../constants';
-// FIX: Changed import path to be relative.
 import { useRequestContext } from './contexts/RequestContext';
-// FIX: Changed import path to be relative.
 import { usePoliciesContext } from './contexts/PoliciesContext';
 import { useTranslation } from './contexts/LanguageContext';
 
@@ -35,12 +30,10 @@ interface AttendancePageProps {
   externalTasks: ExternalTask[];
 }
 
-// FIX: Renamed component from EmployeeAttendanceView to AttendancePage to match default import in App.tsx.
 const AttendancePage: React.FC<AttendancePageProps> = ({ records, attendanceEvents, infractions, currentUser, externalTasks }) => {
   const { t } = useTranslation();
   const [isExcuseModalOpen, setIsExcuseModalOpen] = useState(false);
   const [isPermitModalOpen, setIsPermitModalOpen] = useState(false);
-  // FIX: Destructure `leavePermitRequests` correctly from the context hook.
   const { attendanceAdjustmentRequests, leavePermitRequests, handleNewAttendanceAdjustmentRequest, handleNewLeavePermitRequest } = useRequestContext();
   const { attendancePolicies } = usePoliciesContext();
 

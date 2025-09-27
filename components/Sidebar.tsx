@@ -1,8 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-// FIX: Changed import path to be relative.
 import { NAV_GROUPS, BOTTOM_NAV_ITEMS } from '../constants';
-// FIX: Changed import path to be relative.
 import type { NavItem, EmployeeProfile, NavGroup, AppModule } from '../types';
 import { ChevronDownIcon, BuildingOfficeIcon, ChevronLeftIcon, ChevronRightIcon } from './icons/Icons';
 import { useTranslation } from './contexts/LanguageContext';

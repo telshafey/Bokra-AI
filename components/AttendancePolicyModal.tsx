@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, PlusCircleIcon, TrashIcon } from './icons/Icons';
 import type { AttendancePolicy, LatenessTier, EmployeeProfile, Branch, EarlyLeaveTier, WorkLocation } from '../types';
@@ -169,7 +171,6 @@ const AttendancePolicyModal: React.FC<AttendancePolicyModalProps> = ({ isOpen, o
                                 required={policy.scope === 'branch'}
                             >
                                 <option value="">-- اختر فرع --</option>
-                                {/* FIX: Replaced property access from `name` to `nameKey` and wrapped it in the translation function to match the type definition. */}
                                 {branches.map(b => <option key={b.id} value={b.id}>{t(b.nameKey)}</option>)}
                             </select>
                         </div>

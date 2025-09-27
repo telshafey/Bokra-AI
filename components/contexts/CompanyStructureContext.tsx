@@ -21,7 +21,6 @@ export const CompanyStructureProvider: React.FC<CompanyStructureProviderProps> =
     const addBranch = (nameKey: string): Branch => {
         const newBranch: Branch = {
             id: `branch-${nameKey.toLowerCase().replace(/\s/g, '-')}-${Date.now()}`,
-            // FIX: Changed property from `name` to `nameKey` to align with the `Branch` type definition.
             nameKey: nameKey,
             status: 'Active'
         };
@@ -31,7 +30,6 @@ export const CompanyStructureProvider: React.FC<CompanyStructureProviderProps> =
     };
 
     const updateBranch = (id: string, nameKey: string) => {
-        // FIX: Changed property from `name` to `nameKey` to align with the `Branch` type definition.
         setBranches(prev => prev.map(b => b.id === id ? { ...b, nameKey: nameKey } : b));
         addToast(t('toasts.branchSaved'), 'success');
     };

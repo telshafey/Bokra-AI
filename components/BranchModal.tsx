@@ -1,3 +1,5 @@
+
+
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { Branch, EmployeeProfile } from '../types';
@@ -17,7 +19,6 @@ const BranchModal: React.FC<BranchModalProps> = ({ isOpen, onClose, onSave, bran
     useEffect(() => {
         if (isOpen) {
             if (branchToEdit) {
-                // FIX: Changed property access from `name` to `nameKey` to match the `Branch` type definition.
                 setNameKey(branchToEdit.nameKey);
                 const currentManager = employees.find(e => e.branchId === branchToEdit.id && e.role === 'Branch Admin');
                 setSelectedManagerId(currentManager?.id || '');
@@ -62,28 +63,25 @@ const BranchModal: React.FC<BranchModalProps> = ({ isOpen, onClose, onSave, bran
                             value={nameKey}
                             onChange={(e) => setNameKey(e.target.value)}
                             className="w-full p-2 border border-slate-300 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500"
-                            placeholder="مثال: فرع المعادي أو branches.maadi"
+                            placeholder="branches.cairo"
                             required
-                            autoFocus
                         />
                     </div>
                     <div>
-                        <label htmlFor="branchManager" className="block text-sm font-medium text-slate-700 mb-1">مسؤول الفرع (Admin)</label>
+                        <label htmlFor="managerId" className="block text-sm font-medium text-slate-700 mb-1">مدير الفرع (اختياري)</label>
                         <select
-                            id="branchManager"
+                            id="managerId"
                             value={selectedManagerId}
                             onChange={(e) => setSelectedManagerId(e.target.value)}
-                            className="w-full p-2 border border-slate-300 rounded-lg bg-slate-50 focus:outline-none focus:ring-2 focus:ring-sky-500"
+                            className="w-full p-2 border border-slate-300 rounded-lg bg-slate-50"
                         >
-                            <option value="">لا يوجد مسؤول معين</option>
+                            <option value="">-- لا يوجد مدير --</option>
                             {potentialManagers.map(emp => (
-                                <option key={emp.id} value={emp.id}>
-                                    {emp.name} ({emp.title})
-                                </option>
+                                <option key={emp.id} value={emp.id}>{emp.name}</option>
                             ))}
                         </select>
                     </div>
-                    <div className="flex justify-end gap-4 pt-6">
+                    <div className="flex justify-end gap-4 pt-4">
                         <button type="button" onClick={onClose} className="py-2 px-6 bg-slate-100 text-slate-700 rounded-lg font-semibold hover:bg-slate-200">
                             إلغاء
                         </button>
@@ -96,5 +94,4 @@ const BranchModal: React.FC<BranchModalProps> = ({ isOpen, onClose, onSave, bran
         </div>
     );
 };
-
 export default BranchModal;

@@ -25,6 +25,9 @@ export const translations = {
       se: 'مهندس برمجيات',
       salesLead: 'قائد فريق المبيعات',
       salesRep: 'مسؤول مبيعات',
+      hrSpecialist: 'أخصائي موارد بشرية',
+      financeManager: 'مدير مالي',
+      branchAdmin: 'مسؤول فرع',
     },
     // Departments
     departments: {
@@ -284,24 +287,6 @@ export const translations = {
       requestLeave: "طلب إجازة",
       viewPayslip: "عرض الراتب",
       updateProfile: "تحديث ملفي",
-    },
-    // Contracts Page
-    contracts: {
-        pageHeaderTitle: "توليد عقود العمل بالذكاء الاصطناعي",
-        pageHeaderSubtitle: "أدخل النقاط الأساسية مثل (اسم الموظف، المنصب، الراتب، تاريخ البدء) وسيقوم الذكاء الاصطناعي بصياغة مسودة عقد عمل رسمي متوافق مع قانون العمل المصري.",
-        keyPointsTitle: "النقاط الأساسية للعقد",
-        promptPlaceholder: "مثال:\n- اسم الموظف: أحمد علي\n- المسمى الوظيفي: مهندس برمجيات\n- الراتب الأساسي: 15000 جنيه مصري\n- تاريخ بدء العمل: 1/10/2025\n- مدة العقد: سنة واحدة",
-        promptRequiredError: "يرجى إدخال النقاط الأساسية للعقد.",
-        unexpectedError: "حدث خطأ غير متوقع أثناء إنشاء العقد.",
-        generatingButton: "جاري الإنشاء...",
-        generateButton: "إنشاء العقد",
-        aiWriting: "يقوم الذكاء الاصطناعي بكتابة العقد...",
-        draftPlaceholder: "ستظهر مسودة العقد هنا.",
-        draftContractTitle: "مسودة العقد",
-        copyButton: "نسخ",
-        printButton: "طباعة",
-        copiedAlert: "تم نسخ العقد إلى الحافظة!",
-        printTitle: "عقد عمل",
     },
     time: {
       yearsAgo: "منذ {{count}} سنوات",
@@ -1004,6 +989,9 @@ export const translations = {
       se: 'Software Engineer',
       salesLead: 'Sales Team Lead',
       salesRep: 'Sales Representative',
+      hrSpecialist: 'HR Specialist',
+      financeManager: 'Finance Manager',
+      branchAdmin: 'Branch Admin',
     },
     // Departments
     departments: {
@@ -1263,24 +1251,6 @@ export const translations = {
       requestLeave: "Request Leave",
       viewPayslip: "View Payslip",
       updateProfile: "Update Profile",
-    },
-    // Contracts Page
-    contracts: {
-        pageHeaderTitle: "AI Contract Generation",
-        pageHeaderSubtitle: "Enter key points like (employee name, position, salary, start date) and the AI will draft a formal employment contract compliant with Egyptian labor law.",
-        keyPointsTitle: "Key Contract Points",
-        promptPlaceholder: "Example:\n- Employee Name: Ahmed Ali\n- Position: Software Engineer\n- Base Salary: 15,000 EGP\n- Start Date: 1/10/2025\n- Contract Duration: 1 year",
-        promptRequiredError: "Please enter the key points for the contract.",
-        unexpectedError: "An unexpected error occurred while generating the contract.",
-        generatingButton: "Generating...",
-        generateButton: "Generate Contract",
-        aiWriting: "AI is writing the contract...",
-        draftPlaceholder: "The draft contract will appear here.",
-        draftContractTitle: "Draft Contract",
-        copyButton: "Copy",
-        printButton: "Print",
-        copiedAlert: "Contract copied to clipboard!",
-        printTitle: "Employment Contract",
     },
     time: {
       yearsAgo: "{{count}} years ago",

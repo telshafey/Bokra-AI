@@ -1,3 +1,5 @@
+
+
 import React, { useState, useMemo, useEffect, lazy, Suspense } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -60,7 +62,7 @@ import Chatbot from './components/Chatbot';
 
 import { useTranslation, Language } from './components/contexts/LanguageContext';
 import { MOCK_DASHBOARD_DATA, MOCK_TEAM_DASHBOARD_DATA, MOCK_NOTIFICATIONS, MOCK_TEAM_REPORTS_DATA, MOCK_TEAM_PERFORMANCE_DATA, MOCK_JOB_OPENINGS, MOCK_CANDIDATES, MOCK_ONBOARDING_PROCESSES, MOCK_OFFBOARDING_PROCESSES, MOCK_EMPLOYEE_DOCUMENTS, MOCK_ALL_COURSES, MOCK_EMPLOYEE_COURSES, MOCK_PERFORMANCE_REVIEWS, MOCK_MONTHLY_CHECKINS, MOCK_EXTERNAL_TASKS, MOCK_SUPPORT_TICKETS, MOCK_SALARY_COMPONENTS, MOCK_COMPENSATION_PACKAGES, MOCK_GOALS } from './constants';
-import { AppModule, EmployeeProfile, HRRequest, UserRole } from './types';
+import { AppModule, EmployeeProfile, UserRole } from './types';
 
 // Custom hook to persist state in localStorage
 const useStickyState = <T,>(defaultValue: T | (() => T), key: string): [T, React.Dispatch<React.SetStateAction<T>>] => {
@@ -150,7 +152,7 @@ const App: React.FC = () => {
         if (currentUser.role !== 'Branch Admin') return [];
 
         const branchEmployeeIds = new Set(branchEmployees.map(e => e.id));
-        const allRequests: HRRequest[] = [
+        const allRequests = [
             ...leaveRequests,
             ...attendanceAdjustmentRequests,
             ...leavePermitRequests,
@@ -231,7 +233,7 @@ const App: React.FC = () => {
         'sidebar.support': <SupportTicketsPage currentUser={currentUser} allUsers={employees} allTickets={MOCK_SUPPORT_TICKETS} onCreateTicket={() => {}} onAddMessage={() => {}} onUpdateTicketStatus={() => {}} />,
         'sidebar.teamDashboard': <TeamDashboard teamDashboardData={MOCK_TEAM_DASHBOARD_DATA} onAction={handleRequestAction} />,
         'sidebar.branchDashboard': <BranchAdminPage branchEmployees={branchEmployees} branchPendingRequests={branchPendingRequests} onAction={handleRequestAction} currentUser={currentUser} />,
-        'sidebar.teamAnalytics': <TeamAnalyticsPage teamDetails={teamDetails} currentUser={currentUser} onUpdateProfile={() => {}} branches={branches} attendancePolicies={attendancePolicies} overtimePolicies={overtimePolicies} leavePolicies={leavePolicies} jobTitles={jobTitles} onCourseApprovalAction={()=>{}} onSaveMonthlyCheckIn={()=>{}} performanceReviews={[]} onSavePerformanceReview={()=>{}} activeModules={activeModules} salaryComponents={MOCK_SALARY_COMPONENTS} compensationPackages={MOCK_COMPENSATION_PACKAGES} onSaveDocument={()=>{}} />,
+        'sidebar.teamAnalytics': <TeamAnalyticsPage teamDetails={teamDetails} currentUser={currentUser} branches={branches} salaryComponents={MOCK_SALARY_COMPONENTS} compensationPackages={MOCK_COMPENSATION_PACKAGES} onSaveDocument={()=>{}} />,
         'sidebar.reports': <ManagerReportsPage reportsData={MOCK_TEAM_REPORTS_DATA} teamMembers={[]} teamGoals={[]} attendanceRecords={[]} requests={[]} externalTasks={[]}/>,
         'sidebar.performanceManagement': <ManagerPerformancePage data={MOCK_TEAM_PERFORMANCE_DATA} onSavePerformanceReview={()=>{}} performanceReviews={MOCK_PERFORMANCE_REVIEWS} currentUser={currentUser} />,
         'sidebar.turnoverAnalysis': <TurnoverReportPage teamMembers={employees.filter(e => e.managerId === currentUser.id)} />,

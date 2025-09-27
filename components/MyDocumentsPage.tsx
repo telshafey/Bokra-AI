@@ -64,7 +64,6 @@ const MyDocumentsPage: React.FC<MyDocumentsPageProps> = ({ documents, onSaveDocu
                                 return (
                                     <tr key={doc.id} className="bg-white border-b hover:bg-slate-50">
                                         <td className="px-6 py-4 font-semibold text-slate-800">{doc.name}</td>
-                                        {/* FIX: Removed invalid second argument from translation function `t`. The function expects an object for replacements, but a string was provided. */}
                                         <td className="px-6 py-4">{t(`myDocuments.docTypes.${doc.type}`)}</td>
                                         <td className="px-6 py-4">{new Date(doc.uploadDate).toLocaleDateString(locale)}</td>
                                         <td className="px-6 py-4">{doc.expirationDate ? new Date(doc.expirationDate).toLocaleDateString(locale) : '-'}</td>

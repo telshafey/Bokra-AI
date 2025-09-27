@@ -130,37 +130,60 @@ export const sendMessageToAI = async (message: string, employeeData: EmployeePro
   }
 };
 
-// FIX: Add generateContractWithAI function to generate employment contracts.
+// FIX: Add missing generateContractWithAI function
 export const generateContractWithAI = async (prompt: string, language: Language): Promise<string> => {
     if (!process.env.API_KEY) {
         throw new Error("API_KEY is not set in environment variables.");
     }
     const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-    const systemInstruction = language === 'ar' ? `
-        أنت خبير في قانون العمل المصري ومستشار قانوني متخصص في صياغة عقود العمل.
-        مهمتك هي صياغة عقد عمل رسمي كامل بناءً على النقاط الأساسية المقدمة من المستخدم.
-        يجب أن يكون العقد باللغة العربية، احترافي، وشامل لجميع البنود الأساسية المطلوبة قانونياً (مثل: بيانات الطرفين، المسمى الوظيفي، الراتب، مدة العقد، الإجازات، واجبات الموظف، التزامات الشركة، شرط إنهاء العقد).
-        تأكد من أن الصياغة القانونية سليمة وواضحة.
+    const fullPrompt = language === 'ar' ? `
+        أنت خبير قانوني متخصص في صياغة عقود العمل المصرية. مهمتك هي إنشاء مسودة عقد عمل رسمي وقانوني بناءً على النقاط الرئيسية التي يقدمها المستخدم.
+        يجب أن يكون العقد باللغة العربية، شاملاً، ويتبع التنسيق والهيكل القياسي لعقود العمل في مصر.
+
+        النقاط الرئيسية من المستخدم:
+        "${prompt}"
+
+        الآن، قم بصياغة عقد عمل كامل بناءً على هذه النقاط. تأكد من تضمين بنود أساسية مثل:
+        - بيانات الطرفين (الشركة والموظف)
+        - المسمى الوظيفي والوصف الوظيفي
+        - مدة العقد (محدد أو غير محدد)
+        - الراتب والمزايا
+        - ساعات العمل والإجازات
+        - واجبات وحقوق الطرفين
+        - شروط إنهاء العقد
+
+        استخدم لغة قانونية واضحة واحترافية.
     ` : `
-        You are an expert in Egyptian labor law and a legal consultant specializing in drafting employment contracts.
-        Your task is to draft a complete, formal employment contract based on the key points provided by the user.
-        The contract must be in English, professional, and include all legally required essential clauses (e.g., parties' details, job title, salary, contract duration, leaves, employee duties, company obligations, termination clause).
-        Ensure the legal wording is sound and clear.
+        You are a legal expert specializing in drafting Egyptian employment contracts. Your task is to generate a formal and legally sound employment contract draft based on key points provided by the user.
+        The contract must be in English, comprehensive, and follow the standard format and structure for employment contracts in Egypt.
+
+        Key points from the user:
+        "${prompt}"
+
+        Now, draft a complete employment contract based on these points. Ensure you include essential clauses such as:
+        - Details of both parties (company and employee)
+        - Job title and description
+        - Contract duration (fixed-term or indefinite)
+        - Salary and benefits
+        - Working hours and leave
+        - Duties and rights of both parties
+        - Termination conditions
+
+        Use clear and professional legal language.
     `;
 
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
-            contents: prompt,
-            config: {
-                systemInstruction: systemInstruction,
-            }
+            model: "gemini-2.5-flash",
+            contents: fullPrompt,
         });
 
         return response.text.trim();
+
     } catch (error) {
         console.error("Error generating contract with Gemini:", error);
-        throw new Error("Failed to generate contract from AI service.");
+        const errorMessage = language === 'ar' ? "عذرًا، حدث خطأ أثناء إنشاء العقد. يرجى المحاولة مرة أخرى." : "Sorry, an error occurred while generating the contract. Please try again.";
+        throw new Error(errorMessage);
     }
 };

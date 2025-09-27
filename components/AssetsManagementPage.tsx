@@ -1,5 +1,6 @@
 
 
+
 import React, { useState, useMemo } from 'react';
 import type { Asset, EmployeeProfile, Branch } from '../types';
 import { PlusCircleIcon, PencilIcon, ArrowsRightLeftIcon, ArrowsUpDownIcon, ChevronUpIcon, ChevronDownIcon } from './icons/Icons';
@@ -9,7 +10,6 @@ import AssetModal from './AssetModal';
 import AssignAssetModal from './AssignAssetModal';
 import { useAssetsContext } from './contexts/AssetsContext';
 import ActionBar from './ActionBar';
-// FIX: Import COMPANY_BRANCHES to resolve reference error.
 import { COMPANY_BRANCHES } from '../constants';
 import { useTranslation } from './contexts/LanguageContext';
 
@@ -35,7 +35,6 @@ const AssetsManagementPage: React.FC<AssetsManagementPageProps> = ({ employees }
         const branchMap = new Map<string, Branch>();
         employees.forEach(e => {
             const branch = COMPANY_BRANCHES.find(b => b.id === e.branchId);
-            // FIX: Replaced property access from `name` to `nameKey` to align with type definitions.
             if(branch && !branchMap.has(branch.id)) {
                 branchMap.set(branch.id, { id: branch.id, nameKey: branch.nameKey, status: 'Active' });
             }
@@ -130,7 +129,6 @@ const AssetsManagementPage: React.FC<AssetsManagementPageProps> = ({ employees }
                  <div className="flex items-center gap-4">
                      <select value={branchFilter} onChange={(e) => setBranchFilter(e.target.value)} className="p-2 border rounded-lg text-sm bg-slate-50">
                         <option value="all">كل الفروع</option>
-                        {/* FIX: Replaced property access from `name` to `nameKey` and wrapped it in the translation function to match the type definition. */}
                         {branches.map(b => <option key={b.id} value={b.id}>{t(b.nameKey)}</option>)}
                     </select>
                      <select value={depreciationFilter} onChange={(e) => setDepreciationFilter(e.target.value as any)} className="p-2 border rounded-lg text-sm bg-slate-50">

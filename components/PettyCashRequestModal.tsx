@@ -6,7 +6,6 @@ import { useTranslation } from './contexts/LanguageContext';
 interface PettyCashRequestModalProps {
     isOpen: boolean;
     onClose: () => void;
-    // FIX: Omitted 'approvalHistory' from the type to match the object being passed.
     onSubmit: (newRequest: Omit<PettyCashRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'employeeId' | 'approvalHistory'>) => void;
 }
 

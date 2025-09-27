@@ -9,7 +9,6 @@ import { useTranslation } from './contexts/LanguageContext';
 interface BranchAdminPageProps {
   branchEmployees: EmployeeProfile[];
   branchPendingRequests: HRRequest[];
-// FIX: Changed onAction prop signature to match what PendingRequests expects.
   onAction: (requestId: string, newStatus: 'Approved' | 'Rejected', notes: string) => void;
   currentUser: EmployeeProfile;
 }
@@ -98,7 +97,6 @@ const BranchAdminPage: React.FC<BranchAdminPageProps> = ({ branchEmployees, bran
                                         </div>
                                     </td>
                                     <td className="px-6 py-4">{employee.title}</td>
-                                    {/* FIX: Replaced property access from `department` to `departmentKey` to match the type definition, and wrapped it in the translation function. */}
                                     <td className="px-6 py-4">{t('departments.' + employee.departmentKey)}</td>
                                     <td className="px-6 py-4">{employee.manager || '-'}</td>
                                 </tr>

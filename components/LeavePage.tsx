@@ -1,12 +1,10 @@
 
 import React, { useState } from 'react';
-// FIX: Changed import path to be relative.
 import type { LeaveBalance, LeaveRequest, RequestStatus, LeaveType, EmployeeProfile } from '../types';
 import { CalendarIcon, BriefcaseIcon, ClockIcon, XCircleIcon, PlusCircleIcon, UserPlusIcon, AcademicCapIcon, ArrowDownTrayIcon } from './icons/Icons';
 import RequestLeaveModal from './RequestLeaveModal';
 import Card from './Card';
 import ActionBar from './ActionBar';
-// FIX: Changed import path to be relative.
 import { useRequestContext } from './contexts/RequestContext';
 import { useTranslation } from './contexts/LanguageContext';
 

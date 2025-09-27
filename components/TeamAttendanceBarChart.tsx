@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-// FIX: Changed import path to be relative.
 import { TeamWeeklyAttendanceItem } from '../types';
 
 interface TeamAttendanceBarChartProps {

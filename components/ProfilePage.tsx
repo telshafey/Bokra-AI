@@ -1,6 +1,6 @@
 
+
 import React, { useState, useEffect } from 'react';
-// FIX: Changed import path to be relative.
 import { EmployeeProfile, Branch, AttendancePolicy, LeavePolicy, JobTitle, OvertimePolicy } from '../types';
 import ProfileDetailCard from './ProfileDetailCard';
 import { PencilSquareIcon } from './icons/Icons';

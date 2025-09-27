@@ -6,7 +6,6 @@ import { useTranslation } from './contexts/LanguageContext';
 interface AttendanceAdjustmentModalProps {
     isOpen: boolean;
     onClose: () => void;
-    // FIX: Omitted 'approvalHistory' from the type to match the object being passed.
     onSubmit: (newRequest: Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'employeeId' | 'approvalHistory'>) => void;
 }
 

@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon, ArrowUpTrayIcon } from './icons/Icons';
-// FIX: Changed import path to be relative.
 import type { LeaveRequest, LeaveType } from '../types';
 import { useTranslation } from './contexts/LanguageContext';
 
 interface RequestLeaveModalProps {
     isOpen: boolean;
     onClose: () => void;
-    // FIX: Omitted 'approvalHistory' from the type to match the object being passed.
     onSubmit: (newRequest: Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'employeeId' | 'approvalHistory'>) => void;
 }
 

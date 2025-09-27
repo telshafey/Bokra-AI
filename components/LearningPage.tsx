@@ -1,4 +1,5 @@
 
+
 import React, { useMemo, useState } from 'react';
 import type { EmployeeProfile, Course, EmployeeCourse, CourseStatus } from '../types';
 import CourseCard from './CourseCard';
@@ -35,7 +36,6 @@ const LearningPage: React.FC<LearningPageProps> = ({ currentUser, allCourses, em
     // Simple AI recommendation logic for demonstration
     const recommendedCourses = useMemo(() => {
         return libraryCourses.filter(c => {
-            // FIX: Replaced property access from `department` to `departmentKey` to match the `EmployeeProfile` type definition.
             if (currentUser.departmentKey === 'it' && c.category === 'Technical') {
                 return true;
             }

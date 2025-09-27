@@ -105,7 +105,6 @@ const ManagerPerformancePage: React.FC<ManagerPerformancePageProps> = ({ data, o
                                         reviewerId: currentUser.id,
                                         cycle: cycle.name,
                                         status: 'Draft',
-                                        // FIX: Removed non-existent property 'overallRating' from PerformanceReview object creation to align with its type definition.
                                         ratings: {},
                                         comments: {},
                                         finalComments: '',

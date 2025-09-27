@@ -16,7 +16,7 @@ interface NotificationPanelProps {
 
 const NotificationPanel: React.FC<NotificationPanelProps> = ({ notifications, allUsers, onMarkAsRead, onMarkAllAsRead, onClearAll, onClose }) => {
     const { t } = useTranslation();
-    const userMap = new Map(allUsers.map(u => [u.id, u]));
+    const userMap: Map<string, EmployeeProfile> = new Map(allUsers.map(u => [u.id, u]));
 
     return (
         <div className="absolute top-full right-0 mt-2 w-80 md:w-96 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border dark:border-slate-700 z-50 flex flex-col">

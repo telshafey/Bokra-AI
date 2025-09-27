@@ -64,7 +64,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const addNewUser = (newUserPayload: NewUserPayload) => {
         const newEmployeeId = `BOK-${Math.floor(1000 + Math.random() * 9000)}`;
         const newId = `emp-${Math.floor(1000 + Math.random() * 9000)}`;
-        // FIX: Changed property access from `name` to `nameKey` and used the translation function to get the display title.
         const jobTitle = jobTitles.find(jt => jt.id === newUserPayload.jobTitleId);
 
         const newUserProfile: EmployeeProfile = {
@@ -76,7 +75,6 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
           role: newUserPayload.role,
           isEmployee: true,
           avatarUrl: `https://i.pravatar.cc/100?u=${newId}`,
-// FIX: Changed property from `department` to `departmentKey` to match type definitions.
           departmentKey: newUserPayload.departmentKey,
           hireDate: newUserPayload.hireDate,
           employmentStatus: 'دوام كامل',
@@ -115,14 +113,12 @@ export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
     const updateUser = (userId: string, updatedData: NewUserPayload) => {
         setEmployees(prev => prev.map(emp => {
             if (emp.id === userId) {
-                // FIX: Changed property access from `name` to `nameKey` and used the translation function to get the display title.
                 const jobTitle = jobTitles.find(jt => jt.id === updatedData.jobTitleId);
                 return {
                     ...emp,
                     name: updatedData.name,
                     jobTitleId: updatedData.jobTitleId,
                     title: jobTitle ? t(jobTitle.nameKey) : emp.title,
-// FIX: Changed property from `department` to `departmentKey` to match type definitions.
                     departmentKey: updatedData.departmentKey,
                     hireDate: updatedData.hireDate,
                     branchId: updatedData.branchId,

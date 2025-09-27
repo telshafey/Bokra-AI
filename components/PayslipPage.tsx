@@ -1,12 +1,9 @@
 
 
-
 import React, { useState, useEffect, useMemo } from 'react';
-// FIX: Changed import path to be relative.
 import type { Payslip, PayslipItem, EmployeeProfile, PettyCashRequest, RequestStatus } from '../types';
 import { BanknotesIcon, ArrowDownTrayIcon, PrinterIcon, PlusCircleIcon } from './icons/Icons';
 import { useTranslation } from './contexts/LanguageContext';
-// FIX: Changed import path to be relative.
 import { useRequestContext } from './contexts/RequestContext';
 import PettyCashRequestModal from './PettyCashRequestModal';
 

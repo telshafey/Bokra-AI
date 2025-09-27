@@ -1,39 +1,22 @@
 
 
-
-
-
-
 import React, { useState, useMemo, useEffect } from 'react';
 import TeamMemberList from './TeamMemberList';
 import TeamMemberDetailView from './TeamMemberDetailView';
-// FIX: Changed import path to be relative.
-import { EmployeeProfile, TeamMemberDetails, Branch, AttendancePolicy, LeavePolicy, JobTitle, MonthlyCheckIn, OvertimePolicy, PerformanceReview, NewUserPayload, AppModule, SalaryComponent, CompensationPackage, EmployeeDocument } from '../types';
+import { EmployeeProfile, TeamMemberDetails, Branch, NewUserPayload, AppModule, SalaryComponent, CompensationPackage, EmployeeDocument } from '../types';
 import { useTranslation } from './contexts/LanguageContext';
 
 interface TeamAnalyticsPageProps {
   teamDetails: TeamMemberDetails[];
   currentUser: EmployeeProfile;
-  onUpdateProfile: (userId: string, updatedData: NewUserPayload) => void;
   branches: Branch[];
-  attendancePolicies: AttendancePolicy[];
-  overtimePolicies: OvertimePolicy[];
-  leavePolicies: LeavePolicy[];
-  jobTitles: JobTitle[];
-  onCourseApprovalAction: (employeeId: string, courseId: string, action: 'Approve' | 'Reject') => void;
-  onSaveMonthlyCheckIn: (checkInData: Omit<MonthlyCheckIn, 'id' | 'reviewerId' | 'date'>) => void;
-  performanceReviews: PerformanceReview[];
-  onSavePerformanceReview: (review: PerformanceReview) => void;
-  activeModules: Set<AppModule>;
   salaryComponents: SalaryComponent[];
   compensationPackages: CompensationPackage[];
   onSaveDocument: (document: EmployeeDocument) => void;
 }
 
 const TeamAnalyticsPage: React.FC<TeamAnalyticsPageProps> = ({ 
-    teamDetails, currentUser, onUpdateProfile, branches, attendancePolicies, 
-    overtimePolicies, leavePolicies, jobTitles, onCourseApprovalAction, 
-    onSaveMonthlyCheckIn, performanceReviews, onSavePerformanceReview, activeModules,
+    teamDetails, currentUser, branches,
     salaryComponents, compensationPackages, onSaveDocument
 }) => {
   const [selectedMemberId, setSelectedMemberId] = useState<string | null>(teamDetails[0]?.profile.id || null);
