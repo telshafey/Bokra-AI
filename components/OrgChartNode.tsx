@@ -1,5 +1,4 @@
 import React from 'react';
-// FIX: Corrected import to include OrgTreeNode type.
 import { OrgTreeNode } from '../types';
 import { ChevronDownIcon } from './icons/Icons';
 

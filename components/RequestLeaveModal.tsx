@@ -1,4 +1,3 @@
-// FIX: Implemented the RequestLeaveModal component.
 import React, { useState } from 'react';
 import type { LeaveType } from '../types';
 import { XMarkIcon, ArrowUpTrayIcon } from './icons/Icons';

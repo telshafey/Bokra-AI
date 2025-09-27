@@ -1,4 +1,3 @@
-// FIX: Implemented the MyRequestsPage component.
 import React, { useState, useMemo } from 'react';
 import type { HRRequest, RequestStatus } from '../types';
 import { PlusCircleIcon } from './icons/Icons';

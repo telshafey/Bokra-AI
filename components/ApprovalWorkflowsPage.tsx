@@ -1,4 +1,3 @@
-// FIX: Replaced placeholder content with a full implementation.
 import React, { useState } from 'react';
 import { PlusCircleIcon, PencilIcon, TrashIcon, SitemapIcon } from './icons/Icons';
 import { usePoliciesContext } from './contexts/PoliciesContext';

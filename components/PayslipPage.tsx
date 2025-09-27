@@ -1,4 +1,3 @@
-// FIX: Implemented the PayslipPage component.
 import React, { useState } from 'react';
 import type { Payslip, PettyCashRequest } from '../types';
 import { BanknotesIcon, PrinterIcon, ArrowDownTrayIcon } from './icons/Icons';

@@ -1,4 +1,3 @@
-// FIX: Implemented the AttendancePage component.
 import React, { useState, useMemo } from 'react';
 import { EmployeeProfile, AttendanceRecord, AttendancePolicy, ExternalTask } from '../types';
 import CalendarView from './CalendarView';

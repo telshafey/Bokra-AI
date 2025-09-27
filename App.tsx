@@ -1,4 +1,3 @@
-// FIX: Implemented the main App component.
 import React, { useState, useMemo, useEffect } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
@@ -38,17 +37,11 @@ import MyOffboardingPage from './components/MyOffboardingPage';
 import MyTasksPage from './components/MyTasksPage';
 import ExternalTasksPage from './components/ExternalTasksPage';
 import JobTitlesPage from './components/JobTitlesPage';
-// FIX: Corrected import to point to a local module.
 import CompensationPage from './components/CompensationPage';
-// FIX: Corrected import to point to a local module.
 import AttendancePolicyPage from './components/AttendancePolicyPage';
-// FIX: Corrected import to point to a local module.
 import OvertimePolicyPage from './components/OvertimePolicyPage';
-// FIX: Corrected import to point to a local module.
 import LeavePolicyPage from './components/LeavePolicyPage';
-// FIX: Corrected import to point to a local module.
 import OnboardingTemplatesPage from './components/OnboardingTemplatesPage';
-// FIX: Corrected import to point to a local module.
 import OffboardingTemplatesPage from './components/OffboardingTemplatesPage';
 import ModuleManagementPage from './components/ModuleManagementPage';
 import OrgChartPage from './components/OrgChartPage';

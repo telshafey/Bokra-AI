@@ -1,7 +1,4 @@
-
-
 import React, { useState } from 'react';
-// FIX: Changed import path to be relative.
 import type { EmployeeProfile } from '../types';
 import { MagnifyingGlassIcon } from './icons/Icons';
 

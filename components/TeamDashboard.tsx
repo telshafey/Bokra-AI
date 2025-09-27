@@ -1,5 +1,4 @@
 import React from 'react';
-// FIX: Corrected import path to be a relative module import.
 import type { TeamDashboardData, RequestStatus } from '../types';
 import TeamStats from './TeamStats';
 import PendingRequests from './PendingRequests';

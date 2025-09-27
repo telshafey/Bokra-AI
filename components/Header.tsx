@@ -1,8 +1,5 @@
-
-
 import React, { useState } from 'react';
 import { BellIcon, Bars3Icon, CogIcon } from './icons/Icons';
-// FIX: Corrected import path to be a relative module import.
 import { EmployeeProfile, Notification, Branch } from '../types';
 import NotificationPanel from './NotificationPanel';
 import { useTranslation } from './contexts/LanguageContext';

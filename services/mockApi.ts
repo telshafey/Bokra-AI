@@ -1,4 +1,3 @@
-// FIX: Implemented all missing mock API functions.
 import { MOCK_ASSETS, MOCK_ATTENDANCE_POLICIES, MOCK_LEAVE_POLICIES, MOCK_OVERTIME_POLICIES, MOCK_ONBOARDING_TEMPLATES, MOCK_OFFBOARDING_TEMPLATES, MOCK_WORK_LOCATIONS, MOCK_SALARY_COMPONENTS, MOCK_COMPENSATION_PACKAGES, MOCK_APPROVAL_WORKFLOWS, ALL_EMPLOYEES, COMPANY_BRANCHES, MOCK_JOB_TITLES } from "../constants";
 import type { Asset, AttendancePolicy, LeavePolicy, OvertimePolicy, OnboardingTemplate, OffboardingTemplate, WorkLocation, SalaryComponent, CompensationPackage, ApprovalWorkflow, EmployeeProfile, Branch, JobTitle, UserRole, NewUserPayload } from "../types";
 

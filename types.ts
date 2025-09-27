@@ -1,4 +1,3 @@
-// FIX: Implemented all missing type definitions.
 import React from "react";
 
 export type Language = 'ar' | 'en';
@@ -242,7 +241,6 @@ export interface ExternalTaskRequest extends BaseRequest {
 
 export type HRRequest = LeaveRequest | DataUpdateRequest | AttendanceAdjustmentRequest | LeavePermitRequest | PettyCashRequest | CourseApprovalRequest | ExternalTaskRequest;
 
-// FIX: Changed PendingRequest from an interface to a type to correctly extend a union type.
 export type PendingRequest = HRRequest & {
     employeeName: string;
     employeeAvatarUrl: string;
@@ -727,14 +725,12 @@ export interface CourseOutline {
     }[];
 }
 
-// FIX: Added missing type.
 export interface AppModuleConfig {
     key: string;
     nameKey: string;
     descriptionKey: string;
 }
 
-// FIX: Added missing OrgTreeNode type for organizational chart.
 export interface OrgTreeNode extends EmployeeProfile {
     children: OrgTreeNode[];
 }
@@ -820,7 +816,6 @@ export interface RequestProviderProps {
     children: React.ReactNode;
 }
 
-// FIX: Added missing HelpCenterContextType
 export interface HelpCenterContextType {
     articles: HelpArticle[];
     categories: HelpCategory[];

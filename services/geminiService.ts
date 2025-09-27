@@ -1,5 +1,4 @@
 import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
-// FIX: Corrected import path to be a relative module import.
 import type { EmployeeProfile } from '../types';
 import { Language } from '../components/contexts/LanguageContext';
 

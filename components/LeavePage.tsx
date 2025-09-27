@@ -1,12 +1,9 @@
-// FIX: Implemented the LeavePage component.
 import React, { useState } from 'react';
 import type { LeaveBalance, LeaveRequest } from '../types';
 import { CalendarIcon, PlusCircleIcon } from './icons/Icons';
 import { useTranslation } from './contexts/LanguageContext';
 import RequestLeaveModal from './RequestLeaveModal';
-// FIX: Corrected import path to be a relative module import.
 import AttendanceAdjustmentModal from './AttendanceAdjustmentModal';
-// FIX: Corrected import path to be a relative module import.
 import LeavePermitModal from './LeavePermitModal';
 
 const LeaveBalanceCard: React.FC<{ balance: LeaveBalance; t: (key: string, replacements?: any) => string }> = ({ balance, t }) => {

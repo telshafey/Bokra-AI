@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import { useUserContext } from './contexts/UserContext';
-// FIX: Corrected import to include OrgTreeNode type.
 import { OrgTreeNode } from '../types';
 import { useTranslation } from './contexts/LanguageContext';
 import OrgChartNode from './OrgChartNode';

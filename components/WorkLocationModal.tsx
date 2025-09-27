@@ -1,4 +1,3 @@
-// FIX: Replaced placeholder content with a full implementation.
 import React, { useState, useEffect } from 'react';
 import { XMarkIcon } from './icons/Icons';
 import type { WorkLocation } from '../types';

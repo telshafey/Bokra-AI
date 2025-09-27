@@ -1,4 +1,3 @@
-// FIX: Update prop names to match the context provider, removing the 'on' prefix.
 import React, { useState, useMemo } from 'react';
 import type { EmployeeProfile, UserRole, Branch, NewUserPayload, AttendancePolicy, LeavePolicy, JobTitle, CompensationPackage, OvertimePolicy } from '../types';
 import { PencilIcon, XCircleIcon, PlusCircleIcon, ArrowPathIcon, InformationCircleIcon, ChevronUpIcon, ArrowsUpDownIcon, ChevronDownIcon } from './icons/Icons';
@@ -39,7 +38,6 @@ const RoleEditor: React.FC<{
     );
 };
 
-// FIX: Update prop names to match the context provider, removing the 'on' prefix.
 interface SystemAdminPageProps {
   allUsers: EmployeeProfile[];
   branches: Branch[];
@@ -59,7 +57,6 @@ interface SystemAdminPageProps {
   bulkAssignLeavePolicy: (policyId: string, employeeIds: string[]) => void;
 }
 
-// FIX: Update props destructuring to match the updated interface.
 const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, attendancePolicies, overtimePolicies, leavePolicies, jobTitles, compensationPackages, updateUserRole, deactivateUser, reactivateUser, addNewUser, updateUser, bulkDeactivateUsers, bulkAssignAttendancePolicy, bulkAssignOvertimePolicy, bulkAssignLeavePolicy }) => {
     const [isUserModalOpen, setIsUserModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<EmployeeProfile | null>(null);

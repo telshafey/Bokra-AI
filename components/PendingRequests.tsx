@@ -1,6 +1,4 @@
-
 import React, { useState } from 'react';
-// FIX: Corrected import path to be a relative module import.
 import type { HRRequest, PendingRequest, RequestStatus } from '../types';
 import { CheckCircleIcon, XCircleIcon } from './icons/Icons';
 import ApprovalModal from './ApprovalModal';

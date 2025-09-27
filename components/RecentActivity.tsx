@@ -1,7 +1,4 @@
-
-
 import React from 'react';
-// FIX: Corrected import path to be a relative module import.
 import type { RecentActivityItem } from '../types';
 import { useTranslation } from './contexts/LanguageContext';
 
