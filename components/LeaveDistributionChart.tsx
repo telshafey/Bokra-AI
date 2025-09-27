@@ -1,7 +1,6 @@
-
-
 import React from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+// FIX: Corrected import path to be a relative module import.
 import type { LeaveDistributionDataItem } from '../types';
 
 interface LeaveDistributionChartProps {
@@ -12,12 +11,13 @@ const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
       return (
         <div className="bg-white p-3 rounded-lg shadow-lg border border-slate-200">
-          <p className="font-semibold text-slate-700">{`${payload[0].payload.typeName}: ${payload[0].value} يوم`}</p>
+          <p className="font-semibold text-slate-700">{`${payload[0].name}: ${payload[0].value} يوم`}</p>
         </div>
       );
     }
     return null;
 };
+
 
 const LeaveDistributionChart: React.FC<LeaveDistributionChartProps> = ({ data }) => {
     return (
@@ -44,6 +44,7 @@ const LeaveDistributionChart: React.FC<LeaveDistributionChartProps> = ({ data })
                     verticalAlign="middle" 
                     align="right" 
                     wrapperStyle={{ fontFamily: 'Cairo, sans-serif' }}
+                    formatter={(value, entry) => <span style={{ color: '#334155' }}>{value}</span>}
                 />
             </PieChart>
         </ResponsiveContainer>

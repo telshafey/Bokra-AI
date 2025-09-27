@@ -1,9 +1,9 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { EmployeeProfile, UserContextType, UserProviderProps, NewUserPayload, UserRole } from '../../types';
-import { ALL_EMPLOYEES } from '../../constants';
-import { useCompanyStructureContext } from './CompanyStructureContext';
-import { useTranslation } from './LanguageContext';
+import * as api from '../../services/mockApi';
 import { useToast } from './ToastContext';
+import { useTranslation } from './LanguageContext';
 
 const UserContext = createContext<UserContextType | undefined>(undefined);
 
@@ -14,183 +14,89 @@ export const useUserContext = () => {
 };
 
 export const UserProvider: React.FC<UserProviderProps> = ({ children }) => {
-    const { jobTitles } = useCompanyStructureContext();
-    const [employees, setEmployees] = useState<EmployeeProfile[]>(ALL_EMPLOYEES);
-    const { t } = useTranslation();
+    const queryClient = useQueryClient();
     const { addToast } = useToast();
+    const { t } = useTranslation();
 
-    const updateUserRole = (userId: string, newRole: UserRole) => {
-        setEmployees(prev => prev.map(emp => emp.id === userId ? { ...emp, role: newRole } : emp));
-        addToast(t('toasts.userRoleUpdated'), 'success');
-    };
-
-    const deactivateUser = (userId: string) => {
-        const deactivationDate = new Date().toISOString();
-        setEmployees(prev => prev.map(emp => emp.id === userId ? { ...emp, employmentStatus: 'Inactive', deactivationDate } : emp));
-        addToast(t('toasts.userDeactivated'), 'success');
-    };
+    const { data: employees = [], isError, error, isLoading } = useQuery<EmployeeProfile[], Error>({
+        queryKey: ['users'],
+        queryFn: api.fetchUsers,
+    });
     
-    const bulkDeactivateUsers = (userIds: string[]) => {
-        const deactivationDate = new Date().toISOString();
-        setEmployees(prev => prev.map(emp => userIds.includes(emp.id) ? { ...emp, employmentStatus: 'Inactive', deactivationDate } : emp));
-        addToast(t('toasts.userDeactivated'), 'success');
-    };
-    
-    const reactivateUser = (userId: string) => {
-        setEmployees(prev => prev.map(emp => emp.id === userId ? { ...emp, employmentStatus: 'دوام كامل', deactivationDate: undefined } : emp));
-        addToast(t('toasts.userReactivated'), 'success');
-    };
-    
-    const bulkAssignAttendancePolicy = (policyId: string, employeeIds: string[]) => {
-        setEmployees(prev => prev.map(emp => employeeIds.includes(emp.id) ? { ...emp, attendancePolicyId: policyId } : emp));
-        addToast(t('toasts.policySaved'), 'success');
-    };
-    
-    const bulkAssignOvertimePolicy = (policyId: string, employeeIds: string[]) => {
-        setEmployees(prev => prev.map(emp => employeeIds.includes(emp.id) ? { ...emp, overtimePolicyId: policyId } : emp));
-         addToast(t('toasts.policySaved'), 'success');
-    };
-    
-    const bulkAssignLeavePolicy = (policyId: string, employeeIds: string[]) => {
-        setEmployees(prev => prev.map(emp => employeeIds.includes(emp.id) ? { ...emp, leavePolicyId: policyId } : emp));
-         addToast(t('toasts.policySaved'), 'success');
-    };
-    
-    const updateProfile = (updatedProfile: EmployeeProfile) => {
-        setEmployees(prev => prev.map(emp => emp.id === updatedProfile.id ? updatedProfile : emp));
-        addToast(t('toasts.profileUpdated'), 'success');
-    };
-
-    const addNewUser = (newUserPayload: NewUserPayload) => {
-        const newEmployeeId = `BOK-${Math.floor(1000 + Math.random() * 9000)}`;
-        const newId = `emp-${Math.floor(1000 + Math.random() * 9000)}`;
-        const jobTitle = jobTitles.find(jt => jt.id === newUserPayload.jobTitleId);
-
-        const newUserProfile: EmployeeProfile = {
-          id: newId,
-          employeeId: newEmployeeId,
-          name: newUserPayload.name,
-          jobTitleId: newUserPayload.jobTitleId,
-          title: jobTitle ? t(jobTitle.nameKey) : '',
-          role: newUserPayload.role,
-          isEmployee: true,
-          avatarUrl: `https://i.pravatar.cc/100?u=${newId}`,
-          departmentKey: newUserPayload.departmentKey,
-          hireDate: newUserPayload.hireDate,
-          employmentStatus: 'دوام كامل',
-          managerId: newUserPayload.managerId,
-          branchId: newUserPayload.branchId,
-          checkInStatus: 'CheckedOut',
-          leaveBalances: [],
-          baseSalary: newUserPayload.baseSalary,
-          attendancePolicyId: newUserPayload.attendancePolicyId,
-          overtimePolicyId: newUserPayload.overtimePolicyId,
-          leavePolicyId: newUserPayload.leavePolicyId,
-          compensationPackageId: newUserPayload.compensationPackageId,
-          contact: {
-              phone: newUserPayload.phone,
-              workEmail: newUserPayload.workEmail,
-              personalEmail: newUserPayload.personalEmail,
-          },
-          personal: {
-              dateOfBirth: newUserPayload.dateOfBirth,
-              nationality: newUserPayload.nationality,
-              nationalId: newUserPayload.nationalId,
-              maritalStatus: newUserPayload.maritalStatus,
-              gender: newUserPayload.gender,
-              religion: newUserPayload.religion,
-          },
-          address: newUserPayload.address,
-          performanceScore: 4.0, 
-          satisfactionSurveyScore: 4.0,
-          lastPromotionDate: null,
-          salaryComparedToMarket: 'Average',
-        };
-        setEmployees(prev => [...prev, newUserProfile]);
-        addToast(t('toasts.userAdded'), 'success');
-    };
-  
-    const updateUser = (userId: string, updatedData: NewUserPayload) => {
-        setEmployees(prev => prev.map(emp => {
-            if (emp.id === userId) {
-                const jobTitle = jobTitles.find(jt => jt.id === updatedData.jobTitleId);
-                return {
-                    ...emp,
-                    name: updatedData.name,
-                    jobTitleId: updatedData.jobTitleId,
-                    title: jobTitle ? t(jobTitle.nameKey) : emp.title,
-                    departmentKey: updatedData.departmentKey,
-                    hireDate: updatedData.hireDate,
-                    branchId: updatedData.branchId,
-                    role: updatedData.role,
-                    managerId: updatedData.managerId,
-                    baseSalary: updatedData.baseSalary,
-                    attendancePolicyId: updatedData.attendancePolicyId,
-                    overtimePolicyId: updatedData.overtimePolicyId,
-                    leavePolicyId: updatedData.leavePolicyId,
-                    compensationPackageId: updatedData.compensationPackageId,
-                    contact: {
-                        phone: updatedData.phone,
-                        workEmail: updatedData.workEmail,
-                        personalEmail: updatedData.personalEmail,
-                    },
-                    personal: {
-                        ...emp.personal,
-                        dateOfBirth: updatedData.dateOfBirth,
-                        nationality: updatedData.nationality,
-                        nationalId: updatedData.nationalId,
-                        maritalStatus: updatedData.maritalStatus,
-                        gender: updatedData.gender,
-                        religion: updatedData.religion,
-                    },
-                    address: updatedData.address,
-                };
-            }
-            return emp;
-        }));
-        addToast(t('toasts.userUpdated'), 'success');
-    };
-
-    const updateBranchManager = (branchId: string, newManagerId: string) => {
-        setEmployees(prev => {
-            const oldManager = prev.find(e => e.branchId === branchId && e.role === 'Branch Admin');
-            
-            return prev.map(emp => {
-                // Demote old manager if they are not the new manager
-                if (oldManager && emp.id === oldManager.id && emp.id !== newManagerId) {
-                     return { ...emp, role: 'Employee' }; 
-                }
-                // Assign new manager
-                if (emp.id === newManagerId) {
-                    return { ...emp, branchId: branchId, role: 'Branch Admin' }; 
-                }
-                return emp;
-            });
+    const createMutation = (mutationFn: (...args: any[]) => Promise<any>, successMessageKey: string) => {
+        return useMutation({
+            mutationFn,
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['users'] });
+                queryClient.invalidateQueries({ queryKey: ['branches'] }); // Also invalidate branches in case a manager changes
+                addToast(t(successMessageKey), 'success');
+            },
+            onError: (err: Error) => {
+                addToast(err.message, 'error');
+            },
         });
-        addToast(t('toasts.branchManagerUpdated'), 'success');
     };
 
-    const updateEmployeeManager = (employeeId: string, newManagerId: string) => {
-        setEmployees(prev => prev.map(emp => 
-            emp.id === employeeId ? { ...emp, managerId: newManagerId } : emp
-        ));
-    };
+    const updateUserRoleMutation = createMutation(api.updateUserRole, 'toasts.userRoleUpdated');
+    const deactivateUserMutation = createMutation(api.deactivateUser, 'toasts.userDeactivated');
+    const reactivateUserMutation = createMutation(api.reactivateUser, 'toasts.userReactivated');
+    const bulkDeactivateUsersMutation = createMutation(api.bulkDeactivateUsers, 'toasts.userDeactivated');
+    const bulkAssignAttendancePolicyMutation = createMutation(api.bulkAssignAttendancePolicy, 'toasts.policySaved');
+    const bulkAssignOvertimePolicyMutation = createMutation(api.bulkAssignOvertimePolicy, 'toasts.policySaved');
+    const bulkAssignLeavePolicyMutation = createMutation(api.bulkAssignLeavePolicy, 'toasts.policySaved');
+    const updateProfileMutation = createMutation(api.updateProfile, 'toasts.profileUpdated');
+    const addNewUserMutation = createMutation(api.addNewUser, 'toasts.userAdded');
+    const updateUserMutation = createMutation(api.updateUser, 'toasts.userUpdated');
+    const updateBranchManagerMutation = createMutation(api.updateBranchManager, 'toasts.branchManagerUpdated');
+    const updateEmployeeManagerMutation = useMutation({ 
+        mutationFn: api.updateEmployeeManager, 
+        onSuccess: () => {
+             queryClient.invalidateQueries({ queryKey: ['users'] });
+        } 
+    });
 
-    const value = {
+    const value: UserContextType = {
         employees,
-        updateUserRole,
-        deactivateUser,
-        bulkDeactivateUsers,
-        reactivateUser,
-        bulkAssignAttendancePolicy,
-        bulkAssignOvertimePolicy,
-        bulkAssignLeavePolicy,
-        updateProfile,
-        addNewUser,
-        updateUser,
-        updateBranchManager,
-        updateEmployeeManager,
+        isLoading,
+        updateUserRole: async (userId, newRole) => {
+            await updateUserRoleMutation.mutateAsync({ userId, newRole });
+        },
+        deactivateUser: async (userId) => {
+            await deactivateUserMutation.mutateAsync(userId);
+        },
+        reactivateUser: async (userId) => {
+            await reactivateUserMutation.mutateAsync(userId);
+        },
+        bulkDeactivateUsers: async (userIds) => {
+            await bulkDeactivateUsersMutation.mutateAsync(userIds);
+        },
+        bulkAssignAttendancePolicy: async (policyId, employeeIds) => {
+            await bulkAssignAttendancePolicyMutation.mutateAsync({ policyId, employeeIds });
+        },
+        bulkAssignOvertimePolicy: async (policyId, employeeIds) => {
+            await bulkAssignOvertimePolicyMutation.mutateAsync({ policyId, employeeIds });
+        },
+        bulkAssignLeavePolicy: async (policyId, employeeIds) => {
+            await bulkAssignLeavePolicyMutation.mutateAsync({ policyId, employeeIds });
+        },
+        updateProfile: async (updatedProfile) => {
+            await updateProfileMutation.mutateAsync(updatedProfile);
+        },
+        addNewUser: async (newUser) => {
+            await addNewUserMutation.mutateAsync(newUser);
+        },
+        updateUser: async (userId, updatedData) => {
+            await updateUserMutation.mutateAsync({ userId, updatedData });
+        },
+        updateBranchManager: async (branchId, newManagerId) => {
+            await updateBranchManagerMutation.mutateAsync({ branchId, newManagerId });
+        },
+        updateEmployeeManager: async (employeeId, newManagerId) => {
+            await updateEmployeeManagerMutation.mutateAsync({ employeeId, newManagerId });
+        },
     };
+    
+    if (isError) return <div>Error loading users: {error.message}</div>;
 
     return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

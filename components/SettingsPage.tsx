@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { BellIcon, LanguageIcon, SunIcon, MoonIcon, LockClosedIcon, UserCircleIcon, KeyIcon, CogIcon, BuildingOfficeIcon, ArrowUpTrayIcon } from './icons/Icons';
+import { BellIcon, LanguageIcon, SunIcon, MoonIcon, LockClosedIcon, UserCircleIcon, KeyIcon, CogIcon, BuildingOfficeIcon, ArrowUpTrayIcon, QuestionMarkCircleIcon, LifebuoyIcon, ArrowLeftOnRectangleIcon } from './icons/Icons';
 import ChangePasswordModal from './ChangePasswordModal';
 import { EmployeeProfile } from '../types';
 import { useTranslation } from './contexts/LanguageContext';
@@ -69,6 +68,25 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ theme, setTheme, currentUse
         }
     };
     
+     const LinkItem: React.FC<{
+        label: string;
+        subtitle: string;
+        icon: React.FC<React.SVGProps<SVGSVGElement>>;
+        iconColor: string;
+        onClick: () => void;
+    }> = ({ label, subtitle, icon: Icon, iconColor, onClick }) => (
+        <button
+            onClick={onClick}
+            className="w-full text-center flex flex-col items-center gap-2 p-4 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700/50 transition-colors"
+        >
+            <Icon className={`w-8 h-8 ${iconColor}`} />
+            <div>
+                <p className="font-semibold text-slate-800 dark:text-slate-200">{label}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400">{subtitle}</p>
+            </div>
+        </button>
+    );
+
     const renderMySettings = () => (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card title={t('settingsPage.account.title')}>
@@ -98,6 +116,32 @@ const SettingsPage: React.FC<SettingsPageProps> = ({ theme, setTheme, currentUse
                         <KeyIcon className="w-4 h-4"/>
                         <span>{t('general.change')}</span>
                     </button>
+                </div>
+            </Card>
+
+             <Card title={t('settingsPage.links.title')} className="md:col-span-2">
+                <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-slate-100 dark:divide-slate-700 -m-6">
+                    <LinkItem
+                        icon={QuestionMarkCircleIcon}
+                        label={t('sidebar.support')}
+                        subtitle={t('settingsPage.links.supportSubtitle')}
+                        iconColor="text-emerald-600 dark:text-emerald-400"
+                        onClick={() => setActivePage('sidebar.support')}
+                    />
+                    <LinkItem
+                        icon={LifebuoyIcon}
+                        label={t('sidebar.helpCenter')}
+                        subtitle={t('settingsPage.links.helpCenterSubtitle')}
+                        iconColor="text-sky-600 dark:text-sky-400"
+                        onClick={() => setActivePage('sidebar.helpCenter')}
+                    />
+                    <LinkItem
+                        icon={ArrowLeftOnRectangleIcon}
+                        label={t('sidebar.logout')}
+                        subtitle={t('settingsPage.links.logoutSubtitle')}
+                        iconColor="text-red-600 dark:text-red-400"
+                        onClick={() => alert('Logout action triggered!')}
+                    />
                 </div>
             </Card>
 

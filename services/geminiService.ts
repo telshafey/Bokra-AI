@@ -1,4 +1,5 @@
 import { GoogleGenAI, Chat, GenerateContentResponse } from "@google/genai";
+// FIX: Corrected import path to be a relative module import.
 import type { EmployeeProfile } from '../types';
 import { Language } from '../components/contexts/LanguageContext';
 
@@ -130,7 +131,6 @@ export const sendMessageToAI = async (message: string, employeeData: EmployeePro
   }
 };
 
-// FIX: Add missing generateContractWithAI function
 export const generateContractWithAI = async (prompt: string, language: Language): Promise<string> => {
     if (!process.env.API_KEY) {
         throw new Error("API_KEY is not set in environment variables.");

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import { HelpArticle, HelpCategory, HelpCenterContextType, BilingualText } from '../../types';
 import { MOCK_HELP_ARTICLES, MOCK_HELP_CATEGORIES } from '../../constants';
@@ -32,11 +31,11 @@ export const HelpCenterProvider: React.FC<{ children: ReactNode }> = ({ children
     };
 
     // Category CRUD
-    const addCategory = (categoryData: Omit<HelpCategory, 'id' | 'icon'> & { name: BilingualText }) => {
+    const addCategory = (categoryData: Omit<HelpCategory, 'id' | 'icon'>) => {
         const newCategory: HelpCategory = {
             id: `cat-${Date.now()}`,
             name: categoryData.name,
-            icon: MOCK_HELP_CATEGORIES[0].icon, // Placeholder icon
+            icon: MOCK_HELP_CATEGORIES[0]?.icon || (() => <div />), // Placeholder icon
         };
         setCategories(prev => [...prev, newCategory]);
     };

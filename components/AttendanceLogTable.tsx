@@ -1,6 +1,7 @@
 
 
 import React, { useState, useMemo } from 'react';
+// FIX: Corrected import path to be a relative module import.
 import { AttendanceRecord, AttendanceStatus, EmployeeInfraction, AttendancePolicy, AttendanceAdjustmentRequest, RequestStatus, LeavePermitRequest, AttendanceEvent, ExternalTask } from '../types';
 import { ExclamationTriangleIcon, InformationCircleIcon, ShieldCheckIcon, ChevronDownIcon, CheckCircleIcon, XCircleIcon, ClipboardDocumentCheckIcon } from './icons/Icons';
 

@@ -1,5 +1,3 @@
-
-
 import React from 'react';
 import RecentActivity from './RecentActivity';
 import { EmployeeProfile, EmployeeDashboardData, AppModule } from '../types';
@@ -7,6 +5,7 @@ import ClockInWidget from './ClockInWidget';
 import LearningProgressWidget from './LearningProgressWidget';
 import SupportTicketWidget from './SupportTicketWidget';
 import StatCard from './StatCard';
+import QuickActions from './QuickActions';
 import { BriefcaseIcon, DocumentTextIcon, ClockIcon } from './icons/Icons';
 import { useTranslation } from './contexts/LanguageContext';
 
@@ -42,19 +41,18 @@ const Dashboard: React.FC<DashboardProps> = ({ currentUser, dashboardData, onClo
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Main content area */}
         <div className="lg:col-span-2 space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {activeModules.has('learning') && <LearningProgressWidget activeCourse={dashboardData.activeCourse} setActivePage={setActivePage} />}
-            {activeModules.has('support') && <SupportTicketWidget latestTicket={dashboardData.latestTicket} setActivePage={setActivePage} />}
-          </div>
            <RecentActivity activities={dashboardData.recentActivities} setActivePage={setActivePage} />
         </div>
 
-        {/* Right Sidebar content */}
+        {/* Right Sidebar Widgets */}
         <div className="lg:col-span-1 space-y-6">
            <ClockInWidget 
             status={currentUser.checkInStatus} 
             onPunch={onClockIn}
           />
+          <QuickActions setActivePage={setActivePage} />
+          {activeModules.has('learning') && <LearningProgressWidget activeCourse={dashboardData.activeCourse} setActivePage={setActivePage} />}
+          {activeModules.has('support') && <SupportTicketWidget latestTicket={dashboardData.latestTicket} setActivePage={setActivePage} />}
         </div>
       </div>
     </div>

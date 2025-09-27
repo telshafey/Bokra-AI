@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Asset, AssetsContextType, AssetsProviderProps } from '../../types';
-import { MOCK_ASSETS } from '../../constants';
+import { fetchAssets, updateAsset, updateAssetAssignment } from '../../services/mockApi';
 import { useToast } from './ToastContext';
 import { useTranslation } from './LanguageContext';
 
@@ -15,39 +16,47 @@ export const useAssetsContext = () => {
 };
 
 export const AssetsProvider: React.FC<AssetsProviderProps> = ({ children }) => {
-    const [assets, setAssets] = useState<Asset[]>(MOCK_ASSETS);
+    const queryClient = useQueryClient();
     const { addToast } = useToast();
     const { t } = useTranslation();
 
+    const { data: assets = [], isError, error } = useQuery<Asset[], Error>({
+        queryKey: ['assets'],
+        queryFn: fetchAssets,
+    });
 
-    const saveAsset = (asset: Asset) => {
-        setAssets(prev => {
-            const isNew = !prev.some(a => a.id === asset.id);
-            if (isNew) {
-                return [...prev, asset];
-            } else {
-                return prev.map(a => a.id === asset.id ? asset : a);
-            }
-        });
-        addToast(t('toasts.assetSaved'), 'success');
-    };
+    const saveAssetMutation = useMutation({
+        mutationFn: updateAsset,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['assets'] });
+            addToast(t('toasts.assetSaved'), 'success');
+        },
+        onError: (err: Error) => {
+            addToast(err.message, 'error');
+        },
+    });
 
-    const assignAsset = (assetId: string, employeeId: string | null) => {
-        setAssets(prev =>
-            prev.map(a =>
-                a.id === assetId
-                    ? { ...a, assignedToId: employeeId, status: employeeId ? 'Assigned' : 'Available' }
-                    : a
-            )
-        );
-        addToast(t('toasts.assetAssigned'), 'success');
-    };
+    const assignAssetMutation = useMutation({
+        mutationFn: updateAssetAssignment,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['assets'] });
+            addToast(t('toasts.assetAssigned'), 'success');
+        },
+         onError: (err: Error) => {
+            addToast(err.message, 'error');
+        },
+    });
 
-    const value = {
+    const value: AssetsContextType = {
         assets,
-        saveAsset,
-        assignAsset,
+        saveAsset: (asset: Asset) => saveAssetMutation.mutate(asset),
+        assignAsset: (assetId: string, employeeId: string | null) => 
+            assignAssetMutation.mutate({ assetId, employeeId }),
     };
+
+    if (isError) {
+        return <div className="p-4 text-center text-red-500">Error loading assets: {error.message}</div>;
+    }
 
     return <AssetsContext.Provider value={value}>{children}</AssetsContext.Provider>;
 };

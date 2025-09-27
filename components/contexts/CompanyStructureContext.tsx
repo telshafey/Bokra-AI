@@ -1,6 +1,7 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Branch, JobTitle, CompanyStructureContextType, CompanyStructureProviderProps } from '../../types';
-import { COMPANY_BRANCHES, MOCK_JOB_TITLES } from '../../constants';
+import * as api from '../../services/mockApi';
 import { useToast } from './ToastContext';
 import { useTranslation } from './LanguageContext';
 
@@ -13,47 +14,73 @@ export const useCompanyStructureContext = () => {
 };
 
 export const CompanyStructureProvider: React.FC<CompanyStructureProviderProps> = ({ children }) => {
-    const [branches, setBranches] = useState<Branch[]>(COMPANY_BRANCHES);
-    const [jobTitles, setJobTitles] = useState<JobTitle[]>(MOCK_JOB_TITLES);
+    const queryClient = useQueryClient();
     const { addToast } = useToast();
     const { t } = useTranslation();
 
-    const addBranch = (nameKey: string): Branch => {
-        const newBranch: Branch = {
-            id: `branch-${nameKey.toLowerCase().replace(/\s/g, '-')}-${Date.now()}`,
-            nameKey: nameKey,
-            status: 'Active'
-        };
-        setBranches(prev => [...prev, newBranch]);
-        addToast(t('toasts.branchSaved'), 'success');
-        return newBranch;
-    };
-
-    const updateBranch = (id: string, nameKey: string) => {
-        setBranches(prev => prev.map(b => b.id === id ? { ...b, nameKey: nameKey } : b));
-        addToast(t('toasts.branchSaved'), 'success');
-    };
-
-    const archiveBranch = (id: string) => {
-        setBranches(prev => prev.map(b => b.id === id ? { ...b, status: 'Archived' } : b));
-        addToast(t('toasts.branchArchived'), 'success');
-    };
-
-    const saveJobTitle = (jobTitle: JobTitle) => {
-        setJobTitles(prev => {
-            const isNew = !prev.some(jt => jt.id === jobTitle.id);
-            if (isNew) return [...prev, jobTitle];
-            return prev.map(jt => jt.id === jobTitle.id ? jobTitle : jt);
-        });
-        addToast(t('toasts.jobTitleSaved'), 'success');
-    };
+    // --- Queries ---
+    const { data: branches = [] } = useQuery<Branch[], Error>({
+        queryKey: ['branches'],
+        queryFn: api.fetchBranches,
+    });
     
-    const deleteJobTitle = (jobTitleId: string) => {
-        setJobTitles(prev => prev.filter(jt => jt.id !== jobTitleId));
-        addToast(t('toasts.jobTitleDeleted'), 'success');
-    };
+    const { data: jobTitles = [] } = useQuery<JobTitle[], Error>({
+        queryKey: ['jobTitles'],
+        queryFn: api.fetchJobTitles,
+    });
 
-    const value = { branches, jobTitles, addBranch, updateBranch, archiveBranch, saveJobTitle, deleteJobTitle };
+    // --- Mutations ---
+    const addBranchMutation = useMutation<Branch, Error, string>({
+        mutationFn: api.addBranch,
+        onSuccess: (newBranch) => {
+            // Invalidate and refetch
+            queryClient.invalidateQueries({ queryKey: ['branches'] });
+            addToast(t('toasts.branchSaved'), 'success');
+            // We return the newBranch from mutateAsync so the caller can use it
+        },
+    });
+
+    const updateBranchMutation = useMutation<Branch, Error, { id: string; nameKey: string }>({
+        mutationFn: api.updateBranch,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['branches'] });
+            addToast(t('toasts.branchSaved'), 'success');
+        },
+    });
+
+    const archiveBranchMutation = useMutation<Branch, Error, string>({
+        mutationFn: api.archiveBranch,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['branches'] });
+            addToast(t('toasts.branchArchived'), 'success');
+        },
+    });
+    
+    const saveJobTitleMutation = useMutation<JobTitle, Error, JobTitle>({
+        mutationFn: api.saveJobTitle,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['jobTitles'] });
+            addToast(t('toasts.jobTitleSaved'), 'success');
+        },
+    });
+
+    const deleteJobTitleMutation = useMutation<{ id: string }, Error, string>({
+        mutationFn: api.deleteJobTitle,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['jobTitles'] });
+            addToast(t('toasts.jobTitleDeleted'), 'success');
+        },
+    });
+
+    const value: CompanyStructureContextType = {
+        branches,
+        jobTitles,
+        addBranch: (name: string) => addBranchMutation.mutateAsync(name),
+        updateBranch: (id: string, name: string) => updateBranchMutation.mutateAsync({ id, nameKey: name }),
+        archiveBranch: (id: string) => archiveBranchMutation.mutateAsync(id),
+        saveJobTitle: (jobTitle: JobTitle) => saveJobTitleMutation.mutateAsync(jobTitle),
+        deleteJobTitle: (jobTitleId: string) => deleteJobTitleMutation.mutateAsync(jobTitleId),
+    };
 
     return <CompanyStructureContext.Provider value={value}>{children}</CompanyStructureContext.Provider>;
 };

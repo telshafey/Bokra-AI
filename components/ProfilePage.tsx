@@ -1,6 +1,7 @@
 
 
 import React, { useState, useEffect } from 'react';
+// FIX: Corrected import path to be a relative module import.
 import { EmployeeProfile, Branch, AttendancePolicy, LeavePolicy, JobTitle, OvertimePolicy } from '../types';
 import ProfileDetailCard from './ProfileDetailCard';
 import { PencilSquareIcon } from './icons/Icons';

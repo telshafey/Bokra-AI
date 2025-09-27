@@ -1,17 +1,60 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import {
-    RequestContextType,
-    RequestProviderProps,
-    LeaveRequest,
-    AttendanceAdjustmentRequest,
-    LeavePermitRequest,
-    PettyCashRequest,
-    RequestStatus,
-    HRRequest,
-    ApprovalHistoryEntry
-} from '../../types';
+// FIX: Implemented the RequestContext provider.
+import React, { createContext, useContext } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { HRRequest, RequestContextType, RequestProviderProps } from '../../types';
 import { useToast } from './ToastContext';
 import { useTranslation } from './LanguageContext';
+
+// Mock API functions for requests
+const MOCK_REQUESTS: HRRequest[] = [
+    { 
+        id: 'lr-002', 
+        employeeId: 'emp-011', 
+        type: 'Leave', 
+        status: 'Pending', 
+        submissionDate: '2025-08-20T11:00:00Z', 
+        approvalHistory: [],
+        leaveType: 'Casual', 
+        startDate: '2025-08-22', 
+        endDate: '2025-08-22', 
+        reason: 'ظرف شخصي طارئ', 
+        duration: 1 
+    }
+];
+
+const fetchRequests = async (): Promise<HRRequest[]> => {
+    await new Promise(res => setTimeout(res, 300));
+    return MOCK_REQUESTS;
+};
+
+const submitNewRequest = async (request: Omit<HRRequest, 'id' | 'status' | 'submissionDate' | 'approvalHistory'>): Promise<HRRequest> => {
+    await new Promise(res => setTimeout(res, 500));
+    const newRequest: HRRequest = {
+        ...request,
+        id: `req-${Date.now()}`,
+        status: 'Pending',
+        submissionDate: new Date().toISOString(),
+        approvalHistory: [],
+    } as HRRequest;
+    MOCK_REQUESTS.push(newRequest);
+    return newRequest;
+};
+
+const updateRequestStatus = async ({ requestId, status, notes }: { requestId: string, status: 'Approved' | 'Rejected', notes: string }): Promise<HRRequest> => {
+    await new Promise(res => setTimeout(res, 500));
+    const request = MOCK_REQUESTS.find(r => r.id === requestId);
+    if (request) {
+        request.status = status;
+        request.approvalHistory.push({
+            approverId: 'current-manager-id', // This should come from current user context
+            status,
+            timestamp: new Date().toISOString(),
+            notes,
+        });
+        return request;
+    }
+    throw new Error('Request not found');
+};
 
 const RequestContext = createContext<RequestContextType | undefined>(undefined);
 
@@ -24,114 +67,47 @@ export const useRequestContext = () => {
 };
 
 export const RequestProvider: React.FC<RequestProviderProps> = ({ children }) => {
-    const [leaveRequests, setLeaveRequests] = useState<LeaveRequest[]>([]);
-    const [attendanceAdjustmentRequests, setAttendanceAdjustmentRequests] = useState<AttendanceAdjustmentRequest[]>([]);
-    const [leavePermitRequests, setLeavePermitRequests] = useState<LeavePermitRequest[]>([]);
-    const [pettyCashRequests, setPettyCashRequests] = useState<PettyCashRequest[]>([]);
+    const queryClient = useQueryClient();
     const { addToast } = useToast();
     const { t } = useTranslation();
 
-    const handleNewLeaveRequest = (newRequestData: Omit<LeaveRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'approvalHistory'>) => {
-        const newRequest: LeaveRequest = {
-            ...newRequestData,
-            id: `lr-${Date.now()}`,
-            type: 'Leave',
-            status: 'Pending',
-            submissionDate: new Date().toISOString(),
-            approvalHistory: [],
-        };
-        setLeaveRequests(prev => [...prev, newRequest]);
-        addToast(t('toasts.requestSubmitted'), 'success');
-    };
+    const { data: requests = [] } = useQuery<HRRequest[], Error>({
+        queryKey: ['requests'],
+        queryFn: fetchRequests,
+    });
+
+    const submitMutation = useMutation({
+        mutationFn: submitNewRequest,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['requests'] });
+            addToast(t('toasts.requestSubmitted'), 'success');
+        },
+        onError: (err: Error) => {
+            addToast(err.message, 'error');
+        },
+    });
     
-    const handleNewAttendanceAdjustmentRequest = (newRequestData: Omit<AttendanceAdjustmentRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'approvalHistory'>) => {
-        const newRequest: AttendanceAdjustmentRequest = {
-            ...newRequestData,
-            id: `aar-${Date.now()}`,
-            type: 'AttendanceAdjustment',
-            status: 'Pending',
-            submissionDate: new Date().toISOString(),
-            approvalHistory: [],
-        };
-        setAttendanceAdjustmentRequests(prev => [...prev, newRequest]);
-        addToast(t('toasts.requestSubmitted'), 'success');
-    };
-    
-    const handleNewLeavePermitRequest = (newRequestData: Omit<LeavePermitRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'durationHours' | 'approvalHistory'>) => {
-        const start = new Date(`${newRequestData.date}T${newRequestData.startTime}`);
-        const end = new Date(`${newRequestData.date}T${newRequestData.endTime}`);
-        const durationHours = (end.getTime() - start.getTime()) / (1000 * 60 * 60);
+    const approveMutation = useMutation({
+        mutationFn: (data: { requestId: string, approverId: string, notes: string }) => updateRequestStatus({ requestId: data.requestId, status: 'Approved', notes: data.notes }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['requests'] });
+            addToast(t('toasts.requestApproved'), 'success');
+        },
+    });
 
-        const newRequest: LeavePermitRequest = {
-            ...newRequestData,
-            id: `lpr-${Date.now()}`,
-            type: 'LeavePermit',
-            status: 'Pending',
-            submissionDate: new Date().toISOString(),
-            durationHours: durationHours,
-            approvalHistory: [],
-        };
-        setLeavePermitRequests(prev => [...prev, newRequest]);
-        addToast(t('toasts.requestSubmitted'), 'success');
-    };
+    const rejectMutation = useMutation({
+        mutationFn: (data: { requestId: string, approverId: string, notes: string }) => updateRequestStatus({ requestId: data.requestId, status: 'Rejected', notes: data.notes }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['requests'] });
+            addToast(t('toasts.requestRejected'), 'success');
+        },
+    });
 
-    const handleNewPettyCashRequest = (newRequestData: Omit<PettyCashRequest, 'id' | 'status' | 'type' | 'submissionDate' | 'approvalHistory'>) => {
-         const newRequest: PettyCashRequest = {
-            ...newRequestData,
-            id: `pcr-${Date.now()}`,
-            type: 'PettyCash',
-            status: 'Pending',
-            submissionDate: new Date().toISOString(),
-            approvalHistory: [],
-        };
-        setPettyCashRequests(prev => [...prev, newRequest]);
-        addToast(t('toasts.requestSubmitted'), 'success');
-    };
-
-    const handleRequestAction = (requestId: string, newStatus: 'Approved' | 'Rejected', notes: string, approverId: string, approverName: string) => {
-        
-        const approvalEntry: ApprovalHistoryEntry = {
-            approverId,
-            approverName,
-            status: newStatus,
-            notes,
-            timestamp: new Date().toISOString(),
-        };
-
-        const updateRequest = (request: HRRequest): HRRequest => ({
-            ...request,
-            status: newStatus,
-            approvalHistory: [...(request.approvalHistory || []), approvalEntry],
-        });
-        
-        const updateState = <T extends HRRequest>(setState: React.Dispatch<React.SetStateAction<T[]>>) => {
-             setState(prev => prev.map(r => r.id === requestId ? updateRequest(r) as T : r));
-        };
-
-        if (requestId.startsWith('lr-')) {
-            updateState(setLeaveRequests);
-        } else if (requestId.startsWith('aar-')) {
-            updateState(setAttendanceAdjustmentRequests);
-        } else if (requestId.startsWith('lpr-')) {
-            updateState(setLeavePermitRequests);
-        } else if (requestId.startsWith('pcr-')) {
-            updateState(setPettyCashRequests);
-        }
-
-        addToast(newStatus === 'Approved' ? t('toasts.requestApproved') : t('toasts.requestRejected'), 'success');
-    };
-
-
-    const value = {
-        leaveRequests,
-        attendanceAdjustmentRequests,
-        leavePermitRequests,
-        pettyCashRequests,
-        handleNewLeaveRequest,
-        handleNewAttendanceAdjustmentRequest,
-        handleNewLeavePermitRequest,
-        handleNewPettyCashRequest,
-        handleRequestAction
+    const value: RequestContextType = {
+        requests,
+        submitRequest: (request) => submitMutation.mutate(request),
+        approveRequest: (requestId, approverId, notes) => approveMutation.mutate({ requestId, approverId, notes }),
+        rejectRequest: (requestId, approverId, notes) => rejectMutation.mutate({ requestId, approverId, notes }),
     };
 
     return <RequestContext.Provider value={value}>{children}</RequestContext.Provider>;

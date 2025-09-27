@@ -1,5 +1,4 @@
 
-
 import React, { useState, useMemo, useEffect } from 'react';
 import TeamMemberList from './TeamMemberList';
 import TeamMemberDetailView from './TeamMemberDetailView';
@@ -47,7 +46,7 @@ const TeamAnalyticsPage: React.FC<TeamAnalyticsPageProps> = ({
 
 
   return (
-    <div className="flex flex-col gap-6 h-[calc(100vh-120px)]">
+    <div className="flex flex-col gap-6 h-full md:h-[calc(100vh-120px)]">
       {canViewAllBranches && (
         <div className="bg-white dark:bg-slate-800 p-3 rounded-xl shadow-md flex items-center gap-4">
           <label htmlFor="branch-filter" className="font-semibold text-slate-700 dark:text-slate-200 text-sm">{t('teamAnalytics.filterByBranch')}:</label>
@@ -65,9 +64,9 @@ const TeamAnalyticsPage: React.FC<TeamAnalyticsPageProps> = ({
         </div>
       )}
 
-      <div className="flex gap-6 flex-1 min-h-0">
+      <div className="flex flex-col md:flex-row gap-6 flex-1 min-h-0">
         {/* Team Member List */}
-        <div className="w-1/3 xl:w-1/4">
+        <div className="w-full md:w-1/3 xl:w-1/4">
           <TeamMemberList
             members={filteredTeamDetails.map(m => m.profile)}
             selectedMemberId={selectedMemberId}

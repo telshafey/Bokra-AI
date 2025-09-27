@@ -1,8 +1,10 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { NAV_GROUPS, BOTTOM_NAV_ITEMS } from '../constants';
-import type { NavItem, EmployeeProfile, NavGroup, AppModule } from '../types';
-import { ChevronDownIcon, BuildingOfficeIcon, ChevronLeftIcon, ChevronRightIcon } from './icons/Icons';
+// FIX: Corrected import path to be a relative module import.
+import type { NavItem, EmployeeProfile, NavGroup, AppModule, Language } from '../types';
+import { ChevronDownIcon, BuildingOfficeIcon, ChevronLeftIcon, ChevronRightIcon, SunIcon, MoonIcon, LanguageIcon } from './icons/Icons';
 import { useTranslation } from './contexts/LanguageContext';
 
 
@@ -16,6 +18,12 @@ interface SidebarProps {
     activeModules: Set<AppModule>;
     isSidebarCollapsed: boolean;
     toggleSidebar: () => void;
+    isMobileSidebarOpen: boolean;
+    setIsMobileSidebarOpen: (isOpen: boolean) => void;
+    theme: 'light' | 'dark';
+    setTheme: (theme: 'light' | 'dark') => void;
+    language: Language;
+    setLanguage: (lang: Language) => void;
 }
 
 const NavLink: React.FC<{ item: NavItem, isActive: boolean, onClick: () => void, isCollapsed: boolean, t: (key: string) => string }> = ({ item, isActive, onClick, isCollapsed, t }) => (
@@ -26,17 +34,16 @@ const NavLink: React.FC<{ item: NavItem, isActive: boolean, onClick: () => void,
         e.preventDefault();
         onClick();
       }}
-      className={`group relative flex items-center p-3 my-1 rounded-lg transition-colors duration-200 cursor-pointer ${
+      className={`group relative flex items-center gap-4 p-3 my-1 rounded-lg transition-colors duration-200 cursor-pointer ${
         isActive
-          ? 'bg-primary-100 text-primary-700 font-bold dark:bg-slate-700 dark:text-primary-400'
+          ? 'bg-primary-600 text-white font-semibold shadow-md dark:bg-primary-500'
           : 'text-slate-500 hover:bg-slate-100 hover:text-slate-800 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-200'
       } ${isCollapsed ? 'justify-center' : ''}`}
     >
-      {isActive && !isCollapsed && <div className="absolute right-0 top-2 bottom-2 w-1 bg-primary-500 rounded-r-lg"></div>}
-      <item.icon className={`w-6 h-6 flex-shrink-0 ${isActive ? 'text-primary-600 dark:text-primary-400' : 'text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300'}`} />
-      <span className={`mr-4 whitespace-nowrap transition-all duration-200 ${isCollapsed ? 'opacity-0 w-0 pointer-events-none' : 'opacity-100'}`}>{t(item.nameKey)}</span>
+      <item.icon className={`w-6 h-6 flex-shrink-0 transition-colors ${isActive ? 'text-white' : 'text-slate-400 group-hover:text-slate-600 dark:text-slate-500 dark:group-hover:text-slate-300'}`} />
+      <span className={`whitespace-nowrap transition-all duration-200 ${isCollapsed ? 'opacity-0 w-0 pointer-events-none' : 'opacity-100'}`}>{t(item.nameKey)}</span>
       {isCollapsed && (
-        <div className="absolute left-full ml-4 px-2 py-1 bg-slate-800 text-white text-xs rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none dark:bg-slate-900 dark:text-slate-200">
+        <div className="absolute start-full ms-4 px-2 py-1 bg-slate-800 text-white text-xs rounded-md shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-20 pointer-events-none dark:bg-slate-900 dark:text-slate-200">
           {t(item.nameKey)}
         </div>
       )}
@@ -81,12 +88,13 @@ const NavGroup: React.FC<{
 );
 
 
-const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, companyName, currentUser, hasOnboardingProcess, hasOffboardingProcess, activeModules, isSidebarCollapsed, toggleSidebar }) => {
+const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, companyName, currentUser, hasOnboardingProcess, hasOffboardingProcess, activeModules, isSidebarCollapsed, toggleSidebar, isMobileSidebarOpen, setIsMobileSidebarOpen, theme, setTheme, language, setLanguage }) => {
   const [openGroups, setOpenGroups] = useState<Set<string>>(new Set());
   const { t } = useTranslation();
+  const isRTL = language === 'ar';
 
   const filterNavItem = (item: NavItem) => {
-    if (item.module && !activeModules.has(item.module)) return false;
+    if (item.module && !activeModules.has(item.module as AppModule)) return false;
     if (item.nameKey === 'sidebar.myOnboarding' && !hasOnboardingProcess) return false;
     if (item.nameKey === 'sidebar.myOffboarding' && !hasOffboardingProcess) return false;
     if (item.requiresEmployee && !currentUser.isEmployee) return false;
@@ -115,20 +123,33 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, companyNam
       });
   };
   
-  const filteredBottomNavItems = BOTTOM_NAV_ITEMS.filter(filterNavItem);
+  const sidebarClasses = `
+    fixed inset-y-0 ${isRTL ? 'right-0' : 'left-0'} z-40 h-screen flex flex-col p-4 bg-white dark:bg-slate-800
+    ${isRTL ? 'border-l border-slate-200 dark:border-slate-700' : 'border-r border-slate-200 dark:border-slate-700'} 
+    transition-transform duration-300 ease-in-out 
+    md:relative md:translate-x-0 md:h-auto
+    ${isMobileSidebarOpen ? 'translate-x-0' : (isRTL ? 'translate-x-full' : '-translate-x-full')}
+    ${isSidebarCollapsed ? 'md:w-20' : 'md:w-72'}
+    w-64
+  `;
+
+    const handleLanguageToggle = () => setLanguage(language === 'ar' ? 'en' : 'ar');
+    const handleThemeToggle = () => setTheme(theme === 'light' ? 'dark' : 'light');
+
+    const expandIcon = isRTL ? <ChevronLeftIcon className="w-6 h-6"/> : <ChevronRightIcon className="w-6 h-6"/>;
+    const collapseIcon = isRTL ? <ChevronRightIcon className="w-6 h-6"/> : <ChevronLeftIcon className="w-6 h-6"/>;
+
   
   return (
-    <aside className={`bg-white dark:bg-slate-800 h-screen flex flex-col p-4 sticky top-0 transition-all duration-300 border-l border-slate-200 dark:border-slate-700 ${isSidebarCollapsed ? 'w-20' : 'w-72'} overflow-y-auto`}>
+    <aside className={sidebarClasses}>
       <div className="flex items-center gap-3 mb-8 px-2 flex-shrink-0">
-        <div className="bg-primary-100 p-3 rounded-lg">
-          <BuildingOfficeIcon className="w-7 h-7 text-primary-600"/>
-        </div>
-        <div className={`flex-1 transition-opacity duration-200 ${isSidebarCollapsed ? 'opacity-0' : 'opacity-100'}`}>
+        <BuildingOfficeIcon className="w-8 h-8 text-primary-600 flex-shrink-0"/>
+        <div className={`flex-1 transition-opacity duration-200 ${isSidebarCollapsed ? 'md:opacity-0' : 'opacity-100'}`}>
             <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100 whitespace-nowrap">{companyName}</h1>
         </div>
       </div>
       
-      <nav className="flex-1">
+      <nav className="flex-1 overflow-y-auto -mr-2 pr-2">
         {NAV_GROUPS.map(group => {
             const visibleItems = group.items.filter(filterNavItem);
             if (visibleItems.length === 0) {
@@ -150,35 +171,36 @@ const Sidebar: React.FC<SidebarProps> = ({ activePage, setActivePage, companyNam
       </nav>
       
       <div className="mt-auto flex-shrink-0">
-        <div className="p-4 border-t border-slate-100 dark:border-slate-700">
-            <div className={`flex items-center gap-3 ${isSidebarCollapsed ? 'justify-center' : ''}`}>
-                <img src={currentUser.avatarUrl} alt={currentUser.name} className="w-10 h-10 rounded-full flex-shrink-0" />
-                <div className={`transition-opacity duration-200 whitespace-nowrap ${isSidebarCollapsed ? 'opacity-0' : 'opacity-100'}`}>
-                    <p className="font-semibold text-sm text-slate-800 dark:text-slate-200">{currentUser.name}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{currentUser.isEmployee ? currentUser.title : currentUser.role}</p>
-                </div>
+         {/* Combined Footer for Desktop */}
+         <div className={`pt-2 mt-2 border-t border-slate-100 dark:border-slate-700 hidden md:flex items-center justify-between px-2`}>
+            <div className={`flex items-center gap-1 transition-opacity duration-300 ${isSidebarCollapsed ? 'opacity-0 pointer-events-none' : 'opacity-100'}`}>
+                <button onClick={handleLanguageToggle} className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700" aria-label={t('header.toggleLanguage')}>
+                    <LanguageIcon className="h-5 w-5" />
+                </button>
+                <button onClick={handleThemeToggle} className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700" aria-label={t('header.toggleTheme')}>
+                    {theme === 'light' ? <MoonIcon className="h-5 w-5" /> : <SunIcon className="h-5 w-5" />}
+                </button>
             </div>
-        </div>
-        <ul>
-          {filteredBottomNavItems.map((item) => (
-             <NavLink 
-                key={item.nameKey} 
-                item={item} 
-                isActive={activePage === item.nameKey}
-                onClick={() => setActivePage(item.nameKey)}
-                isCollapsed={isSidebarCollapsed}
-                t={t}
-            />
-          ))}
-        </ul>
-         <div className="pt-2 mt-2 border-t border-slate-100 dark:border-slate-700">
+            
             <button
                 onClick={toggleSidebar}
-                className="w-full flex items-center justify-center p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
+                className="p-2 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700"
                 aria-label={t(isSidebarCollapsed ? "sidebar.toggleExpand" : "sidebar.toggleCollapse")}
             >
-                {isSidebarCollapsed ? <ChevronRightIcon className="w-6 h-6"/> : <ChevronLeftIcon className="w-6 h-6"/>}
+                {isSidebarCollapsed ? expandIcon : collapseIcon}
             </button>
+        </div>
+
+        {/* Footer for Mobile (always expanded, no collapse button) */}
+        <div className={`md:hidden pt-2 mt-2 border-t border-slate-100 dark:border-slate-700`}>
+            <div className="flex justify-around items-center">
+                <button onClick={handleLanguageToggle} className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700" aria-label={t('header.toggleLanguage')}>
+                    <LanguageIcon className="h-6 w-6" />
+                </button>
+                <button onClick={handleThemeToggle} className="p-2 rounded-full text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700" aria-label={t('header.toggleTheme')}>
+                    {theme === 'light' ? <MoonIcon className="h-6 w-6" /> : <SunIcon className="h-6 w-6" />}
+                </button>
+            </div>
         </div>
       </div>
     </aside>

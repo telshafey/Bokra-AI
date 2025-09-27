@@ -1,9 +1,10 @@
+// FIX: Replaced placeholder content with a full implementation.
 import React, { useState } from 'react';
-import PageHeader from './PageHeader';
-import Card from './Card';
+import { PlusCircleIcon, PencilIcon, TrashIcon, SitemapIcon } from './icons/Icons';
 import { usePoliciesContext } from './contexts/PoliciesContext';
 import { useTranslation } from './contexts/LanguageContext';
-import { PlusCircleIcon, PencilIcon, TrashIcon, ChevronRightIcon } from './icons/Icons';
+import PageHeader from './PageHeader';
+import Card from './Card';
 import { ApprovalWorkflow } from '../types';
 import ApprovalWorkflowModal from './ApprovalWorkflowModal';
 
@@ -12,7 +13,7 @@ const ApprovalWorkflowsPage: React.FC = () => {
     const { approvalWorkflows, deleteApprovalWorkflow } = usePoliciesContext();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [editingWorkflow, setEditingWorkflow] = useState<ApprovalWorkflow | null>(null);
-
+    
     const handleOpenAddModal = () => {
         setEditingWorkflow(null);
         setIsModalOpen(true);
@@ -47,38 +48,50 @@ const ApprovalWorkflowsPage: React.FC = () => {
                 actionButton={headerAction}
             />
             <Card paddingClass="p-0">
-                <div className="divide-y divide-slate-100 dark:divide-slate-700">
-                    {approvalWorkflows.length > 0 ? (
-                        approvalWorkflows.map(workflow => (
-                            <div key={workflow.id} className="p-4 flex justify-between items-center hover:bg-slate-50 dark:hover:bg-slate-700/50">
-                                <div>
-                                    <h3 className="font-bold text-slate-800 dark:text-slate-100">{workflow.name}</h3>
-                                    <p className="text-sm text-slate-500 dark:text-slate-400">{t('approvalWorkflows.requestType')}: {t(`requestTypes.${workflow.requestType}`)}</p>
-                                    <div className="flex items-center gap-2 mt-2 text-xs font-semibold text-slate-600 dark:text-slate-300">
-                                        {workflow.steps.sort((a,b) => a.order - b.order).map((step, index) => (
-                                            <React.Fragment key={step.id}>
-                                                <span className="bg-slate-200 dark:bg-slate-600 px-2 py-1 rounded-md">{t(`approverRoles.${step.approverRole}`)}</span>
-                                                {index < workflow.steps.length - 1 && <ChevronRightIcon className="w-4 h-4 text-slate-400" />}
-                                            </React.Fragment>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="flex items-center gap-2">
-                                    <button onClick={() => handleOpenEditModal(workflow)} className="p-2 text-slate-500 hover:text-sky-600" title={t('approvalWorkflows.edit')}><PencilIcon className="w-5 h-5" /></button>
-                                    <button onClick={() => handleDelete(workflow.id)} className="p-2 text-slate-500 hover:text-red-600" title={t('approvalWorkflows.delete')}><TrashIcon className="w-5 h-5" /></button>
-                                </div>
-                            </div>
-                        ))
-                    ) : (
-                        <div className="text-center p-12">
-                            <p className="font-semibold text-slate-600 dark:text-slate-300">{t('approvalWorkflows.noWorkflows')}</p>
-                            <p className="text-sm text-slate-500 dark:text-slate-400">{t('approvalWorkflows.noWorkflowsHint')}</p>
+                 <div className="overflow-x-auto">
+                    <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
+                        <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-50 dark:bg-slate-700">
+                            <tr>
+                                <th className="px-6 py-3">{t('approvalWorkflows.workflowName')}</th>
+                                <th className="px-6 py-3">{t('approvalWorkflows.requestType')}</th>
+                                <th className="px-6 py-3">{t('approvalWorkflows.steps')}</th>
+                                <th className="px-6 py-3">{t('general.actions')}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {approvalWorkflows.map(workflow => (
+                                <tr key={workflow.id} className="bg-white dark:bg-slate-800 border-b dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700/50">
+                                    <td className="px-6 py-4 font-semibold text-slate-800 dark:text-slate-200">{workflow.name}</td>
+                                    <td className="px-6 py-4">{t(`requestTypes.${workflow.requestType}`)}</td>
+                                    <td className="px-6 py-4">
+                                        <div className="flex items-center gap-2">
+                                            {workflow.steps.sort((a,b) => a.order - b.order).map((step, index) => (
+                                                <React.Fragment key={step.id}>
+                                                    <span className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded-md text-xs font-medium">{t(`approverRoles.${step.approverRole}`)}</span>
+                                                    {index < workflow.steps.length - 1 && <span className="text-slate-400">&rarr;</span>}
+                                                </React.Fragment>
+                                            ))}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 flex items-center gap-2">
+                                        <button onClick={() => handleOpenEditModal(workflow)} className="p-2 text-slate-500 hover:text-sky-600" title={t('general.edit')}><PencilIcon className="w-5 h-5"/></button>
+                                        <button onClick={() => handleDelete(workflow.id)} className="p-2 text-slate-500 hover:text-red-600" title={t('general.delete')}><TrashIcon className="w-5 h-5"/></button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                     {approvalWorkflows.length === 0 && (
+                        <div className="text-center p-12 text-slate-500 dark:text-slate-400">
+                            <SitemapIcon className="w-12 h-12 mx-auto text-slate-300 dark:text-slate-600 mb-2"/>
+                            <p className="font-semibold">{t('approvalWorkflows.noWorkflows')}</p>
+                            <p className="text-sm">{t('approvalWorkflows.noWorkflowsHint')}</p>
                         </div>
                     )}
                 </div>
             </Card>
 
-            <ApprovalWorkflowModal
+             <ApprovalWorkflowModal
                 isOpen={isModalOpen}
                 onClose={() => setIsModalOpen(false)}
                 workflowToEdit={editingWorkflow}

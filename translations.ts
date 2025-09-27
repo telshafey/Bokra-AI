@@ -912,6 +912,12 @@ export const translations = {
         subtitle: 'تفعيل أو إلغاء تفعيل الوحدات الاختيارية.',
         button: 'الذهاب لإدارة الوحدات',
       },
+      links: {
+        title: "روابط سريعة",
+        supportSubtitle: "تواصل مع فريق الدعم لحل المشكلات",
+        helpCenterSubtitle: "ابحث عن إجابات في قاعدة المعرفة",
+        logoutSubtitle: "إنهاء جلستك الحالية بأمان"
+      },
     },
     approvalWorkflows: {
         pageHeaderTitle: 'إدارة مسارات الموافقات',
@@ -1875,6 +1881,12 @@ export const translations = {
         title: 'Module Management',
         subtitle: 'Enable or disable optional modules.',
         button: 'Go to Module Management',
+      },
+      links: {
+        title: "Quick Links",
+        supportSubtitle: "Contact the support team to resolve issues",
+        helpCenterSubtitle: "Find answers in the knowledge base",
+        logoutSubtitle: "End your current session securely"
       },
     },
     approvalWorkflows: {

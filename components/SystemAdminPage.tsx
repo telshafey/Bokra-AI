@@ -1,5 +1,4 @@
-
-
+// FIX: Update prop names to match the context provider, removing the 'on' prefix.
 import React, { useState, useMemo } from 'react';
 import type { EmployeeProfile, UserRole, Branch, NewUserPayload, AttendancePolicy, LeavePolicy, JobTitle, CompensationPackage, OvertimePolicy } from '../types';
 import { PencilIcon, XCircleIcon, PlusCircleIcon, ArrowPathIcon, InformationCircleIcon, ChevronUpIcon, ArrowsUpDownIcon, ChevronDownIcon } from './icons/Icons';
@@ -40,6 +39,7 @@ const RoleEditor: React.FC<{
     );
 };
 
+// FIX: Update prop names to match the context provider, removing the 'on' prefix.
 interface SystemAdminPageProps {
   allUsers: EmployeeProfile[];
   branches: Branch[];
@@ -48,18 +48,19 @@ interface SystemAdminPageProps {
   leavePolicies: LeavePolicy[];
   jobTitles: JobTitle[];
   compensationPackages: CompensationPackage[];
-  onUpdateUserRole: (userId: string, newRole: UserRole) => void;
-  onDeactivateUser: (userId: string) => void;
-  onReactivateUser: (userId: string) => void;
-  onAddNewUser: (newUser: NewUserPayload) => void;
-  onUpdateUser: (userId: string, updatedData: NewUserPayload) => void;
-  onBulkDeactivateUsers: (userIds: string[]) => void;
-  onBulkAssignAttendancePolicy: (policyId: string, employeeIds: string[]) => void;
-  onBulkAssignOvertimePolicy: (policyId: string, employeeIds: string[]) => void;
-  onBulkAssignLeavePolicy: (policyId: string, employeeIds: string[]) => void;
+  updateUserRole: (userId: string, newRole: UserRole) => void;
+  deactivateUser: (userId: string) => void;
+  reactivateUser: (userId: string) => void;
+  addNewUser: (newUser: NewUserPayload) => void;
+  updateUser: (userId: string, updatedData: NewUserPayload) => void;
+  bulkDeactivateUsers: (userIds: string[]) => void;
+  bulkAssignAttendancePolicy: (policyId: string, employeeIds: string[]) => void;
+  bulkAssignOvertimePolicy: (policyId: string, employeeIds: string[]) => void;
+  bulkAssignLeavePolicy: (policyId: string, employeeIds: string[]) => void;
 }
 
-const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, attendancePolicies, overtimePolicies, leavePolicies, jobTitles, compensationPackages, onUpdateUserRole, onDeactivateUser, onReactivateUser, onAddNewUser, onUpdateUser, onBulkDeactivateUsers, onBulkAssignAttendancePolicy, onBulkAssignOvertimePolicy, onBulkAssignLeavePolicy }) => {
+// FIX: Update props destructuring to match the updated interface.
+const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, attendancePolicies, overtimePolicies, leavePolicies, jobTitles, compensationPackages, updateUserRole, deactivateUser, reactivateUser, addNewUser, updateUser, bulkDeactivateUsers, bulkAssignAttendancePolicy, bulkAssignOvertimePolicy, bulkAssignLeavePolicy }) => {
     const [isUserModalOpen, setIsUserModalOpen] = useState(false);
     const [editingUser, setEditingUser] = useState<EmployeeProfile | null>(null);
     const [branchFilter, setBranchFilter] = useState('all');
@@ -120,9 +121,9 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
 
     const handleSaveUser = (userData: NewUserPayload) => {
         if (editingUser) {
-            onUpdateUser(editingUser.id, userData);
+            updateUser(editingUser.id, userData);
         } else {
-            onAddNewUser(userData);
+            addNewUser(userData);
         }
     };
     
@@ -148,7 +149,7 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
     
     const handleBulkDeactivate = () => {
         if (confirm(t('alerts.confirmations.deactivateUsers', { count: selectedUserIds.size }))) {
-            onBulkDeactivateUsers(Array.from(selectedUserIds));
+            bulkDeactivateUsers(Array.from(selectedUserIds));
             setSelectedUserIds(new Set());
         }
     };
@@ -214,7 +215,7 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
                                     </td>
                                     <td className="px-6 py-4">{user.title}</td>
                                     <td className="px-6 py-4">{user.branchName}</td>
-                                    <td className="px-6 py-4"><RoleEditor currentRole={user.role} onSave={(newRole) => onUpdateUserRole(user.id, newRole)} /></td>
+                                    <td className="px-6 py-4"><RoleEditor currentRole={user.role} onSave={(newRole) => updateUserRole(user.id, newRole)} /></td>
                                     <td className="px-6 py-4">
                                         <span className={`px-2 py-1 rounded-full text-xs font-semibold ${user.employmentStatus === 'Inactive' ? 'bg-red-100 text-red-800 dark:bg-red-900/60 dark:text-red-300' : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300'}`}>
                                             {user.employmentStatus}
@@ -223,9 +224,9 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
                                     <td className="px-6 py-4 flex items-center gap-2">
                                         <button onClick={() => handleOpenEditModal(user)} className="p-2 text-slate-500 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400" title="تعديل"><PencilIcon className="w-5 h-5" /></button>
                                         {user.employmentStatus !== 'Inactive' ? (
-                                             <button onClick={() => onDeactivateUser(user.id)} className="p-2 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500" title="إلغاء تفعيل"><XCircleIcon className="w-5 h-5" /></button>
+                                             <button onClick={() => deactivateUser(user.id)} className="p-2 text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-500" title="إلغاء تفعيل"><XCircleIcon className="w-5 h-5" /></button>
                                         ) : (
-                                            <button onClick={() => onReactivateUser(user.id)} className="p-2 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-500" title="إعادة تفعيل"><ArrowPathIcon className="w-5 h-5" /></button>
+                                            <button onClick={() => reactivateUser(user.id)} className="p-2 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-500" title="إعادة تفعيل"><ArrowPathIcon className="w-5 h-5" /></button>
                                         )}
                                     </td>
                                 </tr>
@@ -256,9 +257,9 @@ const SystemAdminPage: React.FC<SystemAdminPageProps> = ({ allUsers, branches, a
                 attendancePolicies={attendancePolicies}
                 overtimePolicies={overtimePolicies}
                 leavePolicies={leavePolicies}
-                onAssignAttendance={onBulkAssignAttendancePolicy}
-                onAssignOvertime={onBulkAssignOvertimePolicy}
-                onAssignLeave={onBulkAssignLeavePolicy}
+                onAssignAttendance={bulkAssignAttendancePolicy}
+                onAssignOvertime={bulkAssignOvertimePolicy}
+                onAssignLeave={bulkAssignLeavePolicy}
             />
         </div>
     );

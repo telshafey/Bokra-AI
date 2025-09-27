@@ -1,4 +1,5 @@
 import React from 'react';
+// FIX: Corrected import to include OrgTreeNode type.
 import { OrgTreeNode } from '../types';
 import { ChevronDownIcon } from './icons/Icons';
 
@@ -55,8 +56,8 @@ const OrgChartNode: React.FC<OrgChartNodeProps> = ({
     const nodeClasses = [
         "flex items-center justify-between p-3 rounded-lg border",
         "transition-all duration-200 cursor-grab",
-        isDragged ? "dragging" : "bg-white dark:bg-slate-700",
-        isDropTarget ? "drop-target" : "border-slate-200 dark:border-slate-600",
+        isDragged ? "opacity-50" : "bg-white dark:bg-slate-700",
+        isDropTarget ? "border-sky-500 ring-2 ring-sky-200" : "border-slate-200 dark:border-slate-600",
     ].join(" ");
 
     return (
@@ -76,6 +77,7 @@ const OrgChartNode: React.FC<OrgChartNodeProps> = ({
                         <button
                             onClick={() => onToggle(node.id)}
                             className="p-1 rounded-full hover:bg-slate-200 dark:hover:bg-slate-600"
+                            aria-label={t('orgChart.toggleAria', {name: node.name})}
                         >
                             <ChevronDownIcon className={`w-4 h-4 transition-transform ${isCollapsed ? '-rotate-90' : ''}`} />
                         </button>

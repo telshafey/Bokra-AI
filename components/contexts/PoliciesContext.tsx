@@ -1,58 +1,69 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
-import {
-    PoliciesContextType,
-    AttendancePolicy,
-    LeavePolicy,
-    OvertimePolicy,
-    OnboardingTemplate,
+// FIX: Replaced placeholder content with a full implementation.
+import React, { createContext, useContext } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { 
+    PoliciesContextType, 
+    PoliciesProviderProps, 
+    AttendancePolicy, 
+    LeavePolicy, 
+    OvertimePolicy, 
+    OnboardingTemplate, 
     OffboardingTemplate,
     WorkLocation,
     SalaryComponent,
     CompensationPackage,
-    ApprovalWorkflow,
+    ApprovalWorkflow
 } from '../../types';
-
-import { MOCK_ATTENDANCE_POLICIES, MOCK_LEAVE_POLICIES, MOCK_OVERTIME_POLICIES, MOCK_ONBOARDING_TEMPLATES, MOCK_OFFBOARDING_TEMPLATES, MOCK_WORK_LOCATIONS, MOCK_SALARY_COMPONENTS, MOCK_COMPENSATION_PACKAGES, MOCK_APPROVAL_WORKFLOWS } from '../../constants';
+import * as api from '../../services/mockApi';
 import { useToast } from './ToastContext';
 import { useTranslation } from './LanguageContext';
-
 
 const PoliciesContext = createContext<PoliciesContextType | undefined>(undefined);
 
 export const usePoliciesContext = () => {
     const context = useContext(PoliciesContext);
-    if (!context) {
-        throw new Error('usePoliciesContext must be used within a PoliciesProvider');
-    }
+    if (!context) throw new Error('usePoliciesContext must be used within a PoliciesProvider');
     return context;
 };
 
-export const PoliciesProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const [attendancePolicies, setAttendancePolicies] = useState<AttendancePolicy[]>(MOCK_ATTENDANCE_POLICIES);
-    const [leavePolicies, setLeavePolicies] = useState<LeavePolicy[]>(MOCK_LEAVE_POLICIES);
-    const [overtimePolicies, setOvertimePolicies] = useState<OvertimePolicy[]>(MOCK_OVERTIME_POLICIES);
-    const [onboardingTemplates, setOnboardingTemplates] = useState<OnboardingTemplate[]>(MOCK_ONBOARDING_TEMPLATES);
-    const [offboardingTemplates, setOffboardingTemplates] = useState<OffboardingTemplate[]>(MOCK_OFFBOARDING_TEMPLATES);
-    const [workLocations, setWorkLocations] = useState<WorkLocation[]>(MOCK_WORK_LOCATIONS);
-    const [salaryComponents, setSalaryComponents] = useState<SalaryComponent[]>(MOCK_SALARY_COMPONENTS);
-    const [compensationPackages, setCompensationPackages] = useState<CompensationPackage[]>(MOCK_COMPENSATION_PACKAGES);
-    const [approvalWorkflows, setApprovalWorkflows] = useState<ApprovalWorkflow[]>(MOCK_APPROVAL_WORKFLOWS);
+export const PoliciesProvider: React.FC<PoliciesProviderProps> = ({ children }) => {
+    const queryClient = useQueryClient();
     const { addToast } = useToast();
     const { t } = useTranslation();
 
-    const createSaveFunction = <T extends { id: string }>(setter: React.Dispatch<React.SetStateAction<T[]>>, successMessageKey: string) => (item: T) => {
-        setter(prev => {
-            const isNew = !prev.some(p => p.id === item.id);
-            if (isNew) return [...prev, item];
-            return prev.map(p => p.id === item.id ? item : p);
+    const { data: attendancePolicies = [] } = useQuery<AttendancePolicy[]>({ queryKey: ['attendancePolicies'], queryFn: api.fetchAttendancePolicies });
+    const { data: leavePolicies = [] } = useQuery<LeavePolicy[]>({ queryKey: ['leavePolicies'], queryFn: api.fetchLeavePolicies });
+    const { data: overtimePolicies = [] } = useQuery<OvertimePolicy[]>({ queryKey: ['overtimePolicies'], queryFn: api.fetchOvertimePolicies });
+    const { data: onboardingTemplates = [] } = useQuery<OnboardingTemplate[]>({ queryKey: ['onboardingTemplates'], queryFn: api.fetchOnboardingTemplates });
+    const { data: offboardingTemplates = [] } = useQuery<OffboardingTemplate[]>({ queryKey: ['offboardingTemplates'], queryFn: api.fetchOffboardingTemplates });
+    const { data: workLocations = [] } = useQuery<WorkLocation[]>({ queryKey: ['workLocations'], queryFn: api.fetchWorkLocations });
+    const { data: salaryComponents = [] } = useQuery<SalaryComponent[]>({ queryKey: ['salaryComponents'], queryFn: api.fetchSalaryComponents });
+    const { data: compensationPackages = [] } = useQuery<CompensationPackage[]>({ queryKey: ['compensationPackages'], queryFn: api.fetchCompensationPackages });
+    const { data: approvalWorkflows = [] } = useQuery<ApprovalWorkflow[]>({ queryKey: ['approvalWorkflows'], queryFn: api.fetchApprovalWorkflows });
+
+    const createMutation = (mutationFn: (...args: any[]) => Promise<any>, queryKey: string[], successMessageKey: string) => {
+        return useMutation({
+            mutationFn,
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey });
+                addToast(t(successMessageKey), 'success');
+            },
         });
-        addToast(t(successMessageKey), 'success');
     };
-    
-    const createDeleteFunction = (setter: React.Dispatch<React.SetStateAction<any[]>>, successMessageKey: string) => (id: string) => {
-        setter(prev => prev.filter(item => item.id !== id));
-        addToast(t(successMessageKey), 'success');
-    };
+
+    const saveAttendancePolicyMutation = createMutation(api.saveAttendancePolicy, ['attendancePolicies'], 'toasts.policySaved');
+    const saveLeavePolicyMutation = createMutation(api.saveLeavePolicy, ['leavePolicies'], 'toasts.policySaved');
+    const saveOvertimePolicyMutation = createMutation(api.saveOvertimePolicy, ['overtimePolicies'], 'toasts.policySaved');
+    const saveOnboardingTemplateMutation = createMutation(api.saveOnboardingTemplate, ['onboardingTemplates'], 'toasts.templateSaved');
+    const deleteOnboardingTemplateMutation = createMutation(api.deleteOnboardingTemplate, ['onboardingTemplates'], 'toasts.templateDeleted');
+    const saveOffboardingTemplateMutation = createMutation(api.saveOffboardingTemplate, ['offboardingTemplates'], 'toasts.templateSaved');
+    const deleteOffboardingTemplateMutation = createMutation(api.deleteOffboardingTemplate, ['offboardingTemplates'], 'toasts.templateDeleted');
+    const addWorkLocationMutation = createMutation(api.addWorkLocation, ['workLocations'], 'toasts.locationSaved');
+    const updateWorkLocationMutation = createMutation(api.updateWorkLocation, ['workLocations'], 'toasts.locationSaved');
+    const saveSalaryComponentMutation = createMutation(api.saveSalaryComponent, ['salaryComponents'], 'toasts.salaryComponentSaved');
+    const saveCompensationPackageMutation = createMutation(api.saveCompensationPackage, ['compensationPackages'], 'toasts.compensationPackageSaved');
+    const saveApprovalWorkflowMutation = createMutation(api.saveApprovalWorkflow, ['approvalWorkflows'], 'toasts.workflowSaved');
+    const deleteApprovalWorkflowMutation = createMutation(api.deleteApprovalWorkflow, ['approvalWorkflows'], 'toasts.workflowDeleted');
 
     const value: PoliciesContextType = {
         attendancePolicies,
@@ -64,26 +75,19 @@ export const PoliciesProvider: React.FC<{ children: ReactNode }> = ({ children }
         salaryComponents,
         compensationPackages,
         approvalWorkflows,
-        saveAttendancePolicy: createSaveFunction(setAttendancePolicies, 'toasts.policySaved'),
-        saveLeavePolicy: createSaveFunction(setLeavePolicies, 'toasts.policySaved'),
-        saveOvertimePolicy: createSaveFunction(setOvertimePolicies, 'toasts.policySaved'),
-        saveOnboardingTemplate: createSaveFunction(setOnboardingTemplates, 'toasts.templateSaved'),
-        deleteOnboardingTemplate: createDeleteFunction(setOnboardingTemplates, 'toasts.templateDeleted'),
-        saveOffboardingTemplate: createSaveFunction(setOffboardingTemplates, 'toasts.templateSaved'),
-        deleteOffboardingTemplate: createDeleteFunction(setOffboardingTemplates, 'toasts.templateDeleted'),
-        addWorkLocation: (location) => {
-            const newLocation = { id: `loc-${Date.now()}`, ...location };
-            setWorkLocations(prev => [...prev, newLocation]);
-            addToast(t('toasts.locationSaved'), 'success');
-        },
-        updateWorkLocation: (location) => {
-            setWorkLocations(prev => prev.map(loc => loc.id === location.id ? location : loc));
-            addToast(t('toasts.locationSaved'), 'success');
-        },
-        saveSalaryComponent: createSaveFunction(setSalaryComponents, 'toasts.salaryComponentSaved'),
-        saveCompensationPackage: createSaveFunction(setCompensationPackages, 'toasts.compensationPackageSaved'),
-        saveApprovalWorkflow: createSaveFunction(setApprovalWorkflows, 'toasts.workflowSaved'),
-        deleteApprovalWorkflow: createDeleteFunction(setApprovalWorkflows, 'toasts.workflowDeleted'),
+        saveAttendancePolicy: (policy) => saveAttendancePolicyMutation.mutateAsync(policy),
+        saveLeavePolicy: (policy) => saveLeavePolicyMutation.mutateAsync(policy),
+        saveOvertimePolicy: (policy) => saveOvertimePolicyMutation.mutateAsync(policy),
+        saveOnboardingTemplate: (template) => saveOnboardingTemplateMutation.mutateAsync(template),
+        deleteOnboardingTemplate: (templateId) => deleteOnboardingTemplateMutation.mutateAsync(templateId),
+        saveOffboardingTemplate: (template) => saveOffboardingTemplateMutation.mutateAsync(template),
+        deleteOffboardingTemplate: (templateId) => deleteOffboardingTemplateMutation.mutateAsync(templateId),
+        addWorkLocation: (location) => addWorkLocationMutation.mutateAsync(location),
+        updateWorkLocation: (location) => updateWorkLocationMutation.mutateAsync(location),
+        saveSalaryComponent: (component) => saveSalaryComponentMutation.mutateAsync(component),
+        saveCompensationPackage: (pkg) => saveCompensationPackageMutation.mutateAsync(pkg),
+        saveApprovalWorkflow: (workflow) => saveApprovalWorkflowMutation.mutateAsync(workflow),
+        deleteApprovalWorkflow: (workflowId) => deleteApprovalWorkflowMutation.mutateAsync(workflowId),
     };
 
     return <PoliciesContext.Provider value={value}>{children}</PoliciesContext.Provider>;

@@ -1,6 +1,7 @@
 
 
 import React from 'react';
+// FIX: Corrected import path to be a relative module import.
 import { AttendanceRecord, AttendanceStatus } from '../types';
 import { useTranslation } from './contexts/LanguageContext';
 

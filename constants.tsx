@@ -1,7 +1,7 @@
 import {
   HomeIcon, CalendarIcon, DocumentTextIcon, UserCircleIcon, CogIcon, ArrowLeftOnRectangleIcon, BriefcaseIcon, UserGroupIcon, PresentationChartLineIcon, ShieldCheckIcon, UsersIcon, BuildingOfficeIcon, ShieldExclamationIcon, SitemapIcon, DocumentDuplicateIcon, BanknotesIcon, StarIcon, CheckBadgeIcon, QuestionMarkCircleIcon, LifebuoyIcon, BookOpenIcon, ClipboardDocumentListIcon, DocumentCheckIcon, ComputerDesktopIcon, ChartPieIcon
 } from './components/icons/Icons';
-import type { NavGroup, NavItem, EmployeeProfile, Branch, JobTitle, LeaveBalance, AttendanceRecord, Payslip, Stat, RecentActivityItem, TeamMember, PendingRequest, HRRequest, Notification, TeamReportsData, TeamWeeklyAttendanceItem, LeaveDistributionDataItem, ManagerPerformanceData, TeamMemberPerformanceData, JobOpening, Candidate, OnboardingProcess, OnboardingTemplate, OffboardingProcess, OffboardingTemplate, EmployeeDocument, Asset, Course, EmployeeCourse, PerformanceReview, MonthlyCheckIn, ExternalTask, SupportTicket, SalaryComponent, CompensationPackage, WorkLocation, HelpCategory, HelpArticle, ApprovalWorkflow, OnboardingTaskCategory, OnboardingResponsible, OffboardingTaskCategory, OffboardingResponsible, EmployeeDashboardData, TeamDashboardData, Goal, AttendancePolicy, LeavePolicy, OvertimePolicy } from './types';
+import type { NavGroup, NavItem, EmployeeProfile, Branch, JobTitle, LeaveBalance, AttendanceRecord, Payslip, Stat, RecentActivityItem, TeamMember, PendingRequest, HRRequest, Notification, TeamReportsData, TeamWeeklyAttendanceItem, LeaveDistributionDataItem, ManagerPerformanceData, TeamMemberPerformanceData, JobOpening, Candidate, OnboardingProcess, OnboardingTemplate, OffboardingProcess, OffboardingTemplate, EmployeeDocument, Asset, Course, EmployeeCourse, PerformanceReview, MonthlyCheckIn, ExternalTask, SupportTicket, SalaryComponent, CompensationPackage, WorkLocation, HelpCategory, HelpArticle, ApprovalWorkflow, OnboardingTaskCategory, OnboardingResponsible, OffboardingTaskCategory, OffboardingResponsible, EmployeeDashboardData, TeamDashboardData, Goal, AttendancePolicy, LeavePolicy, OvertimePolicy, AppModuleConfig } from './types';
 
 // Icons mapping for recent activities
 import {
@@ -32,6 +32,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { nameKey: 'sidebar.myAssets', path: '/my-assets', icon: ComputerDesktopIcon, module: 'assets', requiresEmployee: true },
       { nameKey: 'sidebar.myOnboarding', path: '/my-onboarding', icon: CheckBadgeIcon, module: 'onboarding', requiresEmployee: true },
       { nameKey: 'sidebar.myOffboarding', path: '/my-offboarding', icon: ShieldExclamationIcon, module: 'offboarding', requiresEmployee: true },
+      { nameKey: 'sidebar.settings', path: '/settings', icon: CogIcon },
     ]
   },
   {
@@ -77,12 +78,7 @@ export const NAV_GROUPS: NavGroup[] = [
   },
 ];
 
-export const BOTTOM_NAV_ITEMS: NavItem[] = [
-  { nameKey: 'sidebar.support', path: '/support', icon: QuestionMarkCircleIcon, module: 'support' },
-  { nameKey: 'sidebar.helpCenter', path: '/help-center', icon: LifebuoyIcon, module: 'help_center' },
-  { nameKey: 'sidebar.settings', path: '/settings', icon: CogIcon },
-  { nameKey: 'sidebar.logout', path: '/logout', icon: ArrowLeftOnRectangleIcon },
-];
+export const BOTTOM_NAV_ITEMS: NavItem[] = [];
 
 export const COMPANY_BRANCHES: Branch[] = [
   { id: 'branch-cai', nameKey: 'branches.cairo', status: 'Active' },
@@ -170,6 +166,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
         attendancePolicyName: 'سياسة الحضور القياسية',
         leavePolicyId: 'leave-p-1',
         leavePolicyName: 'سياسة الإجازات القياسية',
+        compensationPackageId: 'cp-1',
         contact: { phone: '01001234567', workEmail: 'ahmed.elmasry@bokra.com', personalEmail: 'ahmed.elmasry@gmail.com' },
         personal: { dateOfBirth: '1995-05-20', nationality: 'مصري', nationalId: '29505200100123', maritalStatus: 'أعزب', gender: 'Male', religion: 'Muslim' },
         address: '123 شارع التحرير، الدقي، القاهرة',
@@ -201,6 +198,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
         baseSalary: 12000,
         attendancePolicyId: 'att-p-1',
         attendancePolicyName: 'سياسة الحضور القياسية',
+        compensationPackageId: 'cp-1',
         contact: { phone: '01112345678', workEmail: 'fatma.elzahraa@bokra.com', personalEmail: 'fatma.elzahraa@gmail.com' },
         personal: { dateOfBirth: '1998-11-10', nationality: 'مصرية', nationalId: '29811100200456', maritalStatus: 'متزوج', gender: 'Female', religion: 'Muslim' },
         address: '456 شارع فؤاد، الإسكندرية',
@@ -228,6 +226,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
         checkInStatus: 'CheckedOut',
         leaveBalances: [],
         baseSalary: 25000,
+        compensationPackageId: 'cp-2',
         contact: { phone: '01223456789', workEmail: 'mohamed.abdallah@bokra.com', personalEmail: 'mohamed.abdallah@gmail.com' },
         personal: { dateOfBirth: '1990-02-15', nationality: 'مصري', nationalId: '29002150100789', maritalStatus: 'متزوج', gender: 'Male', religion: 'Muslim' },
         address: '789 شارع شهاب، المهندسين، القاهرة',
@@ -255,6 +254,7 @@ export const ALL_EMPLOYEES: EmployeeProfile[] = [
         checkInStatus: 'CheckedOut',
         leaveBalances: [],
         baseSalary: 22000,
+        compensationPackageId: 'cp-2',
         contact: { phone: '01556789012', workEmail: 'ali.hassan@bokra.com', personalEmail: 'ali.hassan@gmail.com' },
         personal: { dateOfBirth: '1992-07-30', nationality: 'مصري', nationalId: '29207300200123', maritalStatus: 'أعزب', gender: 'Male', religion: 'Muslim' },
         address: '101 شارع أبو قير، الإسكندرية',
@@ -642,13 +642,13 @@ export const MOCK_COMPENSATION_PACKAGES: CompensationPackage[] = [
         { componentId: 'sc-4', value: 15 },
     ]},
 ];
-export const MAIN_MODULES_CONFIG: any[] = [
+export const MAIN_MODULES_CONFIG: AppModuleConfig[] = [
     { key: 'employees', nameKey: 'modules.main.employees.name', descriptionKey: 'modules.main.employees.description' },
     { key: 'attendance', nameKey: 'modules.main.attendance.name', descriptionKey: 'modules.main.attendance.description' },
     { key: 'leave', nameKey: 'modules.main.leave.name', descriptionKey: 'modules.main.leave.description' },
     { key: 'job_titles', nameKey: 'modules.main.job_titles.name', descriptionKey: 'modules.main.job_titles.description' },
 ];
-export const OPTIONAL_MODULES_CONFIG: any[] = [
+export const OPTIONAL_MODULES_CONFIG: AppModuleConfig[] = [
     { key: 'payroll', nameKey: 'modules.optional.payroll.name', descriptionKey: 'modules.optional.payroll.description' },
     { key: 'documents', nameKey: 'modules.optional.documents.name', descriptionKey: 'modules.optional.documents.description' },
     { key: 'recruitment', nameKey: 'modules.optional.recruitment.name', descriptionKey: 'modules.optional.recruitment.description' },

@@ -1,225 +1,98 @@
-
-import React, { useState, useMemo } from 'react';
-import type { LeavePolicy, EmployeeProfile, Branch } from '../types';
-import { PlusCircleIcon, PencilIcon, ArchiveBoxIcon, UserGroupIcon, ArrowsUpDownIcon, ChevronUpIcon, ChevronDownIcon } from './icons/Icons';
-import LeavePolicyModal from './LeavePolicyModal';
-import AssignLeavePolicyModal from './AssignLeavePolicyModal';
+import React, { useState } from 'react';
+import type { LeavePolicy, EmployeeProfile } from '../types';
+import { PlusCircleIcon, PencilIcon, UsersIcon } from './icons/Icons';
 import PageHeader from './PageHeader';
 import Card from './Card';
-import ActionBar from './ActionBar';
+import LeavePolicyModal from './LeavePolicyModal';
+import AssignLeavePolicyModal from './AssignLeavePolicyModal';
 import { useTranslation } from './contexts/LanguageContext';
 
-type SortableKeys = 'name' | 'scope';
-
 interface LeavePolicyPageProps {
-    leavePolicies: LeavePolicy[];
-    employees: EmployeeProfile[];
-    onSaveLeavePolicy: (policy: LeavePolicy) => void;
-    onArchivePolicy: (policyId: string) => void;
-    onBulkAssignPolicy: (policyId: string, employeeIds: string[]) => void;
-    onBulkArchivePolicies: (policyIds: string[]) => void;
-    currentUser: EmployeeProfile;
-    branches: Branch[];
-    onUpdatePolicyStatus: (policyId: string, type: 'attendance' | 'leave' | 'overtime', newStatus: 'Active' | 'Rejected') => void;
+  policies: LeavePolicy[];
+  onSavePolicy: (policy: LeavePolicy) => void;
+  allEmployees: EmployeeProfile[];
+  onAssignPolicy: (policyId: string, employeeIds: string[]) => void;
 }
 
-const STATUS_STYLES: Record<LeavePolicy['status'], { text: string; bg: string; }> = {
-    Active: { text: 'text-emerald-800 dark:text-emerald-300', bg: 'bg-emerald-100 dark:bg-emerald-900/60' },
-    PendingApproval: { text: 'text-amber-800 dark:text-amber-300', bg: 'bg-amber-100 dark:bg-amber-900/60' },
-    Archived: { text: 'text-slate-800 dark:text-slate-300', bg: 'bg-slate-200 dark:bg-slate-700' },
-    Rejected: { text: 'text-red-800 dark:text-red-300', bg: 'bg-red-100 dark:bg-red-900/60' },
-};
-
-const PolicyDetailsSummary: React.FC<{ policy: LeavePolicy }> = ({ policy }) => (
-    <ul className="text-xs text-slate-600 dark:text-slate-400 space-y-1">
-        <li><strong>موظف جديد:</strong> {policy.newEmployeeBalance} يوم بعد {policy.newEmployeeEligibilityMonths} أشهر</li>
-        {policy.annualLeaveTiers.map(tier => (
-            <li key={tier.id}><strong>سنوي:</strong> {tier.days} يوم بعد {tier.afterYears} سنوات</li>
-        ))}
-        <li><strong>عارضة:</strong> {policy.casualLeaveBalance} أيام</li>
-    </ul>
-);
-
-
-const LeavePolicyPage: React.FC<LeavePolicyPageProps> = ({
-    leavePolicies,
-    employees,
-    onSaveLeavePolicy,
-    onArchivePolicy,
-    onBulkAssignPolicy,
-    onBulkArchivePolicies,
-    currentUser,
-    branches,
-    onUpdatePolicyStatus
-}) => {
-    const [isPolicyModalOpen, setIsPolicyModalOpen] = useState(false);
-    const [editingPolicy, setEditingPolicy] = useState<LeavePolicy | null>(null);
-    const [assigningPolicy, setAssigningPolicy] = useState<LeavePolicy | null>(null);
-    const [sortConfig, setSortConfig] = useState<{ key: SortableKeys, direction: 'asc' | 'desc' } | null>(null);
-    const [selectedPolicyIds, setSelectedPolicyIds] = useState<Set<string>>(new Set());
+const LeavePolicyPage: React.FC<LeavePolicyPageProps> = ({ policies, onSavePolicy, allEmployees, onAssignPolicy }) => {
     const { t } = useTranslation();
+    const [isPolicyModalOpen, setIsPolicyModalOpen] = useState(false);
+    const [isAssignModalOpen, setIsAssignModalOpen] = useState(false);
+    const [selectedPolicy, setSelectedPolicy] = useState<LeavePolicy | null>(null);
 
-    const visiblePolicies = useMemo(() => {
-        let policies = leavePolicies;
-        if (currentUser.role === 'Branch Admin' || currentUser.role === 'Admin') {
-            policies = policies.filter(p => p.scope === 'company' || p.branchId === currentUser.branchId);
-        }
-        
-        if (sortConfig !== null) {
-            policies.sort((a, b) => {
-                if (a[sortConfig.key] < b[sortConfig.key]) {
-                    return sortConfig.direction === 'asc' ? -1 : 1;
-                }
-                if (a[sortConfig.key] > b[sortConfig.key]) {
-                    return sortConfig.direction === 'asc' ? 1 : -1;
-                }
-                return 0;
-            });
-        }
-        return policies;
-    }, [leavePolicies, currentUser, sortConfig]);
-
-    const handleSort = (key: SortableKeys) => {
-        let direction: 'asc' | 'desc' = 'asc';
-        if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
-            direction = 'desc';
-        }
-        setSortConfig({ key, direction });
-    };
-
-    const getSortIcon = (key: SortableKeys) => {
-        if (!sortConfig || sortConfig.key !== key) return <ArrowsUpDownIcon className="w-4 h-4 text-slate-400" />;
-        return sortConfig.direction === 'asc' ? <ChevronUpIcon className="w-4 h-4" /> : <ChevronDownIcon className="w-4 h-4" />;
-    };
-
-    const handleToggleSelect = (policyId: string) => {
-        setSelectedPolicyIds(prev => {
-            const newSet = new Set(prev);
-            if (newSet.has(policyId)) newSet.delete(policyId);
-            else newSet.add(policyId);
-            return newSet;
-        });
-    };
-
-    const handleToggleSelectAll = () => {
-        if (selectedPolicyIds.size === visiblePolicies.length) {
-            setSelectedPolicyIds(new Set());
-        } else {
-            setSelectedPolicyIds(new Set(visiblePolicies.map(p => p.id)));
-        }
-    };
-    
-    const employeesForAssignment = (policy: LeavePolicy) => {
-        if (policy.scope === 'branch') {
-            return employees.filter(e => e.branchId === policy.branchId);
-        }
-        return employees;
+    const handleOpenEditModal = (policy: LeavePolicy) => {
+        setSelectedPolicy(policy);
+        setIsPolicyModalOpen(true);
     };
 
     const handleOpenAddModal = () => {
-        setEditingPolicy(null);
+        setSelectedPolicy(null);
         setIsPolicyModalOpen(true);
     };
 
-    const handleOpenEditModal = (policy: LeavePolicy) => {
-        setEditingPolicy(policy);
-        setIsPolicyModalOpen(true);
-    };
-
-    const handleArchive = (policyId: string) => {
-        if (confirm('هل أنت متأكد من رغبتك في أرشفة سياسة الإجازات هذه؟')) {
-            onArchivePolicy(policyId);
-        }
-    };
-    
-    const handleBulkArchive = () => {
-        if (confirm(`هل أنت متأكد من رغبتك في أرشفة ${selectedPolicyIds.size} سياسات؟`)) {
-            onBulkArchivePolicies(Array.from(selectedPolicyIds));
-            setSelectedPolicyIds(new Set());
-        }
+    const handleOpenAssignModal = (policy: LeavePolicy) => {
+        setSelectedPolicy(policy);
+        setIsAssignModalOpen(true);
     };
 
     return (
         <div className="space-y-6">
             <PageHeader
-                title="إدارة سياسات الإجازات"
-                subtitle="إدارة سياسات أرصدة الإجازات السنوية، المرضية، والعارضة."
+                title={t('pageTitles.leavePolicies')}
+                subtitle="إدارة سياسات الإجازات السنوية والعارضة وغيرها."
+                actionButton={
+                    <button onClick={handleOpenAddModal} className="flex items-center gap-2 bg-sky-600 text-white font-semibold py-2 px-4 rounded-lg">
+                        <PlusCircleIcon className="w-5 h-5"/>
+                        <span>إنشاء سياسة جديدة</span>
+                    </button>
+                }
             />
-
-            <ActionBar>
-                <div/>
-                <button onClick={handleOpenAddModal} className="flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-semibold py-2 px-4 rounded-lg">
-                    <PlusCircleIcon className="w-5 h-5" />
-                    <span>سياسة جديدة</span>
-                </button>
-            </ActionBar>
-
-            {selectedPolicyIds.size > 0 && (
-                <div className="bg-sky-100 dark:bg-sky-900/50 p-3 rounded-lg flex justify-between items-center">
-                    <span className="text-sky-800 dark:text-sky-300 font-semibold">{selectedPolicyIds.size} سياسات محددة</span>
-                    <button onClick={handleBulkArchive} className="bg-amber-500 text-white font-semibold px-3 py-1 rounded-md text-sm hover:bg-amber-600">أرشفة المحدد</button>
-                </div>
-            )}
-            
             <Card paddingClass="p-0">
                 <div className="overflow-x-auto">
-                    <table className="w-full text-sm text-right text-slate-500 dark:text-slate-400">
-                        <thead className="text-xs text-slate-700 dark:text-slate-300 uppercase bg-slate-50 dark:bg-slate-700">
+                    <table className="w-full text-sm text-right">
+                        <thead className="text-xs text-slate-700 uppercase bg-slate-50">
                             <tr>
-                                <th className="p-4"><input type="checkbox" onChange={handleToggleSelectAll} checked={selectedPolicyIds.size === visiblePolicies.length && visiblePolicies.length > 0} /></th>
-                                <th className="px-6 py-3"><button onClick={() => handleSort('name')} className="flex items-center gap-1">الاسم {getSortIcon('name')}</button></th>
-                                <th className="px-6 py-3">ملخص القواعد</th>
-                                <th className="px-6 py-3"><button onClick={() => handleSort('scope')} className="flex items-center gap-1">النطاق {getSortIcon('scope')}</button></th>
-                                <th className="px-6 py-3">المعينون</th>
+                                <th className="px-6 py-3">اسم السياسة</th>
+                                <th className="px-6 py-3">الرصيد الابتدائي</th>
+                                <th className="px-6 py-3">رصيد العارضة</th>
                                 <th className="px-6 py-3">الحالة</th>
                                 <th className="px-6 py-3">إجراءات</th>
                             </tr>
                         </thead>
-                         <tbody>
-                            {visiblePolicies.map(policy => {
-                                const assignedEmployeesCount = employees.filter(e => e.leavePolicyId === policy.id).length;
-                                const status = policy.status || 'Active'; // Fallback
-                                return (
-                                <tr key={policy.id} className="border-b dark:border-slate-700">
-                                    <td className="p-4"><input type="checkbox" checked={selectedPolicyIds.has(policy.id)} onChange={() => handleToggleSelect(policy.id)} /></td>
-                                    <td className="px-6 py-4 font-semibold dark:text-slate-200">{policy.name}</td>
-                                    <td className="px-6 py-4"><PolicyDetailsSummary policy={policy} /></td>
-                                    {/* FIX: Replaced property access from `name` to `nameKey` and wrapped it in the translation function to match the type definition. */}
-                                    <td className="px-6 py-4">{policy.scope === 'company' ? 'عام للشركة' : `خاص بـ ${t(branches.find(b => b.id === policy.branchId)?.nameKey || 'فرع')}`}</td>
-                                    <td className="px-6 py-4">{assignedEmployeesCount}</td>
-                                    <td className="px-6 py-4"><span className={`px-2 py-1 text-xs font-semibold rounded-full ${STATUS_STYLES[status].bg} ${STATUS_STYLES[status].text}`}>{status === 'Active' ? 'نشط' : (status === 'Archived' ? 'مؤرشفة' : 'بانتظار الموافقة')}</span></td>
-                                    <td className="px-6 py-4 flex items-center gap-1">
-                                        <button onClick={() => setAssigningPolicy(policy)} disabled={status !== 'Active'} className="p-2 text-slate-500 dark:text-slate-400 hover:text-emerald-600 dark:hover:text-emerald-400 rounded-full disabled:text-slate-300 dark:disabled:text-slate-600" title="تعيين"><UserGroupIcon className="w-5 h-5"/></button>
-                                        <button onClick={() => handleOpenEditModal(policy)} className="p-2 text-slate-500 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 rounded-full" title="تعديل"><PencilIcon className="w-5 h-5"/></button>
-                                        <button onClick={() => handleArchive(policy.id)} className="p-2 text-slate-500 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 rounded-full" title="أرشفة"><ArchiveBoxIcon className="w-5 h-5"/></button>
+                        <tbody>
+                            {policies.map(policy => (
+                                <tr key={policy.id} className="border-b hover:bg-slate-50">
+                                    <td className="px-6 py-4 font-semibold">{policy.name}</td>
+                                    <td className="px-6 py-4">{policy.newEmployeeBalance} يوم</td>
+                                    <td className="px-6 py-4">{policy.casualLeaveBalance} أيام</td>
+                                    <td className="px-6 py-4"><span className={`px-2 py-1 text-xs rounded-full ${policy.status === 'Active' ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-100 text-slate-700'}`}>{policy.status}</span></td>
+                                    <td className="px-6 py-4 flex items-center gap-2">
+                                        <button onClick={() => handleOpenAssignModal(policy)} className="p-2 text-slate-500 hover:text-emerald-600" title="تعيين موظفين"><UsersIcon className="w-5 h-5"/></button>
+                                        <button onClick={() => handleOpenEditModal(policy)} className="p-2 text-slate-500 hover:text-sky-600" title="تعديل"><PencilIcon className="w-5 h-5"/></button>
                                     </td>
                                 </tr>
-                                );
-                            })}
+                            ))}
                         </tbody>
                     </table>
                 </div>
             </Card>
-            
 
-            {assigningPolicy && (
-                <AssignLeavePolicyModal
-                    isOpen={!!assigningPolicy}
-                    onClose={() => setAssigningPolicy(null)}
-                    policy={assigningPolicy}
-                    employees={employeesForAssignment(assigningPolicy)}
-                    onAssign={onBulkAssignPolicy}
-                />
-            )}
-            
             <LeavePolicyModal
                 isOpen={isPolicyModalOpen}
                 onClose={() => setIsPolicyModalOpen(false)}
-                onSave={onSaveLeavePolicy}
-                policyToEdit={editingPolicy}
-                currentUser={currentUser}
-                branches={branches}
+                onSave={onSavePolicy}
+                policyToEdit={selectedPolicy}
             />
+
+            {selectedPolicy && (
+                <AssignLeavePolicyModal
+                    isOpen={isAssignModalOpen}
+                    onClose={() => setIsAssignModalOpen(false)}
+                    policy={selectedPolicy}
+                    employees={allEmployees}
+                    onAssign={onAssignPolicy}
+                />
+            )}
         </div>
     );
 };

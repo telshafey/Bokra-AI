@@ -3,6 +3,7 @@ import type { SalaryComponent, CompensationPackage } from '../types';
 import CompensationManagement from './CompensationManagement';
 import PageHeader from './PageHeader';
 import Card from './Card';
+import { useTranslation } from './contexts/LanguageContext';
 
 interface CompensationPageProps {
     salaryComponents: SalaryComponent[];
@@ -11,25 +12,16 @@ interface CompensationPageProps {
     onSaveCompensationPackage: (pkg: CompensationPackage) => void;
 }
 
-const CompensationPage: React.FC<CompensationPageProps> = ({
-    salaryComponents,
-    compensationPackages,
-    onSaveSalaryComponent,
-    onSaveCompensationPackage
-}) => {
+const CompensationPage: React.FC<CompensationPageProps> = (props) => {
+    const { t } = useTranslation();
     return (
         <div className="space-y-6">
             <PageHeader
-                title="إدارة التعويضات والمزايا"
-                subtitle="إدارة مكونات وحزم الرواتب لضمان هيكل مالي عادل وشفاف."
+                title={t('pageTitles.compensation')}
+                subtitle="إدارة مكونات الرواتب وحزم التعويضات والمزايا."
             />
-            <Card paddingClass="p-6">
-                <CompensationManagement
-                    salaryComponents={salaryComponents}
-                    compensationPackages={compensationPackages}
-                    onSaveSalaryComponent={onSaveSalaryComponent}
-                    onSaveCompensationPackage={onSaveCompensationPackage}
-                />
+            <Card>
+                <CompensationManagement {...props} />
             </Card>
         </div>
     );

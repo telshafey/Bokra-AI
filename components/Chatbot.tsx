@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatBubbleOvalLeftEllipsisIcon, PaperAirplaneIcon, XMarkIcon } from './icons/Icons';
 import { sendMessageToAI } from '../services/geminiService';
+// FIX: Corrected import path to be a relative module import.
 import type { ChatMessage, EmployeeProfile } from '../types';
 import { useTranslation } from './contexts/LanguageContext';
 

@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { useUserContext } from './contexts/UserContext';
 import { useCompanyStructureContext } from './contexts/CompanyStructureContext';
@@ -69,7 +68,8 @@ const EmployeeDirectoryPage: React.FC = () => {
                         className="p-3 border border-slate-300 dark:border-slate-600 rounded-lg bg-slate-50 dark:bg-slate-700 dark:text-white"
                     >
                         <option value="all">{t('employeeDirectory.allDepartments')}</option>
-                        {departments.map(d => <option key={d} value={d}>{t(`departments.${d}`)}</option>)}
+                        {/* FIX: Explicitly type 'd' to resolve potential type inference issues. */}
+                        {departments.map((d: string) => <option key={d} value={d}>{t(`departments.${d}`)}</option>)}
                     </select>
                 </div>
             </div>
